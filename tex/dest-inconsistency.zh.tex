@@ -421,7 +421,7 @@ $\ord(a)$ 为下列条件的合取，是一个不带参数的齐一公式：
 定义、定理、引理和命题标题后的链接 \textup{\zihao{-5}[Agda\,$\cdot$\,Lean]} 指向首页所列代码仓库中的相应代码．
 
 \begin{itemize}
-\item \textbf{Agda}\quad 证明写在单个文件 \icode{agda/DESTInconsistency.agda} 中，不导入任何模块，文件头声明了 \icode{-{}-safe -{}-without-K} 选项．信任部分有两块：一是文件的第 0--1 节，给出逻辑、语法、两种读法、公理和不对称的定义；二是文件第 4 节中的定理陈述．定理原文如下：
+\item \textbf{Agda}\quad 版本为 2.8.0.2．证明写在单个文件 \icode{agda/DESTInconsistency.agda} 中，不导入任何模块，文件头声明了 \icode{-{}-safe -{}-without-K} 选项．信任部分有两块：一是文件的第 0--1 节，给出逻辑、语法、两种读法、公理和不对称的定义；二是文件第 4 节中的定理陈述．定理原文如下：
 \input{agda-statements}
 \noindent 其中 \icode{DNE} 是双重否定消去，即经典逻辑；\icode{diagonal} 既不使用 \hyperref[ax:ME]{\ME}，也不使用 \icode{DNE}．核对命令如下：
 \begin{codebox}
@@ -429,7 +429,7 @@ $\ord(a)$ 为下列条件的合取，是一个不带参数的齐一公式：
 cd agda && agda --safe --no-libraries DESTInconsistency.agda
 \end{Verbatim}
 \end{codebox}
-\item \textbf{Lean 4}\quad 版本为 v4.36.0，不依赖任何库．Lean 文件 \icode{lean/DESTInconsistency.lean} 的结构与 Agda 文件相同，信任部分即第 I 部分和第 III 部分的定理陈述，原样列于\hyperref[app:formal]{附录~B}．与 Agda 不同，关系取值于 \icode{Prop}，\hyperref[ax:COMP]{\COMP}{} 只给出 $\exists$ 而不是 $\Sigma$．经典逻辑作为显式假设 \icode{∀ P : Prop, ¬¬P → P} 出现在 \icode{inconsistent} 与 \icode{DEST\_inconsistent} 中．用 \icode{\#print axioms} 查看，\icode{diagonal}、\icode{inconsistent}、\icode{DEST\_inconsistent} 都不依赖任何公理．\icode{leanchecker} 是 Lean 自带的检查器，它重新核对了编译结果．独立内核 nanoda~0.4.17 在禁止使用任何公理的设置下，重新核对了这三个定理所依赖的全部 251 个声明．另有 \icode{lean/Probes.lean} 核对了三件事：仅有 \hyperref[ax:ME]{\ME}{} 与罗素实例时，存在单点模型；\hyperref[ax:ME]{\ME}{} 与去掉参数均质限制的 \hyperref[ax:COMP]{\COMP}{} 不一致；若 \hyperref[ax:COMP]{\COMP}{} 改用同侧的读法，即要求 $F_s(A) = \{x : \varphi^s(x)\}$，则它本身就不一致．核对命令如下：
+\item \textbf{Lean 4}\quad 版本为 v4.36.0，不依赖任何库．Lean 文件 \icode{lean/DESTInconsistency.lean} 的结构与 Agda 文件相同，信任部分即第 I 部分和第 III 部分的定理陈述，原样列于\hyperref[app:formal]{附录~A}．与 Agda 不同，关系取值于 \icode{Prop}，\hyperref[ax:COMP]{\COMP}{} 只给出 $\exists$ 而不是 $\Sigma$．经典逻辑作为显式假设 \icode{∀ P : Prop, ¬¬P → P} 出现在 \icode{inconsistent} 与 \icode{DEST\_inconsistent} 中．用 \icode{\#print axioms} 查看，\icode{diagonal}、\icode{inconsistent}、\icode{DEST\_inconsistent} 都不依赖任何公理．\icode{leanchecker} 是 Lean 自带的检查器，它重新核对了编译结果．独立内核 nanoda~0.4.17 在禁止使用任何公理的设置下，重新核对了这三个定理所依赖的全部 251 个声明．另有 \icode{lean/Probes.lean} 核对了三件事：仅有 \hyperref[ax:ME]{\ME}{} 与罗素实例时，存在单点模型；\hyperref[ax:ME]{\ME}{} 与去掉参数均质限制的 \hyperref[ax:COMP]{\COMP}{} 不一致；若 \hyperref[ax:COMP]{\COMP}{} 改用同侧的读法，即要求 $F_s(A) = \{x : \varphi^s(x)\}$，则它本身就不一致．核对命令如下：
 \begin{codebox}
 \begin{Verbatim}[fontsize=\codesize]
 cd lean && lake build && lake env leanchecker DESTInconsistency
@@ -461,6 +461,10 @@ cd lean && lake build && lake env leanchecker DESTInconsistency
 
 不一致并不意味着双面外延集合论的研究就此终结．被列为开放问题的那个理论已被否定，寻找一致的公理化反而比以往更难．自然的表述已被排除，必须先找到替代表述，再证明它一致．\hyperref[thm:1]{定理~1} 指明了保留交叉概括的替代表述必须避免什么：不能有任何齐一公式不对称．至于 \DESTm{} 在直觉主义逻辑下是否不一致，我们尚不清楚．每一次规避矛盾的尝试都可能让理论弱一些，但这不一定使它失去意义．我们认为，只要最终得到的理论被证明一致，仍能解释 ZF，仍有罗素集 $\{x \mid x \notin x\}$ 这类基本的异质对象，且公理读起来自然、没有针对已知悖论打补丁的痕迹，它就有意义．
 
+\section*{AI 使用声明}
+
+Peter Zhang 主导了这项研究：提出问题，把握方向，作出决定，并对内容负责．工作借助 AI 系统完成．项目证明一致性的尝试陷入僵局之后，ChatGPT（Astra~6.2，OpenAI）担任了外部审计者，经过见\hyperref[sec:7]{第 7 节}．它在不用 \hyperref[ax:REG]{\REG}{} 的情况下推出了序数的不对称，并找到了对角论证．Claude（Anthropic）审核并简化了论证，将其推广为\hyperref[thm:1]{定理~1}，完成了 Agda 与 Lean 形式化，并起草了本文；其中大部分由 Claude Code 中的 Claude Opus~5.5 完成，两次盲测形式化则由相互隔离的 Claude Opus~5.5 实例完成．项目此前的轮次以证明一致性为目标，用到了 Claude 和其他 AI 系统．
+
 % 参考文献：标题五号黑体，条目小五号，著录格式参照 GB/T 7714．
 \begingroup\zihao{-5}
 \ctexset{section = {format = \bfseries\zihao{5}\raggedright, beforeskip = {12bp plus 4bp}, afterskip = {6bp}}}
@@ -476,10 +480,6 @@ cd lean && lake build && lake env leanchecker DESTInconsistency
 
 \appendix
 \ctexset{section/name = {附录,}}
-\section{工具与计算资源说明}\label{app:tools}
-
-Peter Zhang 主导了这项研究：提出问题，把握方向，作出决定，并对内容负责．工作借助 AI 系统完成．项目证明一致性的尝试陷入僵局之后，ChatGPT（Astra~6.2，OpenAI）担任了外部审计者，经过见\hyperref[sec:7]{第 7 节}．它在不用 \hyperref[ax:REG]{\REG}{} 的情况下推出了序数的不对称，并找到了对角论证．Claude（Anthropic）审核并简化了论证，将其推广为\hyperref[thm:1]{定理~1}，完成了 Agda 与 Lean 形式化，并起草了本文；其中大部分由 Claude Code 中的 Claude Opus~5.5 完成，两次盲测形式化则由相互隔离的 Claude Opus~5.5 实例完成．项目此前的轮次以证明一致性为目标，用到了 Claude 和其他 AI 系统．所用软件：Agda~2.8.0.2、Lean~4.36.0 及其 \icode{leanchecker}、nanoda~0.4.17、Tectonic．
-
 \section{形式陈述}\label{app:formal}
 
 下面列出 \icode{lean/DESTInconsistency.lean} 第 I 部分的全部内容和第 III 部分的定理陈述，已去掉文档注释．要信任 Lean 的定理，只需读这些内容．

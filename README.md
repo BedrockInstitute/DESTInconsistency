@@ -35,7 +35,7 @@ Sections 0–1 of the file (logic, syntax, the two readings, the axioms, asymmet
 lake build
 ```
 
-Part I and the statements in Part III of `DESTInconsistency.lean` are the trusted part; they are reproduced in Appendix B of the paper. For the main file, the build prints:
+Part I and the statements in Part III of `DESTInconsistency.lean` are the trusted part; they are reproduced in Appendix A of the paper. For the main file, the build prints:
 
 ```
 'DEST.diagonal' does not depend on any axioms
@@ -59,7 +59,7 @@ The script first runs `gen_codelinks.py`, which regenerates the code links and t
 
 ## Authorship and AI use
 
-Corresponding author: Peter Zhang (peterzhangsg@gmail.com). The research was led by him and carried out with AI systems: ChatGPT (Astra 6.2, OpenAI) and Claude (Anthropic). Their roles are described in the paper's tool and computational resource disclosure.
+Corresponding author: Peter Zhang (peterzhangsg@gmail.com). The research was led by him and carried out with AI systems: ChatGPT (Astra 6.2, OpenAI) and Claude (Anthropic). Their roles are described in the paper's statement on the use of AI.
 
 ## Citation
 
