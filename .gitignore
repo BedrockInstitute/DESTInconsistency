@@ -1,0 +1,20 @@
+# Agda
+agda/_build/
+*.agdai
+
+# Lean
+lean/.lake/
+
+# LaTeX by-products (the PDFs in pdf/ are committed; these are not)
+tex/*.aux
+tex/*.log
+tex/*.out
+tex/*.toc
+tex/*.xdv
+tex/*.fls
+tex/*.fdb_latexmk
+tex/*.synctex.gz
+tex/gitref.tex
+
+.claude/
+.DS_Store

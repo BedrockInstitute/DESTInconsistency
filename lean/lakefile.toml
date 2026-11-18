@@ -1,0 +1,8 @@
+name = "DESTInconsistency"
+defaultTargets = ["DESTInconsistency", "Probes"]
+
+[[lean_lib]]
+name = "DESTInconsistency"
+
+[[lean_lib]]
+name = "Probes"

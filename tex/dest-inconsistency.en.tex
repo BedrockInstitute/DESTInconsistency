@@ -1,0 +1,387 @@
+% Weak double extension set theory is inconsistent
+% (c) 2026 Bedrock Institute. Licensed under CC BY-NC-SA 4.0.
+% Build: ./build.sh in this folder (PDF to ../pdf, HTML to ../html)
+% \iflatexml is true only under LaTeXML (latexmlc --preload=latexml.sty), which builds the HTML version.
+\expandafter\ifx\csname iflatexml\endcsname\relax\expandafter\newif\csname iflatexml\endcsname\fi
+\documentclass[11pt,a4paper]{article}
+\iflatexml\else\usepackage[margin=2.6cm]{geometry}\fi
+\usepackage{amsmath,amssymb,amsthm}
+\iflatexml\else
+\usepackage{fontspec}
+\setmonofont{DejaVuSansMono}[Extension=.ttf, BoldFont=*-Bold, Scale=MatchLowercase]
+\fi
+\usepackage{fancyvrb}
+\iflatexml\else\usepackage{framed}\fi
+\usepackage{enumitem}
+\usepackage{xcolor}
+\usepackage{hyperref}
+\iflatexml\else
+% Every link (cross-references, citations, footnote marks, URLs) in one muted dark blue.
+\definecolor{linkblue}{HTML}{2A5189}
+\hypersetup{colorlinks=true, linkcolor=linkblue, citecolor=linkblue, urlcolor=linkblue}
+\fi
+
+% Links to the code.  The line numbers come from codelinks.tex (gen_codelinks.py).
+% The code links point to branch main, or to the commit named in gitref.tex (written by CI).
+\IfFileExists{gitref.tex}{\input{gitref}}{\newcommand{\gitref}{main}}
+\newcommand{\repo}{https://github.com/BedrockInstitute/DESTInconsistency/blob/\gitref}
+\newcommand{\agdaL}[1]{\href{\repo/agda/DESTInconsistency.agda\#L#1}{Agda}}
+\newcommand{\leanL}[1]{\href{\repo/lean/DESTInconsistency.lean\#L#1}{Lean}}
+\iflatexml
+\newcommand{\codepair}[2]{\lxWithClass{codelinks}{[\agdaL{#1}\,$\cdot$\,\leanL{#2}]}}
+\else
+\newcommand{\codepair}[2]{\textup{\footnotesize[\agdaL{#1}\,$\cdot$\,\leanL{#2}]}}
+\fi
+\newcommand{\defcode}[3]{\expandafter\def\csname code@#1\endcsname{\codepair{#2}{#3}}}
+\newcommand{\code}[1]{\ifcsname code@#1\endcsname\csname code@#1\endcsname\else\errmessage{Unknown code key #1}\fi}
+\input{codelinks}
+
+% Footnotes are marked with symbols: * for the title note on the author, then \dag, ...
+\renewcommand{\thefootnote}{\fnsymbol{footnote}}
+% The title note: in the PDF a footnote marked * on the author; in the HTML a note on the author.
+\newcommand{\authornote}{Corresponding author: Peter Zhang, \href{mailto:peterzhangsg@gmail.com}{peterzhangsg@gmail.com}\newline
+Code and formal proofs: \href{https://github.com/BedrockInstitute/DESTInconsistency}{\texttt{github.com/BedrockInstitute/DESTInconsistency}}\newline
+\textcopyright\ 2026 Bedrock Institute. Licensed under CC BY-NC-SA 4.0.}
+
+% Code: syntax colours as on GitHub.
+\definecolor{shadecolor}{HTML}{F6F8FA}
+\definecolor{codekw}{HTML}{CF222E}
+\definecolor{codefn}{HTML}{8250DF}
+\definecolor{codety}{HTML}{0550AE}
+\newcommand{\kw}[1]{\textcolor{codekw}{#1}}
+\newcommand{\fn}[1]{\textcolor{codefn}{#1}}
+\newcommand{\ty}[1]{\textcolor{codety}{#1}}
+
+\iflatexml
+% HTML: page layout, code boxes and inline code are left to the stylesheet (html/paper.css).
+\newcommand{\titlenote}[1]{}
+\newcommand{\needspace}[1]{}
+\newcommand{\codesize}{}
+\newcommand{\icode}[1]{\lxWithClass{icode}{\texttt{#1}}}
+\newenvironment{codeblock}{\par}{\par}
+\newenvironment{codebox}{\par}{\par}
+\else
+\makeatletter % start a new page unless #1 of space is left (as needspace's \Needspace)
+% Footnote text: grey, mark in the margin of the first line, later lines aligned with the text.
+\renewcommand{\@makefntext}[1]{\noindent\hangindent=0.9em\hangafter=1\color{black!65}\makebox[0.9em][l]{\@makefnmark}#1}
+\newcommand{\titlenote}[1]{\footnotetext[1]{\raisebox{\ht\strutbox}{\hypertarget{titlenote}{}}#1}\setcounter{footnote}{1}}
+\newcommand{\needspace}[1]{\par\penalty-100\begingroup\setlength{\dimen@}{#1}%
+  \dimen@ii\pagegoal\advance\dimen@ii-\pagetotal
+  \ifdim\dimen@>\dimen@ii\ifdim\dimen@ii>\z@\vfil\fi\break\fi\endgroup}
+\makeatother
+
+\emergencystretch=1.5em
+
+% Code blocks: light background.
+\newcommand{\codesize}{\small}
+% Inline code, as `code` in Markdown.
+\newcommand{\icode}[1]{{\setlength{\fboxsep}{1.2pt}\colorbox{shadecolor}{\texttt{\vphantom{Ay}#1}}}}
+% Footnote area: more space above it, grey text.
+\setlength{\skip\footins}{32pt plus 4pt minus 4pt}
+% The rule and footnotes sit at the foot of the page even when the page is short (\raggedbottom).
+\renewcommand{\footnoterule}{\vskip 0pt plus 1fill\relax\kern-3pt{\color{black!20}\hrule width \textwidth height 0.4pt}\kern 2.6pt}
+\newenvironment{codeblock}{\setlength{\FrameSep}{6pt}\begin{shaded}}{\end{shaded}}
+% codebox: a short block aligned with the current line width (e.g. inside a list item).
+\newsavebox{\codebx}
+\newenvironment{codebox}{\par\smallskip\noindent\begin{lrbox}{\codebx}%
+  \begin{minipage}{\dimexpr\linewidth-12pt\relax}}%
+  {\end{minipage}\end{lrbox}\setlength{\fboxsep}{6pt}\colorbox{shadecolor}{\usebox{\codebx}}\par\smallskip}
+\setlist{itemsep=2pt,topsep=4pt,parsep=0pt,partopsep=0pt}
+\fi
+\newtheorem{theorem}{Theorem}
+\newtheorem{lemma}{Lemma}
+\newtheorem{proposition}{Proposition}
+\theoremstyle{definition}
+\newtheorem*{definition*}{Definition}
+\theoremstyle{remark}
+\newtheorem*{remark*}{Remark}
+
+\newcommand{\eps}{\varepsilon}
+\newcommand{\os}{\bar s}
+\newcommand{\ord}{\mathrm{ord}}
+\newcommand{\Ord}{\mathrm{Ord}}
+\newcommand{\ME}{\textup{ME}}
+\newcommand{\COMP}{\textup{COMP}}
+\newcommand{\REG}{\textup{REG}}
+\newcommand{\DEST}{\textup{DEST}}
+\newcommand{\DESTm}{\ensuremath{\textup{DEST}^{-}}}
+
+\title{Weak double extension set theory is inconsistent}
+\iflatexml
+\author{Bedrock Institute\thanks{\authornote}}
+\else
+\author{Bedrock Institute\hyperlink{titlenote}{\textsuperscript{*}}}
+\fi
+\date{November 2026}
+
+\begin{document}
+\maketitle
+\titlenote{\authornote}
+
+\begin{abstract}
+We prove that Kisielewicz's weak double extension set theory \DEST{} is inconsistent: already two of its axioms, mixed extensionality and comprehension, contradict each other. \DEST{} has two membership relations, $\in$ and $\eps$; it interprets ZF, and its consistency was an open problem.
+
+Holmes showed, using the regularity axiom, that the ordinals of the two relations differ: with the relations suitably named, every $\eps$-ordinal is an $\in$-ordinal, and the object $\Ord = \{x \mid x \text{ is an ordinal}\}$ is an $\in$-ordinal but not an $\eps$-ordinal. We show first that comprehension alone refutes such an asymmetry, in intuitionistic logic. Given the asymmetry, if $V$ is the universal set and $\Theta(z)$ says that $z$ omits some ordinal, then the object
+\[
+  A = \{\, z \mid z = V \;\vee\; \ord(z) \;\vee\; \bigl(V \in z \wedge (z \in z \oplus \Theta(z))\bigr) \,\}
+\]
+satisfies $A \in A \leftrightarrow A \notin A$, and the same argument refutes every formula that is asymmetric in this way. We then derive the asymmetry of the ordinals, up to exchanging the two relations, from mixed extensionality and comprehension without the regularity axiom; this is the only use of classical logic. Both parts are formalized in Agda and in Lean~4.
+\end{abstract}
+
+\section{The theory}\label{sec:1}
+
+\begin{description}
+\item[Language.] First-order logic with $=$ and two membership relations $\in$ and $\eps$. For a side $s$ (one of ${\in}$, ${\eps}$) we write $x \in_s y$, let $\os$ be the other side, and call \mbox{$F_s(a) = \{x : x \in_s a\}$} the \emph{$s$-face} of~$a$. An object $a$ is \emph{regular} if $F_{\in}(a) = F_{\eps}(a)$.
+\item[Uniform formulas.] A formula is uniform if its only membership symbol is $\in$. Its \emph{$s$-reading} $\varphi^s$ interprets that symbol as $\in_s$. Thus $\varphi^{\in} = \varphi$, and $\varphi^{\eps}$ is Holmes's dual $\varphi^*$.
+\item[\ME{} (mixed extensionality).]\phantomsection\label{ax:ME} If $F_{\in}(a) = F_{\eps}(b)$, then $a = b$.
+\item[\COMP{} (comprehension).]\phantomsection\label{ax:COMP} For every uniform $\varphi(x, \bar r)$ and regular $\bar r$ there is \mbox{$A = \{x \mid \varphi\}$} with
+\[
+  F_{\eps}(A) = \{x : \varphi^{\in}(x, \bar r)\}, \qquad F_{\in}(A) = \{x : \varphi^{\eps}(x, \bar r)\},
+\]
+that is, $F_s(A) = \{x : \varphi^{\os}(x, \bar r)\}$ for both sides $s$. Comprehension is thus \emph{crossed}; a \emph{same-sided} version would use $\varphi^s$.
+\item[\REG{} (regularity).]\phantomsection\label{ax:REG} If one face of $a$ is included in the same face of some $b$ whose members on both sides are all regular, then $a$ is regular.
+\end{description}
+
+\noindent \DEST{} is {\hyperref[ax:ME]{\ME}}{} + {\hyperref[ax:COMP]{\COMP}}{} + {\hyperref[ax:REG]{\REG}}{} \cite[\S2]{H05}, \cite[\S8.1]{HFL}. \DESTm{} is {\hyperref[ax:ME]{\ME}}{} + {\hyperref[ax:COMP]{\COMP}}.
+
+\paragraph{On the formulation.} In \cite{H05}, Axiom 2.8 places ``there is $\{x \mid \varphi\}$'' before the quantifier over the parameters. We read it, as Holmes does in his proofs, as ``for all regular parameters there is $A$''; read literally, the axiom is already inconsistent. Kisielewicz \cite{K98}, weakening his theory of \cite{K89}, folds {\hyperref[ax:REG]{\REG}}{} into {\hyperref[ax:COMP]{\COMP}}{} through a condition on parameters: they must be partially contained in a suitable regular object, where $a$ is partially contained in $b$ if $F_s(a) \subseteq F_s(b)$ for some side $s$.\footnote{If the condition asks for a regular object with regular members, it matters which parameters the proofs use. The proof of {\hyperref[thm:2]{Theorem~2}} uses only parameters that are regular objects with regular members, with two exceptions. One is the universal set $V$, which can be eliminated: replace $z = V$ by $\forall y\,(y \in z)$ and $V \in z$ by ${\exists v\,(\forall y\,(y \in v)} \wedge {v \in z)}$; by {\hyperref[ax:ME]{\ME}}, $V$ is the only object whose $s$-face is everything. The other is the object $h$ in the proof of {\hyperref[lem:3]{Lemma~3}}, which is regular but need not have regular members; at this one point the proof relies on Holmes's equivalence.} Holmes \cite[\S2]{H04} states that this is equivalent to the formulation above, which is the one recorded as open in \cite[\S8.1]{HFL} and \cite[\S10]{SEP}.
+
+\section{Asymmetry and the results}\label{sec:2}
+
+Being an ordinal is expressed by a parameter-free uniform formula $\ord$: Holmes's definition \cite[\S5]{H05} becomes one when its clause $\beta \in_{\eps} S$ is read as ``$\beta$ has a singleton'', and {\hyperref[sec:4]{Section~4}} gives a variant. Using {\hyperref[ax:REG]{\REG}}, Holmes showed that, with the relations suitably named, every $\eps$-ordinal is an $\in$-ordinal, and that the object $\Ord = \mbox{$\{x \mid \ord(x)\}$}$ is an $\in$-ordinal but not an $\eps$-ordinal \cite[Theorem 5.1 and the discussion after it]{H05}. So $\Ord$ is an ordinal on one side only. We isolate what is needed.
+
+\begin{definition*}\code{asym}
+Let $P(x, \bar r)$ be a uniform formula with regular parameters, write $P^s(x)$ for $P^s(x, \bar r)$, and let $b, c$ be the two sides. $P$ is \emph{asymmetric from $c$ to $b$} if
+\begin{enumerate}[label=(\roman*)]
+\item \label{cond:i}$P^c(x)$ implies $P^b(x)$;
+\item \label{cond:ii}if $P^b(x)$, then no $b$-member $y$ of $x$ has $y \in_b y$;
+\item \label{cond:iii}some $W$ with $F_b(W) = \{x : P^c(x)\}$ and $F_c(W) = \{x : P^b(x)\}$ has $P^b(W)$.
+\end{enumerate}
+\end{definition*}
+
+\noindent By {\hyperref[ax:COMP]{\COMP}}, objects $W$ as in {\hyperref[cond:iii]{(iii)}} exist; {\hyperref[cond:iii]{(iii)}} asks that one of them satisfy $P^b$. With this naming, Holmes's ordinal formula is asymmetric from $\eps$ to $\in$: {\hyperref[cond:i]{(i)}} and {\hyperref[cond:iii]{(iii)}} are his two facts, and {\hyperref[cond:ii]{(ii)}} holds because no ordinal has a self-membered member.
+
+\begin{theorem}[Diagonal]\label{thm:1}\code{thm1}
+Under {\hyperref[ax:COMP]{\COMP}}, no formula is asymmetric. The proof uses neither {\hyperref[ax:ME]{\ME}}{} nor classical logic.
+\end{theorem}
+
+\begin{theorem}\label{thm:2}\code{thm2}
+\DESTm{} is inconsistent in classical logic. Hence \DEST{} is inconsistent.
+\end{theorem}
+
+\noindent With Holmes's facts, {\hyperref[thm:1]{Theorem~1}} already refutes full \DEST. {\hyperref[thm:2]{Theorem~2}} removes {\hyperref[ax:REG]{\REG}}: from {\hyperref[ax:ME]{\ME}}{} and {\hyperref[ax:COMP]{\COMP}}{} alone, the ordinals are asymmetric from one side to the other ({\hyperref[sec:5]{Section~5}}), and {\hyperref[thm:1]{Theorem~1}} gives the contradiction. {\hyperref[sec:3]{Section~3}} proves {\hyperref[thm:1]{Theorem~1}}; {\hyperref[sec:4]{Section~4}} collects the facts about regular objects and ordinals used in {\hyperref[sec:5]{Section~5}}.
+
+\section{Comprehension refutes asymmetry}\label{sec:3}
+
+We prove {\hyperref[thm:1]{Theorem~1}}. Let $P$ be asymmetric from $c$ to $b$, with $W$ as in {\hyperref[cond:iii]{(iii)}}. Let $V = \{x \mid x = x\}$. Both faces of $V$ are everything, so $V$ is regular and $V \in_s V$. Let $\Theta(z)$ be $\exists u\,(P(u) \wedge u \notin z)$, and let
+\[
+  A = \{\, z \mid z = V \;\vee\; P(z) \;\vee\; \bigl(V \in z \wedge (z \in z \oplus \Theta(z))\bigr) \,\},
+\]
+with parameters $V$ and $\bar r$, where $p \oplus q$ is $(p \wedge \neg q) \vee (\neg p \wedge q)$. So $z \in_b A$ iff the $c$-reading of the condition holds at $z$, and $z \in_c A$ iff the $b$-reading does.
+\begin{enumerate}[label=\arabic*.]
+\item $P^b(V)$ fails by {\hyperref[cond:ii]{(ii)}}, since $V \in_b V \in_b V$. $P^c(W)$ fails: otherwise $W \in_b W$ by {\hyperref[cond:iii]{(iii)}}, against {\hyperref[cond:ii]{(ii)}} for $W$.
+\item \textbf{\boldmath $\Theta^b(A)$ holds}, because $W \notin_b A$. Each disjunct fails in the $c$-reading at $W$: $W \neq V$, since $P^b(W)$ and not $P^b(V)$; $P^c(W)$ fails; and $V \in_c W$ would give $P^b(V)$ by {\hyperref[cond:iii]{(iii)}}.
+\item \textbf{\boldmath $\Theta^c(A)$ fails.} If $P^c(u)$, then $P^b(u)$ by {\hyperref[cond:i]{(i)}}, so $u \in_c A$.
+\item \textbf{\boldmath At $z = A$ only the last disjunct can hold.} $V \in_b A$ and $V \in_c A$ by the first disjunct. $A \neq V$, since $W \in_b V$ and $W \notin_b A$. $P^b(A)$ fails by {\hyperref[cond:ii]{(ii)}}, since $V \in_b A$ and $V \in_b V$; so $P^c(A)$ fails by {\hyperref[cond:i]{(i)}}.
+\item Hence $A \in_b A \leftrightarrow A \in_c A$ and $A \in_c A \leftrightarrow A \notin_b A$. If $A \in_b A$, the two give $A \notin_b A$; so $A \notin_b A$. Then $A \in_c A$, and then $A \in_b A$, a contradiction.
+\end{enumerate}
+No step uses {\hyperref[ax:ME]{\ME}}{} or classical logic. \qed
+
+\begin{remark*}[Why the diagonal works]
+Russell's instance $R = \{x \mid x \notin x\}$ sends the two self-membership bits of $R$ around a cycle with two negations, which has a solution: $R$ is merely irregular. Here $\Theta(A)$ is true in one reading and false in the other, which leaves one negation on the cycle.
+\end{remark*}
+
+\section{Regular objects and ordinals}\label{sec:4}
+
+This section and the next prove {\hyperref[thm:2]{Theorem~2}}; they are the only places that use {\hyperref[ax:ME]{\ME}}{} and classical logic. Three facts about regular objects come first.
+
+\begin{lemma}[Rigidity]\label{lem:1}\code{same}
+If $g$ is regular and $F_s(z) = F_s(g)$, then $z = g$.
+\end{lemma}
+
+\begin{proof}
+$F_s(z) = F_s(g) = F_{\os}(g)$, so $z = g$ by {\hyperref[ax:ME]{\ME}}.
+\end{proof}
+
+\begin{lemma}[Flip {\cite[Lemma 2.11]{H05}}]\label{lem:2}\code{ordflip}
+Let $\theta(\bar r)$ be a uniform sentence with regular parameters. Then $\theta^{\in} \leftrightarrow \theta^{\eps}$. In particular, the two readings of a uniform formula with regular parameters agree at every regular object.
+\end{lemma}
+
+\begin{proof}
+Let $V = \{x \mid x = x\}$ and $A = \{x \mid \theta\}$, where $x$ does not occur in $\theta$. Suppose $\theta^{\os}$. Then $F_s(A)$ is everything, which is $F_{\os}(V)$; so $A = V$ by {\hyperref[ax:ME]{\ME}}. Hence $F_{\os}(A)$ is everything too, and this face is nonempty only if $\theta^s$.
+\end{proof}
+
+\begin{lemma}[Singletons {\cite[Lemma 2.10]{H05}}]\label{lem:3}\code{singreg}
+Call $h$ an \emph{$s$-singleton} of $y$ if $F_s(h) = \{y\}$. Every regular object has singletons on both sides, and every object with singletons on both sides is regular.
+\end{lemma}
+
+\begin{proof}
+For the first claim, take $\{x \mid x = r\}$ for regular $r$. For the second, let $h$ be an $s$-singleton of $y$ and $h'$ an $\os$-singleton of $y$. {\hyperref[ax:ME]{\ME}}{} gives $h = h'$ (in one order or the other), so both faces of $h$ are $\{y\}$ and $h$ is regular. Let $k = \{x \mid \exists u\,(x \in u \wedge u \in h)\}$. Then $F_{\os}(k) = F_s(y)$, so $y = k$ by {\hyperref[ax:ME]{\ME}}, and therefore $F_{\os}(y) = F_{\os}(k) = F_s(y)$.
+\end{proof}
+
+\begin{definition*}\code{ordf}
+$\ord(a)$ is the uniform formula, without parameters, that is the conjunction of:
+\begin{enumerate}[label=(O\arabic*),leftmargin=3.2em]
+\item \label{ord:O1}$z \in y \wedge y \in a \to z \in a$;
+\item \label{ord:O2}every member of $a$ satisfies {\hyperref[ord:O1]{(O1)}};
+\item \label{ord:O3}no member of $a$ is a member of itself;
+\item \label{ord:O4}every member $y$ of $a$ has a singleton, i.e.\ $\exists h\,\forall v\,(v \in h \leftrightarrow v = y)$;
+\item \label{ord:O5}for members $y, z$ of $a$: $y \in z \vee y = z \vee z \in y$;
+\item \label{ord:O6}for every $C$ and every $x \in a$ with $x \notin C$, there is $z$ with $z = x$ or $z \in x$, such that $z \notin C$ and every member of $z$ is in $C$.
+\end{enumerate}
+An \emph{$s$-ordinal} is an object satisfying $\ord^s$. In ZF this defines the von Neumann ordinals.
+\end{definition*}
+
+\begin{lemma}[Ordinals]\label{lem:4}\code{memberord}
+\begin{enumerate}[label=(\alph*)]
+\item \label{lem:4a}The $s$-members of an $s$-ordinal are $s$-ordinals.
+\item \label{lem:4b}No $s$-ordinal is an $s$-member of itself.
+\item \label{lem:4c}If $x$ is an $s$-ordinal and $x \notin_s C$, there is $z$ with $z = x$ or $z \in_s x$, such that $z \notin_s C$ and $F_s(z) \subseteq F_s(C)$.
+\item \label{lem:4d}A regular $s$-ordinal is an $\os$-ordinal.
+\end{enumerate}
+\end{lemma}
+
+\begin{proof}
+(a) Let $y$ be a member of $a$. By {\hyperref[ord:O1]{(O1)}} of $a$, the members of $y$ are members of $a$; so {\hyperref[ord:O1]{(O1)}} for $y$ is {\hyperref[ord:O2]{(O2)}} of $a$, and {\hyperref[ord:O2]{(O2)}}--{\hyperref[ord:O6]{(O6)}} for $y$ follow from those of $a$. (b) By {\hyperref[ord:O3]{(O3)}}. (c) If $F_s(x) \subseteq F_s(C)$, take $z = x$. Otherwise apply {\hyperref[ord:O6]{(O6)}} of $x$ to a member of $x$ that is not in $C$, and use {\hyperref[ord:O1]{(O1)}} of $x$. (d) By {\hyperref[lem:2]{Lemma~2}}.
+\end{proof}
+
+\begin{lemma}[Initial segments]\label{lem:5}\code{seg}
+Let $\alpha$ be an $s$-ordinal and $\gamma$ a regular object with $F_s(\gamma) \subseteq F_s(\alpha)$ such that $z \in_s y \in_s \gamma$ implies $z \in_s \gamma$. Then $\gamma = \alpha$ or $\gamma \in_s \alpha$.
+\end{lemma}
+
+\begin{proof}
+If $F_s(\alpha) \subseteq F_s(\gamma)$, then $\gamma = \alpha$ by {\hyperref[lem:1]{Lemma~1}}. Otherwise pick $x \in_s \alpha$ with $x \notin_s \gamma$, and apply {\hyperref[ord:O6]{(O6)}} of $\alpha$ with $C = \gamma$. This gives $z \in_s \alpha$ with $z \notin_s \gamma$ and $F_s(z) \subseteq F_s(\gamma)$. Conversely, let $y \in_s \gamma$. Then $y \in_s \alpha$, so by {\hyperref[ord:O5]{(O5)}} $y \in_s z$, or $y = z$, or $z \in_s y$; the last two would put $z$ in $\gamma$. So $F_s(z) = F_s(\gamma)$, hence $z = \gamma$ by {\hyperref[lem:1]{Lemma~1}}, and $\gamma \in_s \alpha$.
+\end{proof}
+
+\begin{lemma}[Comparability]\label{lem:6}\code{compare}
+Regular $s$-ordinals $\alpha, \beta$ satisfy $\alpha \in_s \beta$ or $\alpha = \beta$ or $\beta \in_s \alpha$.
+\end{lemma}
+
+\begin{proof}
+Let $\gamma = \{x \mid x \in \alpha \wedge x \in \beta\}$. Its $s$-face and $\os$-face are $F_{\os}(\alpha) \cap F_{\os}(\beta)$ and $F_s(\alpha) \cap F_s(\beta)$, which are equal because $\alpha$ and $\beta$ are regular. So $\gamma$ is regular, and it satisfies the condition of {\hyperref[lem:5]{Lemma~5}} by {\hyperref[ord:O1]{(O1)}} of $\alpha$ and $\beta$. By {\hyperref[lem:5]{Lemma~5}}, $\gamma = \alpha$ or $\gamma \in_s \alpha$, and $\gamma = \beta$ or $\gamma \in_s \beta$. If $\gamma \in_s \alpha$ and $\gamma \in_s \beta$, then $\gamma \in_s \gamma$, against {\hyperref[ord:O3]{(O3)}} for $\alpha$. The three remaining combinations give the claim.
+\end{proof}
+
+\section{The ordinals are asymmetric}\label{sec:5}
+
+{\hyperref[thm:2]{Theorem~2}} follows from {\hyperref[thm:1]{Theorem~1}} and two propositions.
+
+\begin{proposition}[One regular side]\label{prop:1}\code{one}
+If every $c$-ordinal is regular, then $\ord$ is asymmetric from $c$ to $\bar c$.
+\end{proposition}
+
+\begin{proof}
+Let $b = \bar c$.
+\begin{enumerate}[label=(\roman*)]
+\item A $c$-ordinal is regular, hence a $b$-ordinal by {\hyperref[lem:4d]{Lemma~4(d)}}.
+\item This is {\hyperref[ord:O3]{(O3)}}.
+\item Let $W = \{x \mid \ord(x)\}$, so $F_b(W)$ is the class of $c$-ordinals and $F_c(W)$ the class of $b$-ordinals. Then $W$ is a $b$-ordinal. Its $b$-members are regular $c$-ordinals, hence regular $b$-ordinals. Clause by clause:
+\begin{itemize}
+\item {\hyperref[ord:O1]{(O1)}}: if $z \in_b y \in_b W$, then $z \in_c y$ since $y$ is regular; so $z$ is a $c$-ordinal by {\hyperref[lem:4a]{Lemma~4(a)}}, and $z \in_b W$;
+\item {\hyperref[ord:O2]{(O2)}}, {\hyperref[ord:O3]{(O3)}}: the members are $b$-ordinals; use {\hyperref[lem:4b]{Lemma~4(b)}};
+\item {\hyperref[ord:O4]{(O4)}}: {\hyperref[lem:3]{Lemma~3}};
+\item {\hyperref[ord:O5]{(O5)}}: {\hyperref[lem:6]{Lemma~6}};
+\item {\hyperref[ord:O6]{(O6)}}: apply {\hyperref[lem:4c]{Lemma~4(c)}} to the member $x$. \qedhere
+\end{itemize}
+\end{enumerate}
+\end{proof}
+
+\begin{proposition}[Not both sides irregular]\label{prop:2}\code{both}
+The two sides do not both have irregular ordinals.
+\end{proposition}
+
+\begin{proof}
+Suppose they do.
+\begin{enumerate}[label=\arabic*.]
+\item\label{step:cut} \textbf{Cut.} If $p$ is an irregular $s$-ordinal and $t$ a regular $s$-ordinal whose $s$-members are regular, then $t \in_s p$. Indeed, a regular $s$-ordinal $z$ with $F_s(z) \subseteq F_s(p)$ satisfies $z = p$ or $z \in_s p$ by {\hyperref[lem:5]{Lemma~5}} (its condition is {\hyperref[ord:O1]{(O1)}} of $z$), and $z = p$ would make $p$ regular; so $z \in_s p$. If some $x \in_s t$ is not in $p$, apply {\hyperref[ord:O6]{(O6)}} of $t$ with $C = p$. This gives $z \in_s t$ with $z \notin_s p$ and $F_s(z) \subseteq F_s(p)$, where $z$ is a regular $s$-ordinal, which is impossible. So $F_s(t) \subseteq F_s(p)$, and $t \in_s p$.
+\item\label{step:descent} \textbf{Descent.} If there is an irregular $s$-ordinal $\alpha$, then there is an irregular $s$-ordinal $p$ whose $s$-members are all regular.
+\begin{itemize}
+\item Let $D = \{x \mid x \text{ has a singleton}\}$. Then $F_s(D)$ is the class of objects with an $\os$-singleton.
+\item The $s$-members of $\alpha$ have $s$-singletons by {\hyperref[ord:O4]{(O4)}}. So, by {\hyperref[lem:3]{Lemma~3}}, an $s$-member of $\alpha$ lies in $F_s(D)$ iff it is regular.
+\item If all $s$-members of $\alpha$ are regular, take $p = \alpha$. Otherwise some irregular $x \in_s \alpha$ satisfies $x \notin_s D$. Apply {\hyperref[ord:O6]{(O6)}} of $\alpha$ with $C = D$ to get $z \in_s \alpha$ with $z \notin_s D$ and $F_s(z) \subseteq F_s(D)$.
+\item The $s$-members of $z$ are in $\alpha$ and in $D$, hence regular. And $z$ is irregular, since otherwise $z \in_s D$. By {\hyperref[lem:4a]{Lemma~4(a)}}, $z$ is an $s$-ordinal; take $p = z$.
+\end{itemize}
+\item \textbf{Conclusion.} By {\hyperref[step:descent]{Descent}}, take such a $p$ on side $\in$ and such a $q$ on side $\eps$.
+\begin{itemize}
+\item Each $\in$-member $x$ of $p$ is a regular $\in$-ordinal, hence an $\eps$-ordinal by {\hyperref[lem:4d]{Lemma~4(d)}}. Its members on either side are its $\in$-members, since $x$ is regular; these lie in $p$ by {\hyperref[ord:O1]{(O1)}}, so they are regular. By {\hyperref[step:cut]{Cut}}, $x \in_{\eps} q$.
+\item Symmetrically, every $\eps$-member of $q$ is an $\in$-member of $p$.
+\item So $F_{\in}(p) = F_{\eps}(q)$, and $p = q$ by {\hyperref[ax:ME]{\ME}}. Then $F_{\eps}(p) = F_{\in}(p)$, so $p$ is regular, a contradiction. \qedhere
+\end{itemize}
+\end{enumerate}
+\end{proof}
+
+\begin{proof}[Proof of {\hyperref[thm:2]{Theorem~2}}]
+By {\hyperref[prop:2]{Proposition~2}} and classical logic, some side $c$ has only regular ordinals. By {\hyperref[prop:1]{Proposition~1}}, $\ord$ is asymmetric from $c$ to $\bar c$, which contradicts {\hyperref[thm:1]{Theorem~1}}.
+\end{proof}
+
+\begin{remark*}[Instances of {\hyperref[ax:COMP]{\COMP}}{} used]
+There are eight: $x = x$; $x = r$; $\exists u\,(x \in u \wedge u \in h)$; $\ord(r)$ with $x$ not free; $x \in \alpha \wedge x \in \beta$; ``$x$ has a singleton''; $\ord(x)$; and the diagonal for $P = \ord$, with parameter $V$. Each has at most two parameters and quantifier rank at most 5.
+\end{remark*}
+
+\section{Verification}\label{sec:6}
+
+The links \textup{\footnotesize[Agda\,$\cdot$\,Lean]} after the heads of definitions, theorems, lemmas, and propositions point to the corresponding code in the repository given on the first page.
+
+\begin{itemize}
+\item \textbf{Agda.} \icode{agda/DESTInconsistency.agda} is a single file with no imports, whose \icode{OPTIONS} pragma sets \icode{-{}-safe -{}-without-K}. Sections 0--1 of the file (logic, syntax, readings, axioms, asymmetry) and the statements in its Section~4 are the trusted part. The theorems, quoted from the file, are
+\input{agda-statements}
+\noindent\icode{DNE} is double-negation elimination, i.e.\ classical logic; \icode{diagonal} takes neither {\hyperref[ax:ME]{\ME}}{} nor \icode{DNE}. Check with
+\begin{codebox}
+\begin{Verbatim}[fontsize=\codesize]
+cd agda && agda --safe --no-libraries DESTInconsistency.agda
+\end{Verbatim}
+\end{codebox}
+\item \textbf{Lean 4} (v4.36.0, no libraries). \icode{lean/DESTInconsistency.lean} has the same structure; its trusted part, Part~I and the statements of Part~III, is reproduced in {\hyperref[app:A]{Appendix~A}}. Unlike in Agda, relations are \icode{Prop}-valued and {\hyperref[ax:COMP]{\COMP}}{} yields $\exists$ rather than $\Sigma$; classical logic is the explicit hypothesis \icode{∀ P : Prop, ¬¬P → P} of \icode{inconsistent} and \icode{DEST\_inconsistent}. \icode{\#print axioms} reports that \icode{diagonal}, \icode{inconsistent}, and \icode{DEST\_inconsistent} depend on no axioms. Lean's \icode{leanchecker} re-checks the compiled development, and the independent kernel nanoda~0.4.17 re-checks the 251 declarations these three theorems depend on, with no axioms permitted. \icode{lean/Probes.lean} checks three things: {\hyperref[ax:ME]{\ME}}{} plus Russell's instance alone has a one-point model; {\hyperref[ax:ME]{\ME}}{} plus {\hyperref[ax:COMP]{\COMP}}{} without the regularity condition on parameters is inconsistent; and {\hyperref[ax:COMP]{\COMP}}{} made same-sided is inconsistent by itself. Check with
+\begin{codebox}
+\begin{Verbatim}[fontsize=\codesize]
+cd lean && lake build && lake env leanchecker DESTInconsistency
+\end{Verbatim}
+\end{codebox}
+\item \textbf{Blind formalizations.} Two isolated Claude Opus~5.5 instances formalized the argument in Agda from scratch, each seeing only its source: one the first draft of this paper, the other a one-page summary of the diagonal (\icode{blind-test/diagonal-summary.zh.png}). Both type-check. The second found that the diagonal uses neither {\hyperref[ax:ME]{\ME}}{} nor classical logic, which led to {\hyperref[thm:1]{Theorem~1}}.
+\item \textbf{Scope.} \icode{inconsistent} and \icode{DEST\_inconsistent} say that no structure satisfies the axioms. Passing to inconsistency of the first-order theory uses the completeness theorem, which is not formalized.
+\end{itemize}
+
+\section{Retrospective}\label{sec:7}
+
+The result came out of an AI-assisted project, recorded in more than four hundred rounds, whose aim was to prove \DEST{} consistent.
+
+\paragraph{The facts were known early.} Theorem~5.1 of \cite{H05} and the discussion after it give the asymmetry of the ordinals, and being an ordinal is expressed by a parameter-free uniform formula. The project treated the asymmetry as something a model must accommodate, and kept asking which models could do so. It seldom asked whether an instance of comprehension could use the asymmetry to decide whether a witness belongs to itself.
+
+\paragraph{Two judgements kept it from that question.}
+\begin{itemize}
+\item Attempts to single out the least irregular ordinal by a formula failed for a real reason: a formula true at an irregular ordinal is also true at some regular ordinal. The refutation needs only that some ordinal is omitted, not which one.
+\item The project proved correctly that one Boolean function applied to both self-membership bits always has a solution, and drew from it the rule that a one-bit diagonal cannot give a contradiction. The rule overlooked that a formula read on the two sides can act differently, because it consults the ordinals of its own side.
+\end{itemize}
+
+\paragraph{Progress was measured by the wrong yardstick.} Most rounds built models for larger and larger fragments of comprehension. This does not measure the distance to the full scheme: two formulas can each have witnesses in a structure where their conjunction has none. The human lead's recurring question, where the unifying step was, pointed at exactly this gap.
+
+\paragraph{How the pieces were found.} The diagonal appeared once the question became whether some $A$ can make ``I omit an ordinal of my side'' true on one side and false on the other. For full \DEST{} every ordinal fact used was already in Holmes's paper. The derivation without {\hyperref[ax:REG]{\REG}}{} came from the last rounds of the project, and {\hyperref[thm:1]{Theorem~1}} from the second blind formalization.
+
+\section{Outlook}\label{sec:8}
+
+The inconsistency does not end the study of double extension. The theory recorded as open fails, and the search for a consistent axiomatization becomes harder than before: the natural formulation is gone, and a replacement has to be found and then shown consistent. {\hyperref[thm:1]{Theorem~1}} says what a replacement that keeps crossed comprehension must avoid: no uniform formula may be asymmetric. We do not know whether \DESTm{} is inconsistent in intuitionistic logic. Each attempt to avoid the contradiction may weaken the theory a little, but that need not make it pointless. In our view, a theory that is finally shown consistent is worth having if it still interprets ZF, still has the basic irregular objects such as Russell's $\{x \mid x \notin x\}$, and has axioms that read naturally rather than as patches against known paradoxes.
+
+\appendix
+\iflatexml\else\makeatletter\renewcommand{\@seccntformat}[1]{\appendixname\ \csname the#1\endcsname\quad}\makeatother\fi
+\section{Formal statements}\label{app:A}
+
+This is Part~I of \icode{lean/DESTInconsistency.lean} and the statements of Part~III, with doc comments removed: all that has to be read to trust the Lean theorems.
+
+\input{lean-statements}
+
+\section{Tool and computational resource disclosure}\label{app:B}
+
+Peter Zhang led the research: he posed the questions, set the direction, made the decisions, and takes responsibility for the content. The work was done with AI systems. ChatGPT (Astra~6.2, OpenAI), acting as an external auditor of the project, derived the asymmetry of the ordinals without {\hyperref[ax:REG]{\REG}}{} and found the diagonal argument. Claude \mbox{(Anthropic)} audited and simplified the argument, generalized it to {\hyperref[thm:1]{Theorem~1}}, wrote the Agda and Lean formalizations, and drafted this paper; most of this was done by Claude Opus~5.5 in Claude Code, and the blind formalizations were written by isolated Claude Opus~5.5 instances. Earlier rounds of the project, aimed at a consistency proof, used Claude and other AI systems. Software: Agda~2.8.0.2, Lean~4.36.0 with \icode{leanchecker}, nanoda~0.4.17, Tectonic.
+
+% References in AMS style: titles in italics, volume numbers in bold, journal abbreviations as in MathSciNet.
+\begingroup\small
+\begin{thebibliography}{HFL}
+\bibitem[H04]{H04} M.~R. Holmes, \emph{Paradoxes in double extension set theories}, Studia Logica \textbf{77} (2004), 41--57.
+\bibitem[H05]{H05} M.~R. Holmes, \emph{The structure of the ordinals and the interpretation of ZF in double extension set theory}, Studia Logica \textbf{79} (2005), 357--372.
+\bibitem[HFL]{HFL} M.~R. Holmes, T.~Forster, and T.~Libert, \emph{Alternative set theories}, Sets and Extensions in the Twentieth Century (D.~M. Gabbay, A.~Kanamori, and J.~Woods, eds.), Handbook of the History of Logic, vol.~6, Elsevier/North-Holland, Amsterdam, 2012, pp.~559--632.
+\bibitem[K89]{K89} A.~Kisielewicz, \emph{Double extension set theory}, Rep. Math. Logic \textbf{23} (1989), 81--89.
+\bibitem[K98]{K98} A.~Kisielewicz, \emph{A very strong set theory?}, Studia Logica \textbf{61} (1998), 171--178.
+\bibitem[SEP]{SEP} M.~R. Holmes, \emph{Alternative axiomatic set theories}, The Stanford Encyclopedia of Philosophy, \href{https://plato.stanford.edu/entries/settheory-alternative/}{\texttt{plato.stanford.edu/entries/settheory-alternative}}.
+\end{thebibliography}
+\endgroup
+
+\end{document}

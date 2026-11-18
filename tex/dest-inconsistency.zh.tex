@@ -1,0 +1,472 @@
+% 弱双面外延集合论不一致
+% (c) 2026 Bedrock Institute. Licensed under CC BY-NC-SA 4.0.
+% Build: ./build.sh in this folder (PDF to ../pdf, HTML to ../html)
+% \iflatexml is true only under LaTeXML (latexmlc --preload=latexml.sty), which builds the HTML version.
+\expandafter\ifx\csname iflatexml\endcsname\relax\expandafter\newif\csname iflatexml\endcsname\fi
+\iflatexml
+\documentclass{article}
+\else
+\documentclass[zihao=5,a4paper,fontset=none]{ctexart}
+\usepackage[margin=2.6cm]{geometry}
+% 版式参照《中国科学：数学》：正文五号宋体，标题与定理头黑体，作者与摘要楷体；
+% 西文与数学用 Latin Modern / Computer Modern，与英文版一致。
+% 中文字体：优先用 macOS 自带的宋体-简、黑体-简、楷体-简（均可嵌入 PDF）。没有时，宋体与黑体
+% 换成思源（Noto CJK，Linux 常见），楷体换成 TeX 自带的 Fandol 楷体；都没有时全用 Fandol。
+\IfFontExistsTF{STSongti-SC-Regular}
+  {\def\zhSong{STSongti-SC-Regular}\def\zhHei{STHeitiSC-Medium}\def\zhHeiLight{STHeitiSC-Light}}
+  {\IfFontExistsTF{Noto Serif CJK SC}
+    {\def\zhSong{Noto Serif CJK SC}\def\zhHei{Noto Sans CJK SC}\def\zhHeiLight{Noto Sans CJK SC}}{}}
+\ifdefined\zhSong
+  \IfFontExistsTF{STKaitiSC-Regular}
+    {\setCJKmainfont{\zhSong}[BoldFont=\zhHei, ItalicFont=STKaitiSC-Regular]
+     \setCJKfamilyfont{zhkai}{STKaitiSC-Regular}}
+    {\setCJKmainfont{\zhSong}[BoldFont=\zhHei, ItalicFont=FandolKai-Regular, ItalicFeatures={Extension=.otf}]
+     \setCJKfamilyfont{zhkai}{FandolKai-Regular}[Extension=.otf]}
+  \setCJKsansfont{\zhHei}
+  \setCJKmonofont{\zhHeiLight}
+  \setCJKfamilyfont{zhsong}{\zhSong}[BoldFont=\zhHei]
+  \setCJKfamilyfont{zhhei}{\zhHei}
+\else
+  \setCJKmainfont{FandolSong-Regular}[Extension=.otf, BoldFont=FandolHei-Bold, ItalicFont=FandolKai-Regular]
+  \setCJKsansfont{FandolHei-Bold}[Extension=.otf]
+  \setCJKmonofont{FandolHei-Bold}[Extension=.otf]
+  \setCJKfamilyfont{zhsong}{FandolSong-Regular}[Extension=.otf, BoldFont=FandolHei-Bold]
+  \setCJKfamilyfont{zhhei}{FandolHei-Bold}[Extension=.otf]
+  \setCJKfamilyfont{zhkai}{FandolKai-Regular}[Extension=.otf]
+\fi
+\providecommand{\songti}{\CJKfamily{zhsong}}
+\providecommand{\heiti}{\CJKfamily{zhhei}}
+\providecommand{\kaishu}{\CJKfamily{zhkai}}
+\fi
+\usepackage{amsmath,amssymb,amsthm}
+\iflatexml\else
+\setmonofont{DejaVuSansMono}[Extension=.ttf, BoldFont=*-Bold, Scale=MatchLowercase]
+\fi
+\usepackage{fancyvrb}
+\iflatexml\else\usepackage{framed}\fi
+\usepackage{enumitem}
+\usepackage{xcolor}
+\usepackage{hyperref}
+\iflatexml\else
+% 所有链接（交叉引用、文献引用、脚注记号、网址）统一用一种低调的深蓝色。
+\definecolor{linkblue}{HTML}{2A5189}
+\hypersetup{colorlinks=true, linkcolor=linkblue, citecolor=linkblue, urlcolor=linkblue}
+\fi
+
+% 指向代码的链接。行号来自 codelinks.tex（由 gen_codelinks.py 生成）。
+% The code links point to branch main, or to the commit named in gitref.tex (written by CI).
+\IfFileExists{gitref.tex}{\input{gitref}}{\newcommand{\gitref}{main}}
+\newcommand{\repo}{https://github.com/BedrockInstitute/DESTInconsistency/blob/\gitref}
+\newcommand{\agdaL}[1]{\href{\repo/agda/DESTInconsistency.agda\#L#1}{Agda}}
+\newcommand{\leanL}[1]{\href{\repo/lean/DESTInconsistency.lean\#L#1}{Lean}}
+\iflatexml
+\newcommand{\codepair}[2]{\lxWithClass{codelinks}{[\agdaL{#1}\,$\cdot$\,\leanL{#2}]}}
+\else
+% 代码链接紧跟标题：与标题只隔约 0.3 字宽，与正文仍隔约一个字宽。
+\newcommand{\codepair}[2]{\hspace{-0.7em}\textup{\zihao{-5}[\agdaL{#1}\,$\cdot$\,\leanL{#2}]}\hspace{0.7em}}
+\fi
+\newcommand{\defcode}[3]{\expandafter\def\csname code@#1\endcsname{\codepair{#2}{#3}}}
+\newcommand{\code}[1]{\ifcsname code@#1\endcsname\csname code@#1\endcsname\else\errmessage{Unknown code key #1}\fi}
+\input{codelinks}
+
+% 脚注统一用符号：署名的标题注为 *，正文脚注依次为 \dag 等。
+\renewcommand{\thefootnote}{\fnsymbol{footnote}}
+% 标题注：PDF 中是署名 * 对应的页脚，HTML 中是作者名后的注释。
+\newcommand{\authornote}{通讯作者：Peter Zhang，\href{mailto:peterzhangsg@gmail.com}{peterzhangsg@gmail.com}\newline
+代码与形式证明：\href{https://github.com/BedrockInstitute/DESTInconsistency}{\texttt{github.com/BedrockInstitute/DESTInconsistency}}\newline
+\textcopyright\ 2026 Bedrock Institute。以 CC BY-NC-SA 4.0 许可发布。}
+
+% 代码配色同 GitHub（两版共用）。
+\definecolor{shadecolor}{HTML}{F6F8FA}
+\definecolor{codekw}{HTML}{CF222E}
+\definecolor{codefn}{HTML}{8250DF}
+\definecolor{codety}{HTML}{0550AE}
+\newcommand{\kw}[1]{\textcolor{codekw}{#1}}
+\newcommand{\fn}[1]{\textcolor{codefn}{#1}}
+\newcommand{\ty}[1]{\textcolor{codety}{#1}}
+
+\iflatexml
+% HTML：版式、代码框、行内代码交给样式表（html/paper.css）；中文排版命令在这里不起作用。
+\newcommand{\titlenote}[1]{}
+\newcommand{\needspace}[1]{}
+\newcommand{\codesize}{}
+\newcommand{\icode}[1]{\lxWithClass{icode}{\texttt{#1}}}
+\newenvironment{codeblock}{\par}{\par}
+\newenvironment{codebox}{\par}{\par}
+\newcommand{\ctexset}[1]{}
+\newcommand{\zihao}[1]{}
+\newcommand{\kaishu}{}
+\newcommand{\jiange}{·}
+\newlength{\ccwd}
+\renewcommand{\proofname}{证明}
+\renewcommand{\abstractname}{摘要}
+\renewcommand{\refname}{参考文献}
+\renewcommand{\appendixname}{附录}
+\renewcommand{\contentsname}{目录}
+\else
+\makeatletter % start a new page unless #1 of space is left (as needspace's \Needspace)
+% 脚注：小五号，灰色；标记在首行行首，其余各行与正文对齐。
+\renewcommand{\@makefntext}[1]{\noindent\zihao{-5}\hangindent=0.9em\hangafter=1\color{black!65}\makebox[0.9em][l]{\@makefnmark}#1}
+\newcommand{\titlenote}[1]{\footnotetext[1]{\raisebox{\ht\strutbox}{\hypertarget{titlenote}{}}#1}\setcounter{footnote}{1}}
+\newcommand{\needspace}[1]{\par\penalty-100\begingroup\setlength{\dimen@}{#1}%
+  \dimen@ii\pagegoal\advance\dimen@ii-\pagetotal
+  \ifdim\dimen@>\dimen@ii\ifdim\dimen@ii>\z@\vfil\fi\break\fi\endgroup}
+% 证明：「证明」二字为黑体，缩进两字，前后留约半行。
+\renewenvironment{proof}[1][\proofname]{\par\pushQED{\qed}\normalfont\topsep6bp\@plus2bp\@minus1bp\relax
+  \trivlist\item[\hskip\labelsep\hskip2\ccwd\bfseries #1\hspace{\dimexpr1em-\labelsep\relax}]\ignorespaces}{\popQED\endtrivlist\@endpefalse}
+% 标题区：题目二号黑体，作者四号楷体。
+\renewcommand{\@maketitle}{\newpage\null\vskip 1.5em
+  \begin{center}
+    {\bfseries\zihao{2}\@title\par}\vskip 1.2em
+    {\kaishu\zihao{4}\@author\par}\vskip 0.6em
+    {\zihao{5}\@date\par}
+  \end{center}\par\vskip 1.2em}
+% 摘要：「摘要」二字黑体接排，正文楷体，通栏。
+\renewenvironment{abstract}{\par\noindent{\bfseries\abstractname}\hspace{1em}\kaishu\ignorespaces}{\par}
+\makeatother
+
+% 标题：一级标题小四号黑体；段落标题五号黑体接排，缩进两字。
+\ctexset{
+  section = {format = \bfseries\zihao{-4}\raggedright,
+             beforeskip = {24bp plus 4bp minus 2bp}, afterskip = {10.5bp plus 2bp}},
+  paragraph = {format = \bfseries, indent = 2\ccwd, beforeskip = {6bp plus 2bp minus 1bp}, afterskip = 1em},
+}
+\pagestyle{plain}
+\raggedbottom% 与英文版相同：页面不强制排满到底，代码块之间不被拉开
+\xeCJKsetup{RubberPunctSkip=false}% 行中不压缩标点，全文标点宽度一致
+\emergencystretch=3em
+\xeCJKDeclareCharClass{FullLeft}{"2018, "201C}
+\xeCJKDeclareCharClass{FullRight}{"2019, "201D}
+% 间隔号（如「冯\jiange 诺依曼」）：按中文字符排，不加中西文间距；两侧各收 0.25 字宽，只占半个字宽。
+\xeCJKDeclareCharClass{CJK}{"00B7}
+\newcommand{\jiange}{\kern-0.25em ·\kern-0.25em\relax}
+
+% 代码块：浅色底；字号固定为 10pt，不随正文字号变化。
+\newcommand{\codesize}{\linespread{1}\fontsize{10pt}{12pt}\selectfont}
+% 行内代码，即 Markdown 的 `code`。前后留出可断行的小空隙；后接中文标点时不留。
+\makeatletter
+\newcommand{\icode}[1]{\ifhmode\unskip\allowbreak\hskip 0.25em plus 0.1em\relax\else\leavevmode\fi
+  {\setlength{\fboxsep}{1.2pt}\colorbox{shadecolor}{\texttt{\vphantom{Ay}#1}}}%
+  \futurelet\@let@token\icode@after}
+\newcommand{\icode@after}{\@tempswatrue
+  \ifx\@let@token，\@tempswafalse\fi \ifx\@let@token。\@tempswafalse\fi
+  \ifx\@let@token、\@tempswafalse\fi \ifx\@let@token；\@tempswafalse\fi
+  \ifx\@let@token：\@tempswafalse\fi \ifx\@let@token）\@tempswafalse\fi
+  \if@tempswa\allowbreak\hskip 0.25em plus 0.1em\relax\fi\ignorespaces}
+\makeatother
+% 脚注区：与正文拉开距离，通栏浅灰细线。
+\setlength{\skip\footins}{32pt plus 4pt minus 4pt}
+% The rule and footnotes sit at the foot of the page even when the page is short (\raggedbottom).
+\renewcommand{\footnoterule}{\vskip 0pt plus 1fill\relax\kern-3pt{\color{black!20}\hrule width \textwidth height 0.4pt}\kern 2.6pt}
+\newenvironment{codeblock}{\setlength{\FrameSep}{6pt}\begin{shaded}}{\end{shaded}}
+% codebox：与当前行宽对齐的短代码块（如列表项内）。
+\newsavebox{\codebx}
+\newenvironment{codebox}{\par\smallskip\noindent\begin{lrbox}{\codebx}%
+  \begin{minipage}{\dimexpr\linewidth-12pt\relax}}%
+  {\end{minipage}\end{lrbox}\setlength{\fboxsep}{6pt}\colorbox{shadecolor}{\usebox{\codebx}}\par\smallskip}
+\setlist{itemsep=2pt,topsep=4pt,parsep=0pt,partopsep=0pt}
+% 列表：标号从两字缩进处开始，与定理头对齐；定义条目按接排段落处理（首行缩进两字，回行顶格）。
+\setlist[enumerate]{labelindent=2\ccwd, leftmargin=*}
+\setlist[itemize,1]{labelindent=2\ccwd, leftmargin=*}
+\setlist[description]{wide=2\ccwd, labelsep=1em}
+\fi
+% 定理类：标签黑体，缩进两字，正文宋体正体，前后留约半行。
+\newtheoremstyle{zh}{6bp plus 2bp minus 1bp}{6bp plus 2bp minus 1bp}{\normalfont}{2\ccwd}{\bfseries}{}{1em}{\thmname{#1}\thmnumber{ #2}\thmnote{\normalfont（#3）}}
+\theoremstyle{zh}
+\newtheorem{theorem}{定理}
+\newtheorem{lemma}{引理}
+\newtheorem{proposition}{命题}
+\newtheorem*{definition*}{定义}
+\newtheorem*{remark*}{注}
+
+\newcommand{\eps}{\varepsilon}
+\newcommand{\os}{\bar s}
+\newcommand{\ord}{\mathrm{ord}}
+\newcommand{\Ord}{\mathrm{Ord}}
+\newcommand{\ME}{\textup{ME}}
+\newcommand{\COMP}{\textup{COMP}}
+\newcommand{\REG}{\textup{REG}}
+\newcommand{\DEST}{\textup{DEST}}
+\newcommand{\DESTm}{\ensuremath{\textup{DEST}^{-}}}
+
+\title{弱双面外延集合论不一致}
+\iflatexml
+\author{Bedrock Institute\thanks{\authornote}}
+\else
+\author{Bedrock Institute\hyperlink{titlenote}{\textsuperscript{*}}}
+\fi
+\date{2026 年 11 月}
+
+\begin{document}
+\maketitle
+\titlenote{\authornote}
+
+\begin{abstract}
+我们证明了 Kisielewicz 的弱双面外延集合论（weak double extension set theory）\DEST{} 不一致：仅混合外延性（mixed extensionality）与概括（comprehension）这两条公理就已互相矛盾。\DEST{} 含有 $\in$ 与 $\eps$ 两种成员关系，可以解释 ZF，其一致性此前一直是开放问题。
+
+Holmes 借助均质性（regularity）公理证明了两种关系下的序数并不相同：适当命名两种关系后，每个 $\eps$-序数都是 $\in$-序数，而对象 $\Ord = \{x \mid x \text{ 是序数}\}$ 是 $\in$-序数，却不是 $\eps$-序数。我们首先证明了单凭概括就能驳倒这种不对称（asymmetry），而且这一证明在直觉主义逻辑中成立。若序数如此不对称，设 $V$ 为全集，$\Theta(z)$ 表示「$z$ 漏掉了某个序数」，则对象
+\[
+  A = \{\, z \mid z = V \;\vee\; \ord(z) \;\vee\; \bigl(V \in z \wedge (z \in z \oplus \Theta(z))\bigr) \,\}
+\]
+满足 $A \in A \leftrightarrow A \notin A$；同一论证可以驳倒一切在这个意义下不对称的公式。接着，我们不用均质性公理，仅用混合外延性与概括推出了序数的不对称。这一不对称的方向可能与 Holmes 的相反。全文只有这一步用到经典逻辑。两部分都已用 Agda 和 Lean~4 形式化。
+\end{abstract}
+
+\section{理论}\label{sec:1}
+
+% 条目标题较长（带英文括注），故标题单独成行，正文另起一段并缩进两字。
+\begin{description}[style=nextline, leftmargin=0pt, labelindent=2\ccwd, listparindent=2\ccwd, itemsep=4pt]
+\item[语言]\hspace*{2\ccwd}带等词的一阶逻辑，另有两种成员关系 $\in$、$\eps$。对任一侧 \mbox{$s \in \{{\in}, {\eps}\}$}，将这一侧的关系记为 $x \in_s y$，另一侧记为 $\os$，并称 $F_s(a) = \{x : x \in_s a\}$ 为 $a$ 的 \emph{$s$-面}（$s$-face）。若 $F_{\in}(a) = F_{\eps}(a)$，即两面相同，则称 $a$ 为\emph{均质}（regular）对象。
+\item[齐一（uniform）公式]\hspace*{2\ccwd}仅以 $\in$ 作为成员符号的公式。它的 \emph{$s$-读法}（$s$-reading） $\varphi^s$ 把这个符号解释为 $\in_s$。于是 $\varphi^{\in} = \varphi$，而 $\varphi^{\eps}$ 就是 Holmes 的对偶 $\varphi^*$。
+\item[\ME（混合外延性，mixed extensionality）]\phantomsection\label{ax:ME}\hspace*{2\ccwd}若 $F_{\in}(a) = F_{\eps}(b)$，则 $a = b$。
+\item[\COMP（概括，comprehension）]\phantomsection\label{ax:COMP}\hspace*{2\ccwd}对任意齐一公式 $\varphi(x, \bar r)$ 与均质参数 $\bar r$，存在对象 \mbox{$A = \{x \mid \varphi\}$}，使得
+\[
+  F_{\eps}(A) = \{x : \varphi^{\in}(x, \bar r)\}, \qquad F_{\in}(A) = \{x : \varphi^{\eps}(x, \bar r)\},
+\]
+也就是说，对两侧 $s$ 都有 $F_s(A) = \{x : \varphi^{\os}(x, \bar r)\}$。这种概括是\emph{交叉}的；\emph{同侧}的版本则用 $\varphi^s$。
+\item[\REG（均质性，regularity）]\phantomsection\label{ax:REG}\hspace*{2\ccwd}若对某一侧 $s$ 有 $F_s(a) \subseteq F_s(b)$，且 $b$ 两侧的成员都是均质对象，则 $a$ 均质。
+\end{description}
+
+\DEST{} 即 \hyperref[ax:ME]{\ME}{} + \hyperref[ax:COMP]{\COMP}{} + \hyperref[ax:REG]{\REG}{} \cite[\S2]{H05}，\cite[\S8.1]{HFL}。\DESTm{} 即 \hyperref[ax:ME]{\ME}{} + \hyperref[ax:COMP]{\COMP}。
+
+\paragraph{关于表述} 在 \cite{H05} 中，公理 2.8 把「存在 $\{x \mid \varphi\}$」写在了参数的全称量词之前。我们按照 Holmes 在证明中的用法，将其读作「对一切均质参数，存在 $A$」；若按字面理解，这条公理本身就已不一致。Kisielewicz 在 \cite{K98} 中削弱了他在 \cite{K89} 中的理论。他没有单列 \hyperref[ax:REG]{\REG}，而是通过参数条件把它并入 \hyperref[ax:COMP]{\COMP}：参数必须部分包含于某个合适的均质对象。这里 $a$ 部分包含于 $b$，是指对某一侧 $s$ 有 $F_s(a) \subseteq F_s(b)$\footnote{若这一条件还要求该均质对象的成员全是均质对象，就需要看证明用了哪些参数。\hyperref[thm:2]{定理~2} 的证明所用参数只有两个例外，其余都是均质对象，且其成员也全是均质对象。一个例外是全集 $V$，可以消去：把 $z = V$ 换成 $\forall y\,(y \in z)$，把 $V \in z$ 换成 ${\exists v\,(\forall y\,(y \in v)} \wedge {v \in z)}$；由 \hyperref[ax:ME]{\ME}，$s$-面为全域的对象只有 $V$。另一个例外是\hyperref[lem:3]{引理~3} 证明中的 $h$：它均质，但其成员未必均质。证明只在这一处依赖 Holmes 的等价论断。}。Holmes \cite[\S2]{H04} 指出，这与上面的写法等价。\cite[\S8.1]{HFL} 与 \cite[\S10]{SEP} 也正是按上面的写法，把这一理论列为开放问题。
+
+\section{不对称与结果}\label{sec:2}
+
+谓词「是序数」可以写成不带参数的齐一公式 $\ord$：把 Holmes 的定义 \cite[\S5]{H05} 中的 $\beta \in_{\eps} S$ 一项换成「$\beta$ 有单元集」，就得到这样的公式；\hyperref[sec:4]{第 4 节}给出的是它的一个变体。Holmes 借助 \hyperref[ax:REG]{\REG}{} 证明了：适当命名两种关系后，每个 $\eps$-序数都是 $\in$-序数，而对象 $\Ord = \{x \mid \ord(x)\}$ 是 $\in$-序数，不是 $\eps$-序数 \cite[定理 5.1 及其后的讨论]{H05}。也就是说，$\Ord$ 只在一侧是序数。下面把所需性质提炼出来。
+
+\begin{definition*}\code{asym}
+设 $P(x, \bar r)$ 是参数均质的齐一公式，$b, c$ 为两侧，并将 $P^s(x, \bar r)$ 简记为 $P^s(x)$。若下列三条都成立，则称 $P$ \emph{从 $c$ 到 $b$ 不对称}（asymmetric from $c$ to $b$）：
+\begin{enumerate}[label=(\roman*)]
+\item \label{cond:i}$P^c(x)$ 蕴涵 $P^b(x)$；
+\item \label{cond:ii}若 $P^b(x)$，则 $x$ 的每个 $b$-成员 $y$ 都不满足 $y \in_b y$；
+\item \label{cond:iii}存在 $W$，满足 $F_b(W) = \{x : P^c(x)\}$、$F_c(W) = \{x : P^b(x)\}$ 且 $P^b(W)$。
+\end{enumerate}
+\end{definition*}
+
+由 \hyperref[ax:COMP]{\COMP}{} 可知，总存在 $W$ 使 \hyperref[cond:iii]{(iii)} 中的两个等式成立；\hyperref[cond:iii]{(iii)} 还要求其中某个 $W$ 满足 $P^b$。按这种命名，Holmes 的序数公式从 $\eps$ 到 $\in$ 不对称：\hyperref[cond:i]{(i)} 与 \hyperref[cond:iii]{(iii)} 正是他的两条结论；\hyperref[cond:ii]{(ii)} 成立，因为序数没有属于自身的成员。
+
+\begin{theorem}[对角]\label{thm:1}\code{thm1}
+在 \hyperref[ax:COMP]{\COMP}{} 下，不存在不对称的公式。证明既不用 \hyperref[ax:ME]{\ME}，也不用经典逻辑。
+\end{theorem}
+
+\begin{theorem}\label{thm:2}\code{thm2}
+在经典逻辑下 \DESTm{} 不一致，因而 \DEST{} 不一致。
+\end{theorem}
+
+借助 Holmes 的结论，\hyperref[thm:1]{定理~1} 已经驳倒完整的 \DEST。\hyperref[thm:2]{定理~2} 则去掉 \hyperref[ax:REG]{\REG}：\hyperref[sec:5]{第 5 节}仅用 \hyperref[ax:ME]{\ME}{} 与 \hyperref[ax:COMP]{\COMP}{} 推出序数从一侧到另一侧不对称，再由\hyperref[thm:1]{定理~1} 得出矛盾。\hyperref[sec:3]{第 3 节}证明\hyperref[thm:1]{定理~1}；\hyperref[sec:4]{第 4 节}汇总均质对象与序数的若干事实，供\hyperref[sec:5]{第 5 节}使用。
+
+\section{概括驳倒不对称}\label{sec:3}
+
+本节证明\hyperref[thm:1]{定理~1}。设 $P$ 从 $c$ 到 $b$ 不对称，$W$ 如 \hyperref[cond:iii]{(iii)} 所述。令 $V = \{x \mid x = x\}$，则它的两个面都是全域，因此 $V$ 均质，且 $V \in_s V$。令 $\Theta(z)$ 为 $\exists u\,(P(u) \wedge u \notin z)$，并令
+\[
+  A = \{\, z \mid z = V \;\vee\; P(z) \;\vee\; \bigl(V \in z \wedge (z \in z \oplus \Theta(z))\bigr) \,\},
+\]
+其中参数为 $V$ 与 $\bar r$，$p \oplus q$ 表示 $(p \wedge \neg q) \vee (\neg p \wedge q)$。于是 $z \in_b A$ 当且仅当条件的 $c$-读法在 $z$ 处成立，$z \in_c A$ 当且仅当它的 $b$-读法成立。
+\begin{enumerate}[label=\arabic*.]
+\item 由 \hyperref[cond:ii]{(ii)} 可知 $P^b(V)$ 不成立，因为 $V \in_b V \in_b V$。又 $P^c(W)$ 不成立：否则由 \hyperref[cond:iii]{(iii)} 可得 $W \in_b W$，这与关于 $W$ 的 \hyperref[cond:ii]{(ii)} 矛盾。
+\item \textbf{\boldmath $\Theta^b(A)$ 成立}，因为 $W \notin_b A$。在 $W$ 处，条件的 $c$-读法中三个析取支都不成立：$P^b(W)$ 成立而 $P^b(V)$ 不成立，故 $W \neq V$；$P^c(W)$ 不成立；$V \in_c W$ 会由 \hyperref[cond:iii]{(iii)} 推出 $P^b(V)$，故也不成立。
+\item \textbf{\boldmath $\Theta^c(A)$ 不成立}\quad 若 $P^c(u)$，则由 \hyperref[cond:i]{(i)} 得 $P^b(u)$，从而 $u \in_c A$。
+\item \textbf{\boldmath 在 $z = A$ 处只剩最后一支}\quad 由第一支可知，$V \in_b A$ 且 $V \in_c A$。又 $A \neq V$，因为 $W \in_b V$ 而 $W \notin_b A$。由 \hyperref[cond:ii]{(ii)} 可知 $P^b(A)$ 不成立，因为 $V \in_b A$ 且 $V \in_b V$；再由 \hyperref[cond:i]{(i)} 可知 $P^c(A)$ 也不成立。
+\item 于是 $A \in_b A \leftrightarrow A \in_c A$，且 $A \in_c A \leftrightarrow A \notin_b A$。若 $A \in_b A$，两式便给出 $A \notin_b A$，故 $A \notin_b A$。由此 $A \in_c A$，进而 $A \in_b A$，矛盾。
+\end{enumerate}
+上述每一步都不使用 \hyperref[ax:ME]{\ME}，也不使用经典逻辑。\qed
+
+\begin{remark*}[对角论证为何奏效]
+在罗素实例 $R = \{x \mid x \notin x\}$ 中，$R \in R$ 与 $R \in_{\eps} R$ 互为否定，二者构成一个含两次否定的环。这个环有解，结果只是 $R$ 异质（irregular）。这里 $\Theta(A)$ 在一种读法下为真、在另一种读法下为假，环上便只剩一次否定。
+\end{remark*}
+
+\section{均质对象与序数}\label{sec:4}
+
+本节与下一节证明\hyperref[thm:2]{定理~2}，全文只有这两节用到 \hyperref[ax:ME]{\ME}{} 与经典逻辑。先列出关于均质对象的三条事实。
+
+\begin{lemma}[刚性]\label{lem:1}\code{same}
+若 $g$ 均质且 $F_s(z) = F_s(g)$，则 $z = g$。
+\end{lemma}
+
+\begin{proof}
+$F_s(z) = F_s(g) = F_{\os}(g)$，故由 \hyperref[ax:ME]{\ME}{} 得 $z = g$。
+\end{proof}
+
+\begin{lemma}[{翻转，\cite[引理 2.11]{H05}}]\label{lem:2}\code{ordflip}
+设 $\theta(\bar r)$ 是参数均质的齐一句子，则 $\theta^{\in} \leftrightarrow \theta^{\eps}$。特别地，参数均质的齐一公式在每个均质对象处的两种读法一致。
+\end{lemma}
+
+\begin{proof}
+令 $V = \{x \mid x = x\}$，$A = \{x \mid \theta\}$，其中 $x$ 不在 $\theta$ 中出现。设 $\theta^{\os}$ 成立，则 $F_s(A)$ 为全域，即 $F_{\os}(V)$，故由 \hyperref[ax:ME]{\ME}{} 得 $A = V$。于是 $F_{\os}(A)$ 也为全域；而这个面仅在 $\theta^s$ 成立时非空。
+\end{proof}
+
+\begin{lemma}[{单元集，\cite[引理 2.10]{H05}}]\label{lem:3}\code{singreg}
+若 $F_s(h) = \{y\}$，则称 $h$ 为 $y$ 的 \emph{$s$-单元集}。均质对象在两侧都有单元集；反之，两侧都有单元集的对象必定均质。
+\end{lemma}
+
+\begin{proof}
+前一结论只需对均质对象 $r$ 取 $\{x \mid x = r\}$ 即可。至于后一结论，设 $h$ 是 $y$ 的 $s$-单元集，$h'$ 是 $y$ 的 $\os$-单元集。按适当的顺序应用 \hyperref[ax:ME]{\ME}，可得 $h = h'$，因此 $h$ 的两个面都是 $\{y\}$，从而 $h$ 均质。令 $k = \{x \mid \exists u\,(x \in u \wedge u \in h)\}$，则 $F_{\os}(k) = F_s(y)$。由 \hyperref[ax:ME]{\ME}{} 得 $y = k$，故 $F_{\os}(y) = F_{\os}(k) = F_s(y)$。
+\end{proof}
+
+\begin{definition*}\code{ordf}
+$\ord(a)$ 为下列条件的合取，是一个不带参数的齐一公式：
+\begin{enumerate}[label=(O\arabic*)]
+\item \label{ord:O1}$z \in y \wedge y \in a \to z \in a$；
+\item \label{ord:O2}$a$ 的每个成员都满足 \hyperref[ord:O1]{(O1)}；
+\item \label{ord:O3}$a$ 的成员都不属于自身；
+\item \label{ord:O4}$a$ 的每个成员 $y$ 都有单元集，即 $\exists h\,\forall v\,(v \in h \leftrightarrow v = y)$；
+\item \label{ord:O5}对 $a$ 的任意成员 $y, z$，有 $y \in z \vee y = z \vee z \in y$；
+\item \label{ord:O6}对任意 $C$ 及任意 $x \in a$，若 $x \notin C$，则存在 $z$ 同时满足：$z = x$ 或 $z \in x$；$z \notin C$；$z$ 的成员都在 $C$ 中。
+\end{enumerate}
+满足 $\ord^s$ 的对象称为 \emph{$s$-序数}。在 ZF 中，$\ord$ 恰好定义了冯\jiange{}诺依曼序数。
+\end{definition*}
+
+\begin{lemma}[序数]\label{lem:4}\code{memberord}
+\begin{enumerate}[label=(\alph*)]
+\item \label{lem:4a}$s$-序数的 $s$-成员是 $s$-序数。
+\item \label{lem:4b}$s$-序数不是自身的 $s$-成员。
+\item \label{lem:4c}若 $x$ 是 $s$-序数且 $x \notin_s C$，则存在 $z$ 同时满足：$z = x$ 或 $z \in_s x$；$z \notin_s C$；$F_s(z) \subseteq F_s(C)$。
+\item \label{lem:4d}均质的 $s$-序数也是 $\os$-序数。
+\end{enumerate}
+\end{lemma}
+
+\begin{proof}
+(a) 设 $y$ 是 $a$ 的成员。由 $a$ 的 \hyperref[ord:O1]{(O1)}，$y$ 的成员都是 $a$ 的成员；于是 $y$ 的 \hyperref[ord:O1]{(O1)} 即 $a$ 的 \hyperref[ord:O2]{(O2)}，而 $y$ 的 \hyperref[ord:O2]{(O2)}--\hyperref[ord:O6]{(O6)} 都可由 $a$ 的相应条件推出。(b) 由 \hyperref[ord:O3]{(O3)} 即得。(c) 若 $F_s(x) \subseteq F_s(C)$，取 $z = x$。否则，对 $x$ 的某个不在 $C$ 中的成员应用 $x$ 的 \hyperref[ord:O6]{(O6)}，再应用 $x$ 的 \hyperref[ord:O1]{(O1)}。(d) 由\hyperref[lem:2]{引理~2} 即得。
+\end{proof}
+
+\begin{lemma}[初始段]\label{lem:5}\code{seg}
+设 $\alpha$ 是 $s$-序数，$\gamma$ 是均质对象，$F_s(\gamma) \subseteq F_s(\alpha)$，且由 $z \in_s y \in_s \gamma$ 可推出 $z \in_s \gamma$，则 $\gamma = \alpha$ 或 $\gamma \in_s \alpha$。
+\end{lemma}
+
+\begin{proof}
+若 $F_s(\alpha) \subseteq F_s(\gamma)$，则由\hyperref[lem:1]{引理~1} 得 $\gamma = \alpha$。否则，取 $x \in_s \alpha$ 且 $x \notin_s \gamma$，对 $\alpha$ 应用 \hyperref[ord:O6]{(O6)} 并取 $C = \gamma$，可得 $z \in_s \alpha$、$z \notin_s \gamma$，且 $F_s(z) \subseteq F_s(\gamma)$。另一方面，设 $y \in_s \gamma$，则 $y \in_s \alpha$；由 \hyperref[ord:O5]{(O5)}，$y \in_s z$、$y = z$、$z \in_s y$ 三者必居其一，而后两种都会使 $z$ 属于 $\gamma$。因此 $F_s(z) = F_s(\gamma)$，再由\hyperref[lem:1]{引理~1} 得 $z = \gamma$，于是 $\gamma \in_s \alpha$。
+\end{proof}
+
+\begin{lemma}[可比性]\label{lem:6}\code{compare}
+设 $\alpha, \beta$ 是均质的 $s$-序数，则 $\alpha \in_s \beta$、$\alpha = \beta$、$\beta \in_s \alpha$ 三者必居其一。
+\end{lemma}
+
+\begin{proof}
+令 $\gamma = \{x \mid x \in \alpha \wedge x \in \beta\}$。它的 $s$-面与 $\os$-面分别是 $F_{\os}(\alpha) \cap F_{\os}(\beta)$ 与 $F_s(\alpha) \cap F_s(\beta)$；由于 $\alpha, \beta$ 均质，二者相等。因此 $\gamma$ 均质；又由 $\alpha, \beta$ 的 \hyperref[ord:O1]{(O1)} 可知，它满足\hyperref[lem:5]{引理~5} 的条件。根据\hyperref[lem:5]{引理~5}，$\gamma = \alpha$ 或 $\gamma \in_s \alpha$，且 $\gamma = \beta$ 或 $\gamma \in_s \beta$。若 $\gamma \in_s \alpha$ 且 $\gamma \in_s \beta$，则 $\gamma \in_s \gamma$，这与 $\alpha$ 的 \hyperref[ord:O3]{(O3)} 矛盾。其余三种组合恰好给出结论。
+\end{proof}
+
+\section{序数的不对称}\label{sec:5}
+
+\hyperref[thm:2]{定理~2} 可由\hyperref[thm:1]{定理~1} 与下面两个命题推出。
+
+\begin{proposition}[一侧序数均质]\label{prop:1}\code{one}
+若 $c$ 侧只有均质序数，则 $\ord$ 从 $c$ 到 $\bar c$ 不对称。
+\end{proposition}
+
+\begin{proof}
+记 $b = \bar c$。
+\begin{enumerate}[label=(\roman*)]
+\item 设 $x$ 是 $c$-序数，则 $x$ 均质，由\hyperref[lem:4d]{引理~4(d)} 可知 $x$ 也是 $b$-序数。
+\item 即 \hyperref[ord:O3]{(O3)}。
+\item 令 $W = \{x \mid \ord(x)\}$，则 $F_b(W)$ 为全体 $c$-序数，$F_c(W)$ 为全体 $b$-序数。$W$ 是 $b$-序数：它的 $b$-成员都是均质的 $c$-序数，从而是均质的 $b$-序数。下面逐条验证：
+\begin{itemize}
+\item \hyperref[ord:O1]{(O1)}：若 $z \in_b y \in_b W$，则由 $y$ 均质得 $z \in_c y$；再由\hyperref[lem:4a]{引理~4(a)} 知 $z$ 是 $c$-序数，因此 $z \in_b W$；
+\item \hyperref[ord:O2]{(O2)}、\hyperref[ord:O3]{(O3)}：成员都是 $b$-序数，用\hyperref[lem:4b]{引理~4(b)} 即得；
+\item \hyperref[ord:O4]{(O4)}：\hyperref[lem:3]{引理~3}；
+\item \hyperref[ord:O5]{(O5)}：\hyperref[lem:6]{引理~6}；
+\item \hyperref[ord:O6]{(O6)}：对成员 $x$ 应用\hyperref[lem:4c]{引理~4(c)}。\qedhere
+\end{itemize}
+\end{enumerate}
+\end{proof}
+
+\begin{proposition}[两侧不能都有异质序数]\label{prop:2}\code{both}
+两侧不可能同时存在异质序数。
+\end{proposition}
+
+\begin{proof}
+假设两侧都有。
+\begin{enumerate}[label=\arabic*.]
+\item\label{step:cut} \textbf{切割}\quad 设 $p$ 是异质的 $s$-序数，$t$ 是均质的 $s$-序数，且 $t$ 的 $s$-成员全是均质对象，则 $t \in_s p$。事实上，若均质的 $s$-序数 $z$ 满足 $F_s(z) \subseteq F_s(p)$，则由\hyperref[lem:5]{引理~5} 可得 $z = p$ 或 $z \in_s p$，引理的条件正是 $z$ 的 \hyperref[ord:O1]{(O1)}；而 $z = p$ 会使 $p$ 均质，所以 $z \in_s p$。若 $t$ 有 $s$-成员不在 $p$ 中，则对 $t$ 应用 \hyperref[ord:O6]{(O6)} 并取 $C = p$，可得 $z \in_s t$、$z \notin_s p$，且 $F_s(z) \subseteq F_s(p)$；而 $z$ 是均质的 $s$-序数，这不可能。所以 $F_s(t) \subseteq F_s(p)$，于是 $t \in_s p$。
+\item\label{step:descent} \textbf{下降}\quad 若存在异质的 $s$-序数 $\alpha$，则存在异质的 $s$-序数 $p$，其 $s$-成员全是均质对象。
+\begin{itemize}
+\item 令 $D = \{x \mid x \text{ 有单元集}\}$，则 $F_s(D)$ 由所有具有 $\os$-单元集的对象组成。
+\item 由 \hyperref[ord:O4]{(O4)} 知 $\alpha$ 的 $s$-成员都有 $s$-单元集；因此由\hyperref[lem:3]{引理~3}，$\alpha$ 的 $s$-成员属于 $F_s(D)$ 当且仅当它均质。
+\item 若 $\alpha$ 的 $s$-成员全是均质对象，则取 $p = \alpha$。否则存在异质的 $x \in_s \alpha$，满足 $x \notin_s D$。对 $\alpha$ 应用 \hyperref[ord:O6]{(O6)} 并取 $C = D$，可得 $z \in_s \alpha$、$z \notin_s D$，且 $F_s(z) \subseteq F_s(D)$。
+\item $z$ 的 $s$-成员既在 $\alpha$ 中又在 $D$ 中，因而都是均质对象。$z$ 本身异质，否则 $z \in_s D$。由\hyperref[lem:4a]{引理~4(a)} 知 $z$ 是 $s$-序数；取 $p = z$。
+\end{itemize}
+\item \textbf{结论}\quad 由\hyperref[step:descent]{第 2 步}，分别在 $\in$ 侧和 $\eps$ 侧取这样的 $p$ 与 $q$。
+\begin{itemize}
+\item $p$ 的每个 $\in$-成员 $x$ 都是均质的 $\in$-序数，由\hyperref[lem:4d]{引理~4(d)} 也是 $\eps$-序数。由于 $x$ 均质，它两侧的成员都是它的 $\in$-成员；再由 \hyperref[ord:O1]{(O1)}，这些成员都在 $p$ 中，因而都是均质对象。由\hyperref[step:cut]{第 1 步}，$x \in_{\eps} q$。
+\item 对称地，$q$ 的每个 $\eps$-成员都是 $p$ 的 $\in$-成员。
+\item 所以 $F_{\in}(p) = F_{\eps}(q)$，由 \hyperref[ax:ME]{\ME}{} 得 $p = q$。于是 $F_{\eps}(p) = F_{\in}(p)$，即 $p$ 均质，矛盾。\qedhere
+\end{itemize}
+\end{enumerate}
+\end{proof}
+
+\begin{proof}[{\hyperref[thm:2]{定理~2}} 的证明]
+由\hyperref[prop:2]{命题~2} 与经典逻辑可知，某一侧 $c$ 只有均质序数。再由\hyperref[prop:1]{命题~1}，$\ord$ 从 $c$ 到 $\bar c$ 不对称，这与\hyperref[thm:1]{定理~1} 矛盾。
+\end{proof}
+
+\begin{remark*}[用到的概括实例]
+共八个：$x = x$；$x = r$；$\exists u\,(x \in u \wedge u \in h)$；与 $x$ 无关的 $\ord(r)$；$x \in \alpha \wedge x \in \beta$；「$x$ 有单元集」；$\ord(x)$；以及 $P = \ord$ 时以 $V$ 为参数的对角公式。每个实例至多含两个参数，量词秩至多为 5。
+\end{remark*}
+
+\section{验证}\label{sec:6}
+
+定义、定理、引理和命题标题后的链接 \textup{\zihao{-5}[Agda\,$\cdot$\,Lean]} 指向首页所列代码仓库中的相应代码。
+
+\begin{itemize}
+\item \textbf{Agda}\quad 证明写在单个文件 \icode{agda/DESTInconsistency.agda} 中，不导入任何模块，文件头声明了 \icode{-{}-safe -{}-without-K} 选项。信任部分有两块：一是文件的第 0--1 节，给出逻辑、语法、两种读法、公理和不对称的定义；二是文件第 4 节中的定理陈述。定理原文如下：
+\input{agda-statements}
+\noindent 其中 \icode{DNE} 是双重否定消去，即经典逻辑；\icode{diagonal} 既不使用 \hyperref[ax:ME]{\ME}，也不使用 \icode{DNE}。核对命令如下：
+\begin{codebox}
+\begin{Verbatim}[fontsize=\codesize]
+cd agda && agda --safe --no-libraries DESTInconsistency.agda
+\end{Verbatim}
+\end{codebox}
+\item \textbf{Lean 4}\quad 版本为 v4.36.0，不依赖任何库。Lean 文件 \icode{lean/DESTInconsistency.lean} 的结构与 Agda 文件相同，信任部分即第 I 部分和第 III 部分的定理陈述，原样列于\hyperref[app:A]{附录~A}。与 Agda 不同，关系取值于 \icode{Prop}，\hyperref[ax:COMP]{\COMP}{} 只给出 $\exists$ 而不是 $\Sigma$。经典逻辑作为显式假设 \icode{∀ P : Prop, ¬¬P → P} 出现在 \icode{inconsistent} 与 \icode{DEST\_inconsistent} 中。用 \icode{\#print axioms} 查看，\icode{diagonal}、\icode{inconsistent}、\icode{DEST\_inconsistent} 都不依赖任何公理。\icode{leanchecker} 是 Lean 自带的检查器，它重新核对了编译结果。独立内核 nanoda~0.4.17 在禁止使用任何公理的设置下，重新核对了这三个定理所依赖的全部 251 个声明。另有 \icode{lean/Probes.lean} 核对了三件事：仅有 \hyperref[ax:ME]{\ME}{} 与罗素实例时，存在单点模型；\hyperref[ax:ME]{\ME}{} 与去掉参数均质限制的 \hyperref[ax:COMP]{\COMP}{} 不一致；改为同侧版本的 \hyperref[ax:COMP]{\COMP}{} 本身就不一致。核对命令如下：
+\begin{codebox}
+\begin{Verbatim}[fontsize=\codesize]
+cd lean && lake build && lake env leanchecker DESTInconsistency
+\end{Verbatim}
+\end{codebox}
+\item \textbf{盲测形式化}\quad 两个彼此隔离的 Claude Opus~5.5 实例从零完成了 Agda 形式化，各自只看到自己的材料：一个是本论文的初稿，另一个是对角论证的一页摘要。两份都通过了 Agda 的类型检查。第二个实例发现，对角论证既不需要 \hyperref[ax:ME]{\ME}，也不需要经典逻辑，由此引出了\hyperref[thm:1]{定理~1}。该摘要收录于仓库的 \icode{blind-test/diagonal-summary.zh.png}。
+\item \textbf{范围}\quad \icode{inconsistent} 与 \icode{DEST\_inconsistent} 断言：没有结构满足这些公理。要由此得出一阶理论不一致，还需用到完备性定理；这一步没有形式化。
+\end{itemize}
+
+\section{回顾与复盘}\label{sec:7}
+
+这一结果出自一个由 AI 辅助的研究项目。项目记录了四百多轮工作，原本的目标是证明 \DEST{} 一致。
+
+\paragraph{所需事实早已齐备} \cite{H05} 的定理~5.1 及其后的讨论已经给出序数的不对称，而谓词「是序数」也可写成不带参数的齐一公式。项目把这种不对称视为模型必须容纳的现象，反复追问什么样的模型能容纳它，却很少反过来问：能否用一个概括实例，让这种不对称决定见证是否属于\mbox{自身}。
+
+\paragraph{两个判断让项目绕开了这个问题}
+\begin{itemize}
+\item 项目试图用公式识别最小的异质序数。这条路确实行不通，因为在某个异质序数上成立的公式，也会在某个均质序数上成立；而反驳只需要有某个序数被漏掉，无需知道是哪一个。
+\item 项目正确地证明了：若两侧用同一个布尔函数决定对象是否属于自身，则总有解。但项目由此得出「单比特对角不能产生矛盾」这条规则。这条规则忽略了一点：同一个公式在每一侧读的是该侧的序数，所以两侧可以用不同的函数决定对象是否属于自身。
+\end{itemize}
+
+\paragraph{进展的度量用错了} 多数轮次都在为越来越大的概括片段构造模型。但这并不能衡量离完整概括还有多远：两个公式可以在同一结构里各有见证，它们的合取却没有。人类主导者一再追问「统一的那一步在哪里」，指的就是这一差距。
+
+\paragraph{各部分从何而来} 问题后来换成了这样的问法：能否有某个 $A$，使「我漏掉了本侧某个序数」这句话在 $A$ 的两侧一真一假？换成这个问法之后，对角论证就出现了。对完整的 \DEST{}，所需的序数事实都已见于 Holmes 的论文；不用 \hyperref[ax:REG]{\REG}{} 的推导来自项目最后几轮的工作，\hyperref[thm:1]{定理~1} 则来自第二次盲测。
+
+\section{展望}\label{sec:8}
+
+不一致并不意味着双面外延集合论（double extension set theory）的研究就此终结。被列为开放问题的那个理论已被否定，寻找一致的公理化反而比以往更难。自然的表述已被排除，必须先找到替代表述，再证明它一致。\hyperref[thm:1]{定理~1} 指明了保留交叉概括的替代表述必须避免什么：不能有任何齐一公式不对称。至于 \DESTm{} 在直觉主义逻辑下是否不一致，我们尚不清楚。每一次规避矛盾的尝试都可能让理论弱一些，但这不一定使它失去意义。我们认为，只要最终得到的理论被证明一致，仍能解释 ZF，仍有罗素集 $\{x \mid x \notin x\}$ 这类基本的异质对象，且公理读起来自然、没有针对已知悖论打补丁的痕迹，它就有意义。
+
+\appendix
+\ctexset{section/name = {附录,}}
+\section{形式陈述}\label{app:A}
+
+下面列出 \icode{lean/DESTInconsistency.lean} 第 I 部分的全部内容和第 III 部分的定理陈述，已去掉文档注释。要信任 Lean 的定理，只需读这些内容。
+
+\input{lean-statements}
+
+\section{工具与计算资源说明}\label{app:B}
+
+Peter Zhang 主导了这项研究：提出问题，把握方向，作出决定，并对内容负责。工作借助 AI 系统完成。ChatGPT（Astra~6.2，OpenAI）担任项目的外部审计者，在不用 \hyperref[ax:REG]{\REG}{} 的情况下推出了序数的不对称，并找到了对角论证。Claude（Anthropic）审核并简化了论证，将其推广为\hyperref[thm:1]{定理~1}，完成了 Agda 与 Lean 形式化，并起草了本文；其中大部分由 Claude Code 中的 Claude Opus~5.5 完成，两次盲测形式化则由相互隔离的 Claude Opus~5.5 实例完成。项目此前的轮次以证明一致性为目标，用到了 Claude 和其他 AI 系统。所用软件：Agda~2.8.0.2、Lean~4.36.0 及其 \icode{leanchecker}、nanoda~0.4.17、Tectonic。
+
+% 参考文献：标题五号黑体，条目小五号，著录格式参照 GB/T 7714。
+\ctexset{section = {format = \bfseries\zihao{5}\raggedright, beforeskip = {12bp plus 4bp}, afterskip = {6bp}}}
+\begingroup\zihao{-5}
+\begin{thebibliography}{HFL}\setlength{\itemsep}{0pt}\setlength{\parsep}{0pt}
+\bibitem[H04]{H04} Holmes M R. Paradoxes in double extension set theories. Studia Logica, 2004, 77: 41--57
+\bibitem[H05]{H05} Holmes M R. The structure of the ordinals and the interpretation of ZF in double extension set theory. Studia Logica, 2005, 79: 357--372
+\bibitem[HFL]{HFL} Holmes M R, Forster T, Libert T. Alternative set theories. In: Gabbay D M, Kanamori A, Woods J, eds. Sets and Extensions in the Twentieth Century. Handbook of the History of Logic, Vol 6. Amsterdam: Elsevier/North-Holland, 2012: 559--632
+\bibitem[K89]{K89} Kisielewicz A. Double extension set theory. Rep Math Logic, 1989, 23: 81--89
+\bibitem[K98]{K98} Kisielewicz A. A very strong set theory? Studia Logica, 1998, 61: 171--178
+\bibitem[SEP]{SEP} Holmes M R. Alternative axiomatic set theories. In: Stanford Encyclopedia of Philosophy.\newline \href{https://plato.stanford.edu/entries/settheory-alternative/}{\texttt{plato.stanford.edu/entries/settheory-alternative}}
+\end{thebibliography}
+\endgroup
+
+\end{document}
