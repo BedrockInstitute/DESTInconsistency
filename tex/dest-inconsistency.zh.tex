@@ -215,24 +215,24 @@ Holmes 借助均质性（regularity）公理证明了两种关系下的序数并
 
 % 条目标题较长（带英文括注），故标题单独成行，正文另起一段并缩进两字．
 \begin{description}[style=nextline, leftmargin=0pt, labelindent=2\ccwd, listparindent=2\ccwd, itemsep=4pt]
-\item[语言]\hspace*{2\ccwd}带等词的一阶逻辑，另有两种成员关系 $\in$、$\eps$．对任一侧 \mbox{$s \in \{{\in}, {\eps}\}$}，将这一侧的关系记为 $x \in_s y$，另一侧记为 $\os$，并称 $F_s(a) = \{x : x \in_s a\}$ 为 $a$ 的 \emph{$s$-面}（$s$-face）．若 $F_{\in}(a) = F_{\eps}(a)$，即两面相同，则称 $a$ 为\emph{均质}（regular）对象．
-\item[齐一（uniform）公式]\hspace*{2\ccwd}仅以 $\in$ 作为成员符号的公式．它的 \emph{$s$-读法}（$s$-reading） $\varphi^s$ 把这个符号解释为 $\in_s$．于是 $\varphi^{\in} = \varphi$，而 $\varphi^{\eps}$ 就是 Holmes 的对偶 $\varphi^*$．
-\item[\ME（混合外延性，mixed extensionality）]\phantomsection\label{ax:ME}\hspace*{2\ccwd}若 $F_{\in}(a) = F_{\eps}(b)$，则 $a = b$．
+\item[语言]\hspace*{2\ccwd}带等词的一阶逻辑，另有两种成员关系 $\in$、$\eps$，分别称为 $\in$ 侧与 $\eps$ 侧．对任一侧 $s$，将这一侧的关系记为 $x \in_s y$，另一侧记为 $\os$，并称 $F_s(a) = \{x : x \in_s a\}$ 为 $a$ 的 \emph{$s$-面}（$s$-face）．若 $F_{\in}(a) = F_{\eps}(a)$，即两面相同，则称 $a$ 为\emph{均质}（regular）对象．
+\item[齐一（uniform）公式]\hspace*{2\ccwd}仅以 $\in$ 作为成员符号的公式．它的 \emph{$s$-读法}（$s$-reading） $\varphi^s$ 把这个符号解释为 $\in_s$．于是 $\varphi^{\in} = \varphi$，而 $\varphi^{\eps}$ 就是 Holmes 所说的 $\varphi$ 的对偶．
+\item[\ME（混合外延性，mixed extensionality）]\phantomsection\label{ax:ME}\hspace*{2\ccwd}若 $F_{\in}(x) = F_{\eps}(y)$，则 $x = y$．
 \item[\COMP（概括，comprehension）]\phantomsection\label{ax:COMP}\hspace*{2\ccwd}对任意参数均质的齐一公式 $\varphi(x)$，存在对象 \mbox{$A = \{x \mid \varphi\}$}，使得
 \[
   F_{\eps}(A) = \{x : \varphi^{\in}(x)\}, \qquad F_{\in}(A) = \{x : \varphi^{\eps}(x)\},
 \]
-也就是说，对两侧 $s$ 都有 $F_s(A) = \{x : \varphi^{\os}(x)\}$，即 $A$ 的 $s$-面由 $\varphi$ 的 $\os$-读法给出．这种概括因此称为\emph{交叉}概括．
-\item[\REG（均质性，regularity）]\phantomsection\label{ax:REG}\hspace*{2\ccwd}若对某一侧 $s$ 有 $F_s(a) \subseteq F_s(b)$，且 $b$ 两侧的成员都是均质对象，则 $a$ 均质．
+也就是说，对两侧 $s$ 都有 $F_s(A) = \{x : \varphi^{\os}(x)\}$，即 $A$ 的 $s$-面由 $\varphi$ 的 $\os$-读法给出．这种概括因此称为\emph{交叉}概括．下文用 $\{x \mid \cdots\}$ 表示由概括得到的对象，用 $\{x : \cdots\}$ 表示类，例如面．
+\item[\REG（均质性，regularity）]\phantomsection\label{ax:REG}\hspace*{2\ccwd}若对某一侧 $s$ 有 $F_s(x) \subseteq F_s(y)$，且 $y$ 两侧的成员都是均质对象，则 $x$ 均质．
 \end{description}
 
 \DEST{} 即 \hyperref[ax:ME]{\ME}{} + \hyperref[ax:COMP]{\COMP}{} + \hyperref[ax:REG]{\REG}{} \cite[\S2]{H05}，\cite[\S8.1]{HFL}．\DESTm{} 即 \hyperref[ax:ME]{\ME}{} + \hyperref[ax:COMP]{\COMP}．
 
-\paragraph{关于表述} 在 \cite{H05} 中，公理 2.8 把「存在 $\{x \mid \varphi\}$」写在了参数的全称量词之前．我们按照 Holmes 在证明中的用法，将其读作「对一切均质参数，存在 $A$」；若按字面理解，这条公理本身就已不一致．Kisielewicz 在 \cite{K98} 中削弱了他在 \cite{K89} 中的理论．他没有单列 \hyperref[ax:REG]{\REG}，而是通过参数条件把它并入 \hyperref[ax:COMP]{\COMP}：参数必须部分包含于某个合适的均质对象．这里 $a$ 部分包含于 $b$，是指对某一侧 $s$ 有 $F_s(a) \subseteq F_s(b)$\footnote{若这一条件还要求该均质对象的成员全是均质对象，就需要看证明用了哪些参数．\hyperref[thm:2]{定理~2} 的证明所用参数只有两个例外，其余都是均质对象，且其成员也全是均质对象．一个例外是全集 $V$，可以消去：把 $z = V$ 换成 $\forall y\,(y \in z)$，把 $V \in z$ 换成 ${\exists v\,(\forall y\,(y \in v)} \wedge {v \in z)}$；由 \hyperref[ax:ME]{\ME}，$s$-面为全域的对象只有 $V$．另一个例外是\hyperref[lem:3]{引理~3} 证明中的 $h$：它均质，但其成员未必均质．证明只在这一处依赖 Holmes 的等价论断．}．Holmes \cite[\S2]{H04} 指出，这与上面的写法等价．\cite[\S8.1]{HFL} 与 \cite[\S10]{SEP} 也正是按上面的写法，把这一理论列为开放问题．
+\paragraph{关于表述} 在 \cite{H05} 中，公理 2.8 把「存在 $\{x \mid \varphi\}$」写在了参数的全称量词之前．我们按照 Holmes 在证明中的用法，将其读作「对一切均质参数，存在 $A$」；若按字面理解，这条公理本身就已不一致．Kisielewicz 在 \cite{K98} 中削弱了他在 \cite{K89} 中的理论．他没有单列 \hyperref[ax:REG]{\REG}，而是通过参数条件把它并入 \hyperref[ax:COMP]{\COMP}：参数必须部分包含于某个合适的均质对象．这里 $x$ 部分包含于 $y$，是指对某一侧 $s$ 有 $F_s(x) \subseteq F_s(y)$\footnote{若这一条件还要求该均质对象的成员全是均质对象，就需要看证明用了哪些参数．\hyperref[thm:2]{定理~2} 的证明所用参数只有两个例外，其余都是均质对象，且其成员也全是均质对象．一个例外是全集 $V$，可以消去：把 $z = V$ 换成 $\forall y\,(y \in z)$，把 $V \in z$ 换成 ${\exists v\,(\forall y\,(y \in v)} \wedge {v \in z)}$；由 \hyperref[ax:ME]{\ME}，$s$-面为全域的对象只有 $V$．另一个例外是\hyperref[lem:3]{引理~3} 证明中的 $h$：它均质，但其成员未必均质．证明只在这一处依赖 Holmes 的等价论断．}．Holmes \cite[\S2]{H04} 指出，这与上面的写法等价．\cite[\S8.1]{HFL} 与 \cite[\S10]{SEP} 也正是按上面的写法，把这一理论列为开放问题．
 
 \section{不对称与结果}\label{sec:2}
 
-谓词「是序数」可以写成不带参数的齐一公式 $\ord$：把 Holmes 的定义 \cite[\S5]{H05} 中的 $\beta \mathrel{\eps} S$ 一项换成「$\beta$ 有单元集」，就得到这样的公式；\hyperref[sec:4]{第 4 节}给出的是它的一个变体．Holmes 借助 \hyperref[ax:REG]{\REG}{} 证明了：适当命名两种关系后，每个 $\eps$-序数都是 $\in$-序数，而对象 $\Ord = \{x \mid \ord(x)\}$ 是 $\in$-序数，不是 $\eps$-序数 \cite[定理 5.1 及其后的讨论]{H05}．也就是说，$\Ord$ 只在一侧是序数．下面把所需性质提炼出来．
+谓词「是序数」可以写成不带参数的齐一公式 $\ord$．Holmes 的定义 \cite[\S5]{H05} 含有一项 $\beta \mathrel{\eps} S$，其中参数 $S$ 为 $\{x \mid x \text{ 有单元集}\}$；把这一项换成「$\beta$ 有单元集」，就得到这样的公式．\hyperref[sec:4]{第 4 节}给出的是它的一个变体．Holmes 借助 \hyperref[ax:REG]{\REG}{} 证明了：适当命名两种关系后，每个 $\eps$-序数都是 $\in$-序数，而对象 $\Ord = \{x \mid \ord(x)\}$ 是 $\in$-序数，不是 $\eps$-序数 \cite[定理 5.1 及其后的讨论]{H05}．也就是说，$\Ord$ 只在一侧是序数．下面把所需性质提炼出来．
 
 \begin{definition*}\code{asym}
 设 $P(x)$ 是参数均质的齐一公式，$b, c$ 为两侧．若下列三条都成立，则称 $P$ \emph{从 $c$ 到 $b$ 不对称}（asymmetric from $c$ to $b$）：
@@ -261,7 +261,7 @@ Holmes 借助均质性（regularity）公理证明了两种关系下的序数并
 \[
   A = \{\, z \mid z = V \;\vee\; P(z) \;\vee\; \bigl(V \in z \wedge (z \in z \oplus \Theta(z))\bigr) \,\},
 \]
-其中参数为 $V$ 与 $P$ 中的参数，$p \oplus q$ 表示 $(p \wedge \neg q) \vee (\neg p \wedge q)$．于是 $z \in_b A$ 当且仅当条件的 $c$-读法在 $z$ 处成立，$z \in_c A$ 当且仅当它的 $b$-读法成立．
+其中参数为 $V$ 与 $P$ 中的参数；$\oplus$ 表示异或，$z \in z \oplus \Theta(z)$ 即 \mbox{$(z \in z \wedge \neg\Theta(z)) \vee (z \notin z \wedge \Theta(z))$}．于是 $z \in_b A$ 当且仅当条件的 $c$-读法在 $z$ 处成立，$z \in_c A$ 当且仅当它的 $b$-读法成立．
 \begin{enumerate}[label=\arabic*.]
 \item 由 \hyperref[cond:ii]{(ii)} 可知 $P^b(V)$ 不成立，因为 $V \in_b V \in_b V$．又 $P^c(W)$ 不成立：否则由 \hyperref[cond:iii]{(iii)} 可得 $W \in_b W$，这与关于 $W$ 的 \hyperref[cond:ii]{(ii)} 矛盾．
 \item \textbf{\boldmath $\Theta^b(A)$ 成立}，因为 $W \notin_b A$．在 $W$ 处，条件的 $c$-读法中三个析取支都不成立：$P^b(W)$ 成立而 $P^b(V)$ 不成立，故 $W \neq V$；$P^c(W)$ 不成立；$V \in_c W$ 会由 \hyperref[cond:iii]{(iii)} 推出 $P^b(V)$，故也不成立．
@@ -271,7 +271,7 @@ Holmes 借助均质性（regularity）公理证明了两种关系下的序数并
 \end{enumerate}
 上述每一步都不使用 \hyperref[ax:ME]{\ME}，也不使用经典逻辑．\qed
 
-\begin{remark*}[对角论证为何奏效]
+\begin{remark*}[对角论证为何有效]
 在罗素实例 $R = \{x \mid x \notin x\}$ 中，$R \in R$ 与 $R \mathrel{\eps} R$ 互为否定，二者构成一个含两次否定的环．这个环有解，结果只是 $R$ 异质（irregular）．这里 $\Theta(A)$ 在一种读法下为真、在另一种读法下为假，环上便只剩一次否定．
 \end{remark*}
 
@@ -288,11 +288,11 @@ $F_s(z) = F_s(g) = F_{\os}(g)$，故由 \hyperref[ax:ME]{\ME}{} 得 $z = g$．
 \end{proof}
 
 \begin{lemma}[{翻转，\cite[引理 2.11]{H05}}]\label{lem:2}\code{ordflip}
-设 $\theta$ 是参数均质的齐一句子，则 $\theta^{\in} \leftrightarrow \theta^{\eps}$．特别地，参数均质的齐一公式在每个均质对象处的两种读法一致．
+设 $\sigma$ 是参数均质的齐一句子，则 $\sigma^{\in} \leftrightarrow \sigma^{\eps}$．特别地，参数均质的齐一公式在每个均质对象处的两种读法一致．
 \end{lemma}
 
 \begin{proof}
-令 $V = \{x \mid x = x\}$，$A = \{x \mid \theta\}$，其中 $x$ 不在 $\theta$ 中出现．设 $\theta^{\os}$ 成立，则 $F_s(A)$ 为全域，即 $F_{\os}(V)$，故由 \hyperref[ax:ME]{\ME}{} 得 $A = V$．于是 $F_{\os}(A)$ 也为全域；而这个面仅在 $\theta^s$ 成立时非空．
+令 $V = \{x \mid x = x\}$，$A = \{x \mid \sigma\}$，其中 $x$ 不在 $\sigma$ 中出现．设 $\sigma^{\os}$ 成立，则 $F_s(A)$ 为全域，即 $F_{\os}(V)$，故由 \hyperref[ax:ME]{\ME}{} 得 $A = V$．于是 $F_{\os}(A)$ 也为全域；而这个面仅在 $\sigma^s$ 成立时非空．
 \end{proof}
 
 \begin{lemma}[{单元集，\cite[引理 2.10]{H05}}]\label{lem:3}\code{singreg}
@@ -317,7 +317,7 @@ $\ord(a)$ 为下列条件的合取，是一个不带参数的齐一公式：
 \end{definition*}
 
 \begin{lemma}[序数]\label{lem:4}\code{memberord}
-\begin{enumerate}[label=(\alph*)]
+\begin{enumerate}[label=(\arabic*)]
 \item \label{lem:4a}$s$-序数的 $s$-成员是 $s$-序数．
 \item \label{lem:4b}$s$-序数不是自身的 $s$-成员．
 \item \label{lem:4c}若 $x$ 是 $s$-序数且 $x \notin_s C$，则存在 $z$ 同时满足：$z = x$ 或 $z \in_s x$；$z \notin_s C$；$F_s(z) \subseteq F_s(C)$．
@@ -326,7 +326,7 @@ $\ord(a)$ 为下列条件的合取，是一个不带参数的齐一公式：
 \end{lemma}
 
 \begin{proof}
-(a) 设 $y$ 是 $a$ 的成员．由 $a$ 的 \hyperref[ord:O1]{(O1)}，$y$ 的成员都是 $a$ 的成员；于是 $y$ 的 \hyperref[ord:O1]{(O1)} 即 $a$ 的 \hyperref[ord:O2]{(O2)}，而 $y$ 的 \hyperref[ord:O2]{(O2)}--\hyperref[ord:O6]{(O6)} 都可由 $a$ 的相应条件推出．(b) 由 \hyperref[ord:O3]{(O3)} 即得．(c) 若 $F_s(x) \subseteq F_s(C)$，取 $z = x$．否则，对 $x$ 的某个不在 $C$ 中的成员应用 $x$ 的 \hyperref[ord:O6]{(O6)}，再应用 $x$ 的 \hyperref[ord:O1]{(O1)}．(d) 由\hyperref[lem:2]{引理~2} 即得．
+(1) 设 $y$ 是 $a$ 的成员．由 $a$ 的 \hyperref[ord:O1]{(O1)}，$y$ 的成员都是 $a$ 的成员；于是 $y$ 的 \hyperref[ord:O1]{(O1)} 即 $a$ 的 \hyperref[ord:O2]{(O2)}，而 $y$ 的 \hyperref[ord:O2]{(O2)}--\hyperref[ord:O6]{(O6)} 都可由 $a$ 的相应条件推出．(2) 由 \hyperref[ord:O3]{(O3)} 即得．(3) 若 $F_s(x) \subseteq F_s(C)$，取 $z = x$．否则，对 $x$ 的某个不在 $C$ 中的成员应用 $x$ 的 \hyperref[ord:O6]{(O6)}，再应用 $x$ 的 \hyperref[ord:O1]{(O1)}．(4) 由\hyperref[lem:2]{引理~2} 即得．
 \end{proof}
 
 \begin{lemma}[初始段]\label{lem:5}\code{seg}
@@ -356,15 +356,15 @@ $\ord(a)$ 为下列条件的合取，是一个不带参数的齐一公式：
 \begin{proof}
 记 $b = \bar c$．
 \begin{enumerate}[label=(\roman*)]
-\item 设 $x$ 是 $c$-序数，则 $x$ 均质，由\hyperref[lem:4d]{引理~4(d)} 可知 $x$ 也是 $b$-序数．
+\item 设 $x$ 是 $c$-序数，则 $x$ 均质，由\hyperref[lem:4d]{引理~4(4)} 可知 $x$ 也是 $b$-序数．
 \item 即 \hyperref[ord:O3]{(O3)}．
 \item 令 $W = \{x \mid \ord(x)\}$，则 $F_b(W)$ 为全体 $c$-序数，$F_c(W)$ 为全体 $b$-序数．$W$ 是 $b$-序数：它的 $b$-成员都是均质的 $c$-序数，从而是均质的 $b$-序数．下面逐条验证：
 \begin{itemize}
-\item \hyperref[ord:O1]{(O1)}：若 $z \in_b y \in_b W$，则由 $y$ 均质得 $z \in_c y$；再由\hyperref[lem:4a]{引理~4(a)} 知 $z$ 是 $c$-序数，因此 $z \in_b W$；
-\item \hyperref[ord:O2]{(O2)}、\hyperref[ord:O3]{(O3)}：成员都是 $b$-序数，用\hyperref[lem:4b]{引理~4(b)} 即得；
+\item \hyperref[ord:O1]{(O1)}：若 $z \in_b y \in_b W$，则由 $y$ 均质得 $z \in_c y$；再由\hyperref[lem:4a]{引理~4(1)} 知 $z$ 是 $c$-序数，因此 $z \in_b W$；
+\item \hyperref[ord:O2]{(O2)}、\hyperref[ord:O3]{(O3)}：成员都是 $b$-序数，用\hyperref[lem:4b]{引理~4(2)} 即得；
 \item \hyperref[ord:O4]{(O4)}：\hyperref[lem:3]{引理~3}；
 \item \hyperref[ord:O5]{(O5)}：\hyperref[lem:6]{引理~6}；
-\item \hyperref[ord:O6]{(O6)}：对成员 $x$ 应用\hyperref[lem:4c]{引理~4(c)}．\qedhere
+\item \hyperref[ord:O6]{(O6)}：对成员 $x$ 应用\hyperref[lem:4c]{引理~4(3)}．\qedhere
 \end{itemize}
 \end{enumerate}
 \end{proof}
@@ -382,11 +382,11 @@ $\ord(a)$ 为下列条件的合取，是一个不带参数的齐一公式：
 \item 令 $D = \{x \mid x \text{ 有单元集}\}$，则 $F_s(D)$ 由所有具有 $\os$-单元集的对象组成．
 \item 由 \hyperref[ord:O4]{(O4)} 知 $\alpha$ 的 $s$-成员都有 $s$-单元集；因此由\hyperref[lem:3]{引理~3}，$\alpha$ 的 $s$-成员属于 $F_s(D)$ 当且仅当它均质．
 \item 若 $\alpha$ 的 $s$-成员全是均质对象，则取 $p = \alpha$．否则存在异质的 $x \in_s \alpha$，满足 $x \notin_s D$．对 $\alpha$ 应用 \hyperref[ord:O6]{(O6)} 并取 $C = D$，可得 $z \in_s \alpha$、$z \notin_s D$，且 $F_s(z) \subseteq F_s(D)$．
-\item $z$ 的 $s$-成员既在 $\alpha$ 中又在 $D$ 中，因而都是均质对象．$z$ 本身异质，否则 $z \in_s D$．由\hyperref[lem:4a]{引理~4(a)} 知 $z$ 是 $s$-序数；取 $p = z$．
+\item $z$ 的 $s$-成员既在 $\alpha$ 中又在 $D$ 中，因而都是均质对象．$z$ 本身异质，否则 $z \in_s D$．由\hyperref[lem:4a]{引理~4(1)} 知 $z$ 是 $s$-序数；取 $p = z$．
 \end{itemize}
 \item \textbf{结论}\quad 由\hyperref[step:descent]{第 2 步}，分别在 $\in$ 侧和 $\eps$ 侧取这样的 $p$ 与 $q$．
 \begin{itemize}
-\item $p$ 的每个 $\in$-成员 $x$ 都是均质的 $\in$-序数，由\hyperref[lem:4d]{引理~4(d)} 也是 $\eps$-序数．由于 $x$ 均质，它两侧的成员都是它的 $\in$-成员；再由 \hyperref[ord:O1]{(O1)}，这些成员都在 $p$ 中，因而都是均质对象．由\hyperref[step:cut]{第 1 步}，$x \mathrel{\eps} q$．
+\item $p$ 的每个 $\in$-成员 $x$ 都是均质的 $\in$-序数，由\hyperref[lem:4d]{引理~4(4)} 也是 $\eps$-序数．由于 $x$ 均质，它两侧的成员都是它的 $\in$-成员；再由 \hyperref[ord:O1]{(O1)}，这些成员都在 $p$ 中，因而都是均质对象．由\hyperref[step:cut]{第 1 步}，$x \mathrel{\eps} q$．
 \item 对称地，$q$ 的每个 $\eps$-成员都是 $p$ 的 $\in$-成员．
 \item 所以 $F_{\in}(p) = F_{\eps}(q)$，由 \hyperref[ax:ME]{\ME}{} 得 $p = q$．于是 $F_{\eps}(p) = F_{\in}(p)$，即 $p$ 均质，矛盾．\qedhere
 \end{itemize}

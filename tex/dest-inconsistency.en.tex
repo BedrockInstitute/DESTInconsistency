@@ -132,23 +132,23 @@ satisfies $A \in A \leftrightarrow A \notin A$, and the same argument refutes ev
 
 \begin{description}
 \item[Language.] First-order logic with $=$ and two membership relations $\in$ and $\eps$. For a side $s$ (one of ${\in}$, ${\eps}$) we write $x \in_s y$, let $\os$ be the other side, and call \mbox{$F_s(a) = \{x : x \in_s a\}$} the \emph{$s$-face} of~$a$. An object $a$ is \emph{regular} if $F_{\in}(a) = F_{\eps}(a)$.
-\item[Uniform formulas.] A formula is uniform if its only membership symbol is $\in$. Its \emph{$s$-reading} $\varphi^s$ interprets that symbol as $\in_s$. Thus $\varphi^{\in} = \varphi$, and $\varphi^{\eps}$ is Holmes's dual $\varphi^*$.
-\item[\ME{} (mixed extensionality).]\phantomsection\label{ax:ME} If $F_{\in}(a) = F_{\eps}(b)$, then $a = b$.
+\item[Uniform formulas.] A formula is uniform if its only membership symbol is $\in$. Its \emph{$s$-reading} $\varphi^s$ interprets that symbol as $\in_s$. Thus $\varphi^{\in} = \varphi$, and $\varphi^{\eps}$ is what Holmes calls the dual of $\varphi$.
+\item[\ME{} (mixed extensionality).]\phantomsection\label{ax:ME} If $F_{\in}(x) = F_{\eps}(y)$, then $x = y$.
 \item[\COMP{} (comprehension).]\phantomsection\label{ax:COMP} For every uniform formula $\varphi(x)$ whose parameters are all regular there is \mbox{$A = \{x \mid \varphi\}$} with
 \[
   F_{\eps}(A) = \{x : \varphi^{\in}(x)\}, \qquad F_{\in}(A) = \{x : \varphi^{\eps}(x)\},
 \]
-that is, $F_s(A) = \{x : \varphi^{\os}(x)\}$ for both sides $s$: the $s$-face of $A$ is given by the $\os$-reading of $\varphi$. Comprehension is thus \emph{crossed}.
-\item[\REG{} (regularity).]\phantomsection\label{ax:REG} If one face of $a$ is included in the same face of some $b$ whose members on both sides are all regular, then $a$ is regular.
+that is, $F_s(A) = \{x : \varphi^{\os}(x)\}$ for both sides $s$: the $s$-face of $A$ is given by the $\os$-reading of $\varphi$. Comprehension is thus \emph{crossed}. We write $\{x \mid \cdots\}$ for objects given by \COMP{} and $\{x : \cdots\}$ for classes, such as faces.
+\item[\REG{} (regularity).]\phantomsection\label{ax:REG} If one face of $x$ is included in the same face of some $y$ whose members on both sides are all regular, then $x$ is regular.
 \end{description}
 
 \noindent \DEST{} is {\hyperref[ax:ME]{\ME}}{} + {\hyperref[ax:COMP]{\COMP}}{} + {\hyperref[ax:REG]{\REG}}{} \cite[\S2]{H05}, \cite[\S8.1]{HFL}. \DESTm{} is {\hyperref[ax:ME]{\ME}}{} + {\hyperref[ax:COMP]{\COMP}}.
 
-\paragraph{On the formulation.} In \cite{H05}, Axiom 2.8 places ``there is $\{x \mid \varphi\}$'' before the quantifier over the parameters. We read it, as Holmes does in his proofs, as ``for all regular parameters there is $A$''; read literally, the axiom is already inconsistent. Kisielewicz \cite{K98}, weakening his theory of \cite{K89}, folds {\hyperref[ax:REG]{\REG}}{} into {\hyperref[ax:COMP]{\COMP}}{} through a condition on parameters: they must be partially contained in a suitable regular object, where $a$ is partially contained in $b$ if $F_s(a) \subseteq F_s(b)$ for some side $s$.\footnote{If the condition asks for a regular object with regular members, it matters which parameters the proofs use. The proof of {\hyperref[thm:2]{Theorem~2}} uses only parameters that are regular objects with regular members, with two exceptions. One is the universal set $V$, which can be eliminated: replace $z = V$ by $\forall y\,(y \in z)$ and $V \in z$ by ${\exists v\,(\forall y\,(y \in v)} \wedge {v \in z)}$; by {\hyperref[ax:ME]{\ME}}, $V$ is the only object whose $s$-face is everything. The other is the object $h$ in the proof of {\hyperref[lem:3]{Lemma~3}}, which is regular but need not have regular members; at this one point the proof relies on Holmes's equivalence.} Holmes \cite[\S2]{H04} states that this is equivalent to the formulation above, which is the one recorded as open in \cite[\S8.1]{HFL} and \cite[\S10]{SEP}.
+\paragraph{On the formulation.} In \cite{H05}, Axiom 2.8 places ``there is $\{x \mid \varphi\}$'' before the quantifier over the parameters. We read it, as Holmes does in his proofs, as ``for all regular parameters there is $A$''; read literally, the axiom is already inconsistent. Kisielewicz \cite{K98}, weakening his theory of \cite{K89}, folds {\hyperref[ax:REG]{\REG}}{} into {\hyperref[ax:COMP]{\COMP}}{} through a condition on parameters: they must be partially contained in a suitable regular object, where $x$ is partially contained in $y$ if $F_s(x) \subseteq F_s(y)$ for some side $s$.\footnote{If the condition asks for a regular object with regular members, it matters which parameters the proofs use. The proof of {\hyperref[thm:2]{Theorem~2}} uses only parameters that are regular objects with regular members, with two exceptions. One is the universal set $V$, which can be eliminated: replace $z = V$ by $\forall y\,(y \in z)$ and $V \in z$ by ${\exists v\,(\forall y\,(y \in v)} \wedge {v \in z)}$; by {\hyperref[ax:ME]{\ME}}, $V$ is the only object whose $s$-face is everything. The other is the object $h$ in the proof of {\hyperref[lem:3]{Lemma~3}}, which is regular but need not have regular members; at this one point the proof relies on Holmes's equivalence.} Holmes \cite[\S2]{H04} states that this is equivalent to the formulation above, which is the one recorded as open in \cite[\S8.1]{HFL} and \cite[\S10]{SEP}.
 
 \section{Asymmetry and the results}\label{sec:2}
 
-Being an ordinal is expressed by a parameter-free uniform formula $\ord$: Holmes's definition \cite[\S5]{H05} becomes one when its clause $\beta \mathrel{\eps} S$ is read as ``$\beta$ has a singleton'', and {\hyperref[sec:4]{Section~4}} gives a variant. Using {\hyperref[ax:REG]{\REG}}, Holmes showed that, with the relations suitably named, every $\eps$-ordinal is an $\in$-ordinal, and that the object $\Ord = \mbox{$\{x \mid \ord(x)\}$}$ is an $\in$-ordinal but not an $\eps$-ordinal \cite[Theorem 5.1 and the discussion after it]{H05}. So $\Ord$ is an ordinal on one side only. We isolate what is needed.
+Being an ordinal is expressed by a parameter-free uniform formula $\ord$. Holmes's definition \cite[\S5]{H05} has the clause $\beta \mathrel{\eps} S$, where the parameter $S$ is $\{x \mid x \text{ has a singleton}\}$; replacing that clause by ``$\beta$ has a singleton'' gives such a formula, and {\hyperref[sec:4]{Section~4}} gives a variant. Using {\hyperref[ax:REG]{\REG}}, Holmes showed that, with the relations suitably named, every $\eps$-ordinal is an $\in$-ordinal, and that the object $\Ord = \mbox{$\{x \mid \ord(x)\}$}$ is an $\in$-ordinal but not an $\eps$-ordinal \cite[Theorem 5.1 and the discussion after it]{H05}. So $\Ord$ is an ordinal on one side only. We isolate what is needed.
 
 \begin{definition*}\code{asym}
 Let $P(x)$ be a uniform formula with regular parameters, and let $b, c$ be the two sides. $P$ is \emph{asymmetric from $c$ to $b$} if
@@ -177,7 +177,7 @@ We prove {\hyperref[thm:1]{Theorem~1}}. Let $P$ be asymmetric from $c$ to $b$, w
 \[
   A = \{\, z \mid z = V \;\vee\; P(z) \;\vee\; \bigl(V \in z \wedge (z \in z \oplus \Theta(z))\bigr) \,\},
 \]
-with parameters $V$ and those of $P$, where $p \oplus q$ is $(p \wedge \neg q) \vee (\neg p \wedge q)$. So $z \in_b A$ iff the $c$-reading of the condition holds at $z$, and $z \in_c A$ iff the $b$-reading does.
+with parameters $V$ and those of $P$, where $\oplus$ is exclusive or: $z \in z \oplus \Theta(z)$ stands for \mbox{$(z \in z \wedge \neg\Theta(z)) \vee (z \notin z \wedge \Theta(z))$}. So $z \in_b A$ iff the $c$-reading of the condition holds at $z$, and $z \in_c A$ iff the $b$-reading does.
 \begin{enumerate}[label=\arabic*.]
 \item $P^b(V)$ fails by {\hyperref[cond:ii]{(ii)}}, since $V \in_b V \in_b V$. $P^c(W)$ fails: otherwise $W \in_b W$ by {\hyperref[cond:iii]{(iii)}}, against {\hyperref[cond:ii]{(ii)}} for $W$.
 \item \textbf{\boldmath $\Theta^b(A)$ holds}, because $W \notin_b A$. Each disjunct fails in the $c$-reading at $W$: $W \neq V$, since $P^b(W)$ and not $P^b(V)$; $P^c(W)$ fails; and $V \in_c W$ would give $P^b(V)$ by {\hyperref[cond:iii]{(iii)}}.
@@ -204,11 +204,11 @@ $F_s(z) = F_s(g) = F_{\os}(g)$, so $z = g$ by {\hyperref[ax:ME]{\ME}}.
 \end{proof}
 
 \begin{lemma}[Flip {\cite[Lemma 2.11]{H05}}]\label{lem:2}\code{ordflip}
-Let $\theta$ be a uniform sentence with regular parameters. Then $\theta^{\in} \leftrightarrow \theta^{\eps}$. In particular, the two readings of a uniform formula with regular parameters agree at every regular object.
+Let $\sigma$ be a uniform sentence with regular parameters. Then $\sigma^{\in} \leftrightarrow \sigma^{\eps}$. In particular, the two readings of a uniform formula with regular parameters agree at every regular object.
 \end{lemma}
 
 \begin{proof}
-Let $V = \{x \mid x = x\}$ and $A = \{x \mid \theta\}$, where $x$ does not occur in $\theta$. Suppose $\theta^{\os}$. Then $F_s(A)$ is everything, which is $F_{\os}(V)$; so $A = V$ by {\hyperref[ax:ME]{\ME}}. Hence $F_{\os}(A)$ is everything too, and this face is nonempty only if $\theta^s$.
+Let $V = \{x \mid x = x\}$ and $A = \{x \mid \sigma\}$, where $x$ does not occur in $\sigma$. Suppose $\sigma^{\os}$. Then $F_s(A)$ is everything, which is $F_{\os}(V)$; so $A = V$ by {\hyperref[ax:ME]{\ME}}. Hence $F_{\os}(A)$ is everything too, and this face is nonempty only if $\sigma^s$.
 \end{proof}
 
 \begin{lemma}[Singletons {\cite[Lemma 2.10]{H05}}]\label{lem:3}\code{singreg}
@@ -233,7 +233,7 @@ An \emph{$s$-ordinal} is an object satisfying $\ord^s$. In ZF this defines the v
 \end{definition*}
 
 \begin{lemma}[Ordinals]\label{lem:4}\code{memberord}
-\begin{enumerate}[label=(\alph*)]
+\begin{enumerate}[label=(\arabic*)]
 \item \label{lem:4a}The $s$-members of an $s$-ordinal are $s$-ordinals.
 \item \label{lem:4b}No $s$-ordinal is an $s$-member of itself.
 \item \label{lem:4c}If $x$ is an $s$-ordinal and $x \notin_s C$, there is $z$ with $z = x$ or $z \in_s x$, such that $z \notin_s C$ and $F_s(z) \subseteq F_s(C)$.
@@ -242,7 +242,7 @@ An \emph{$s$-ordinal} is an object satisfying $\ord^s$. In ZF this defines the v
 \end{lemma}
 
 \begin{proof}
-(a) Let $y$ be a member of $a$. By {\hyperref[ord:O1]{(O1)}} of $a$, the members of $y$ are members of $a$; so {\hyperref[ord:O1]{(O1)}} for $y$ is {\hyperref[ord:O2]{(O2)}} of $a$, and {\hyperref[ord:O2]{(O2)}}--{\hyperref[ord:O6]{(O6)}} for $y$ follow from those of $a$. (b) By {\hyperref[ord:O3]{(O3)}}. (c) If $F_s(x) \subseteq F_s(C)$, take $z = x$. Otherwise apply {\hyperref[ord:O6]{(O6)}} of $x$ to a member of $x$ that is not in $C$, and use {\hyperref[ord:O1]{(O1)}} of $x$. (d) By {\hyperref[lem:2]{Lemma~2}}.
+(1) Let $y$ be a member of $a$. By {\hyperref[ord:O1]{(O1)}} of $a$, the members of $y$ are members of $a$; so {\hyperref[ord:O1]{(O1)}} for $y$ is {\hyperref[ord:O2]{(O2)}} of $a$, and {\hyperref[ord:O2]{(O2)}}--{\hyperref[ord:O6]{(O6)}} for $y$ follow from those of $a$. (2) By {\hyperref[ord:O3]{(O3)}}. (3) If $F_s(x) \subseteq F_s(C)$, take $z = x$. Otherwise apply {\hyperref[ord:O6]{(O6)}} of $x$ to a member of $x$ that is not in $C$, and use {\hyperref[ord:O1]{(O1)}} of $x$. (4) By {\hyperref[lem:2]{Lemma~2}}.
 \end{proof}
 
 \begin{lemma}[Initial segments]\label{lem:5}\code{seg}
@@ -265,27 +265,27 @@ Let $\gamma = \{x \mid x \in \alpha \wedge x \in \beta\}$. Its $s$-face and $\os
 
 {\hyperref[thm:2]{Theorem~2}} follows from {\hyperref[thm:1]{Theorem~1}} and two propositions.
 
-\begin{proposition}[One regular side]\label{prop:1}\code{one}
+\begin{proposition}[Regular ordinals on one side]\label{prop:1}\code{one}
 If every $c$-ordinal is regular, then $\ord$ is asymmetric from $c$ to $\bar c$.
 \end{proposition}
 
 \begin{proof}
 Let $b = \bar c$.
 \begin{enumerate}[label=(\roman*)]
-\item A $c$-ordinal is regular, hence a $b$-ordinal by {\hyperref[lem:4d]{Lemma~4(d)}}.
+\item A $c$-ordinal is regular, hence a $b$-ordinal by {\hyperref[lem:4d]{Lemma~4(4)}}.
 \item This is {\hyperref[ord:O3]{(O3)}}.
 \item Let $W = \{x \mid \ord(x)\}$, so $F_b(W)$ is the class of $c$-ordinals and $F_c(W)$ the class of $b$-ordinals. Then $W$ is a $b$-ordinal. Its $b$-members are regular $c$-ordinals, hence regular $b$-ordinals. Clause by clause:
 \begin{itemize}
-\item {\hyperref[ord:O1]{(O1)}}: if $z \in_b y \in_b W$, then $z \in_c y$ since $y$ is regular; so $z$ is a $c$-ordinal by {\hyperref[lem:4a]{Lemma~4(a)}}, and $z \in_b W$;
-\item {\hyperref[ord:O2]{(O2)}}, {\hyperref[ord:O3]{(O3)}}: the members are $b$-ordinals; use {\hyperref[lem:4b]{Lemma~4(b)}};
+\item {\hyperref[ord:O1]{(O1)}}: if $z \in_b y \in_b W$, then $z \in_c y$ since $y$ is regular; so $z$ is a $c$-ordinal by {\hyperref[lem:4a]{Lemma~4(1)}}, and $z \in_b W$;
+\item {\hyperref[ord:O2]{(O2)}}, {\hyperref[ord:O3]{(O3)}}: the members are $b$-ordinals; use {\hyperref[lem:4b]{Lemma~4(2)}};
 \item {\hyperref[ord:O4]{(O4)}}: {\hyperref[lem:3]{Lemma~3}};
 \item {\hyperref[ord:O5]{(O5)}}: {\hyperref[lem:6]{Lemma~6}};
-\item {\hyperref[ord:O6]{(O6)}}: apply {\hyperref[lem:4c]{Lemma~4(c)}} to the member $x$. \qedhere
+\item {\hyperref[ord:O6]{(O6)}}: apply {\hyperref[lem:4c]{Lemma~4(3)}} to the member $x$. \qedhere
 \end{itemize}
 \end{enumerate}
 \end{proof}
 
-\begin{proposition}[Not both sides irregular]\label{prop:2}\code{both}
+\begin{proposition}[Irregular ordinals on at most one side]\label{prop:2}\code{both}
 The two sides do not both have irregular ordinals.
 \end{proposition}
 
@@ -298,11 +298,11 @@ Suppose they do.
 \item Let $D = \{x \mid x \text{ has a singleton}\}$. Then $F_s(D)$ is the class of objects with an $\os$-singleton.
 \item The $s$-members of $\alpha$ have $s$-singletons by {\hyperref[ord:O4]{(O4)}}. So, by {\hyperref[lem:3]{Lemma~3}}, an $s$-member of $\alpha$ lies in $F_s(D)$ iff it is regular.
 \item If all $s$-members of $\alpha$ are regular, take $p = \alpha$. Otherwise some irregular $x \in_s \alpha$ satisfies $x \notin_s D$. Apply {\hyperref[ord:O6]{(O6)}} of $\alpha$ with $C = D$ to get $z \in_s \alpha$ with $z \notin_s D$ and $F_s(z) \subseteq F_s(D)$.
-\item The $s$-members of $z$ are in $\alpha$ and in $D$, hence regular. And $z$ is irregular, since otherwise $z \in_s D$. By {\hyperref[lem:4a]{Lemma~4(a)}}, $z$ is an $s$-ordinal; take $p = z$.
+\item The $s$-members of $z$ are in $\alpha$ and in $D$, hence regular. And $z$ is irregular, since otherwise $z \in_s D$. By {\hyperref[lem:4a]{Lemma~4(1)}}, $z$ is an $s$-ordinal; take $p = z$.
 \end{itemize}
 \item \textbf{Conclusion.} By {\hyperref[step:descent]{Descent}}, take such a $p$ on side $\in$ and such a $q$ on side $\eps$.
 \begin{itemize}
-\item Each $\in$-member $x$ of $p$ is a regular $\in$-ordinal, hence an $\eps$-ordinal by {\hyperref[lem:4d]{Lemma~4(d)}}. Its members on either side are its $\in$-members, since $x$ is regular; these lie in $p$ by {\hyperref[ord:O1]{(O1)}}, so they are regular. By {\hyperref[step:cut]{Cut}}, $x \mathrel{\eps} q$.
+\item Each $\in$-member $x$ of $p$ is a regular $\in$-ordinal, hence an $\eps$-ordinal by {\hyperref[lem:4d]{Lemma~4(4)}}. Its members on either side are its $\in$-members, since $x$ is regular; these lie in $p$ by {\hyperref[ord:O1]{(O1)}}, so they are regular. By {\hyperref[step:cut]{Cut}}, $x \mathrel{\eps} q$.
 \item Symmetrically, every $\eps$-member of $q$ is an $\in$-member of $p$.
 \item So $F_{\in}(p) = F_{\eps}(q)$, and $p = q$ by {\hyperref[ax:ME]{\ME}}. Then $F_{\eps}(p) = F_{\in}(p)$, so $p$ is regular, a contradiction. \qedhere
 \end{itemize}
