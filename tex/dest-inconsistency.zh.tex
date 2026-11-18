@@ -9,7 +9,7 @@
 \documentclass[zihao=5,a4paper,fontset=none]{ctexart}
 \usepackage[margin=2.6cm]{geometry}
 % 版式参照《中国科学：数学》：正文五号宋体，标题与定理头黑体，作者与摘要楷体；
-% 西文与数学用 Latin Modern / Computer Modern，与英文版一致．
+% 西文与数学用 Latin Modern / Computer Modern，与英文版一致；标题里的西文与数字用黑体字库自带的字形，与汉字一致．
 % 中文字体：优先用 macOS 自带的宋体-简、黑体-简、楷体-简（均可嵌入 PDF）．没有时，宋体与黑体
 % 换成思源（Noto CJK，Linux 常见），楷体换成 TeX 自带的 Fandol 楷体；都没有时全用 Fandol．
 \IfFontExistsTF{STSongti-SC-Regular}
@@ -26,6 +26,7 @@
   \setCJKmonofont{\zhHeiLight}
   \setCJKfamilyfont{zhsong}{\zhSong}[BoldFont=\zhHei]
   \setCJKfamilyfont{zhhei}{\zhHei}
+  \newfontfamily\headlatin{\zhHei}[BoldFont=\zhHei]
 \else
   \setCJKmainfont{FandolSong-Regular}[Extension=.otf, BoldFont=FandolHei-Bold, ItalicFont=FandolKai-Regular]
   \setCJKsansfont{FandolHei-Bold}[Extension=.otf]
@@ -33,6 +34,7 @@
   \setCJKfamilyfont{zhsong}{FandolSong-Regular}[Extension=.otf, BoldFont=FandolHei-Bold]
   \setCJKfamilyfont{zhhei}{FandolHei-Bold}[Extension=.otf]
   \setCJKfamilyfont{zhkai}{FandolKai-Regular}[Extension=.otf]
+  \newfontfamily\headlatin{FandolHei-Bold}[Extension=.otf, BoldFont=FandolHei-Bold]
 \fi
 \providecommand{\songti}{\CJKfamily{zhsong}}
 \providecommand{\heiti}{\CJKfamily{zhhei}}
@@ -127,9 +129,9 @@
 
 % 标题：一级标题小四号黑体；段落标题五号黑体接排，缩进两字．
 \ctexset{
-  section = {format = \bfseries\zihao{-4}\raggedright,
+  section = {format = \bfseries\headlatin\zihao{-4}\raggedright,
              beforeskip = {24bp plus 4bp minus 2bp}, afterskip = {10.5bp plus 2bp}},
-  paragraph = {format = \bfseries, indent = 2\ccwd, beforeskip = {6bp plus 2bp minus 1bp}, afterskip = 1em},
+  paragraph = {format = \bfseries\headlatin, indent = 2\ccwd, beforeskip = {6bp plus 2bp minus 1bp}, afterskip = 1em},
 }
 \pagestyle{plain}
 \raggedbottom% 与英文版相同：页面不强制排满到底，代码块之间不被拉开
@@ -465,9 +467,8 @@ cd lean && lake build && lake env leanchecker DESTInconsistency
 
 Peter Zhang 主导了这项研究：提出问题，把握方向，作出决定，并对内容负责．工作借助 AI 系统完成．项目证明一致性的尝试陷入僵局之后，ChatGPT（Astra~6.2，OpenAI）担任了外部审计者，经过见\hyperref[sec:7]{第 7 节}．它在不用 \hyperref[ax:REG]{\REG}{} 的情况下推出了序数的不对称，并找到了对角论证．Claude（Anthropic）审核并简化了论证，将其推广为\hyperref[thm:1]{定理~1}，完成了 Agda 与 Lean 形式化，并起草了本文；其中大部分由 Claude Code 中的 Claude Opus~5.5 完成，两次盲测形式化则由相互隔离的 Claude Opus~5.5 实例完成．项目此前的轮次以证明一致性为目标，用到了 Claude 和其他 AI 系统．
 
-% 参考文献：标题五号黑体，条目小五号，著录格式参照 GB/T 7714．
+% 参考文献：标题与其他节标题相同，条目小五号，著录格式参照 GB/T 7714．
 \begingroup\zihao{-5}
-\ctexset{section = {format = \bfseries\zihao{5}\raggedright, beforeskip = {12bp plus 4bp}, afterskip = {6bp}}}
 \begin{thebibliography}{HFL}\setlength{\itemsep}{0pt}\setlength{\parsep}{0pt}
 \bibitem[H04]{H04} Holmes M R. Paradoxes in double extension set theories. Studia Logica, 2004, 77: 41--57
 \bibitem[H05]{H05} Holmes M R. The structure of the ordinals and the interpretation of ZF in double extension set theory. Studia Logica, 2005, 79: 357--372
