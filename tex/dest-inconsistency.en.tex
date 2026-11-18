@@ -188,7 +188,11 @@ with parameters $V$ and those of $P$, where $\oplus$ is exclusive or: $z \in z \
 No step uses {\hyperref[ax:ME]{\ME}}{} or classical logic. \qed
 
 \begin{remark*}[Why the diagonal works]
-Russell's instance $R = \{x \mid x \notin x\}$ sends the two self-membership bits of $R$ around a cycle with two negations, which has a solution: $R$ is merely irregular. Here $\Theta(A)$ is true in one reading and false in the other, which leaves one negation on the cycle.
+Russell's instance $R = \{x \mid x \notin x\}$ gives
+\[
+  R \mathrel{\eps} R \leftrightarrow R \notin R, \qquad R \in R \leftrightarrow \neg(R \mathrel{\eps} R).
+\]
+Together they give $R \in R \leftrightarrow \neg\neg(R \in R)$, which is no contradiction: both equivalences hold when exactly one of $R \in R$ and $R \mathrel{\eps} R$ is true, so $R$ is merely irregular. For the diagonal object $A$, $\Theta^b(A)$ holds and $\Theta^c(A)$ fails, which leaves a single negation: $A \in_b A \leftrightarrow A \in_c A$ and $A \in_c A \leftrightarrow A \notin_b A$ give $A \in_b A \leftrightarrow A \notin_b A$.
 \end{remark*}
 
 \section{Regular objects and ordinals}\label{sec:4}
@@ -349,7 +353,7 @@ The result came out of an AI-assisted project, recorded in more than four hundre
 \paragraph{Two judgements kept it from that question.}
 \begin{itemize}
 \item Attempts to single out the least irregular ordinal by a formula failed for a real reason: a formula true at an irregular ordinal is also true at some regular ordinal. The refutation needs only that some ordinal is omitted, not which one.
-\item The project proved correctly that one Boolean function applied to both self-membership bits always has a solution, and drew from it the rule that a one-bit diagonal cannot give a contradiction. The rule overlooked that a formula read on the two sides can act differently, because it consults the ordinals of its own side.
+\item The project proved correctly that if both sides use the same Boolean function to decide whether an object belongs to itself, no contradiction arises, and drew from it the rule that a one-bit diagonal cannot give a contradiction. The rule overlooked that a formula read on the two sides can act differently, because it consults the ordinals of its own side.
 \end{itemize}
 
 \paragraph{Progress was measured by the wrong yardstick.} Most rounds built models for larger and larger fragments of comprehension. This does not measure the distance to the full scheme: two formulas can each have witnesses in a structure where their conjunction has none. The human lead's recurring question, where the unifying step was, pointed at exactly this gap.

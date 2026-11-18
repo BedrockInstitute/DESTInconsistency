@@ -272,7 +272,11 @@ Holmes 借助均质性（regularity）公理证明了两种关系下的序数并
 上述每一步都不使用 \hyperref[ax:ME]{\ME}，也不使用经典逻辑．\qed
 
 \begin{remark*}[对角论证为何有效]
-在罗素实例 $R = \{x \mid x \notin x\}$ 中，$R \in R$ 与 $R \mathrel{\eps} R$ 互为否定，二者构成一个含两次否定的环．这个环有解，结果只是 $R$ 异质（irregular）．这里 $\Theta(A)$ 在一种读法下为真、在另一种读法下为假，环上便只剩一次否定．
+罗素实例 $R = \{x \mid x \notin x\}$ 给出两个等价式：
+\[
+  R \mathrel{\eps} R \leftrightarrow R \notin R, \qquad R \in R \leftrightarrow \neg(R \mathrel{\eps} R).
+\]
+两式合起来给出 $R \in R \leftrightarrow \neg\neg(R \in R)$，这并不矛盾：只要 $R \in R$ 与 $R \mathrel{\eps} R$ 一真一假，两式就都成立，结果只是 $R$ 异质（irregular）．对角对象 $A$ 则不同：$\Theta^b(A)$ 成立而 $\Theta^c(A)$ 不成立，于是只剩一次否定．由 $A \in_b A \leftrightarrow A \in_c A$ 与 $A \in_c A \leftrightarrow A \notin_b A$ 得 $A \in_b A \leftrightarrow A \notin_b A$，矛盾．
 \end{remark*}
 
 \section{均质对象与序数}\label{sec:4}
@@ -433,7 +437,7 @@ cd lean && lake build && lake env leanchecker DESTInconsistency
 \paragraph{两个判断让项目绕开了这个问题}
 \begin{itemize}
 \item 项目试图用公式识别最小的异质序数．这条路确实行不通，因为在某个异质序数上成立的公式，也会在某个均质序数上成立；而反驳只需要有某个序数被漏掉，无需知道是哪一个．
-\item 项目正确地证明了：若两侧用同一个布尔函数决定对象是否属于自身，则总有解．但项目由此得出「单比特对角不能产生矛盾」这条规则．这条规则忽略了一点：同一个公式在每一侧读的是该侧的序数，所以两侧可以用不同的函数决定对象是否属于自身．
+\item 项目正确地证明了：若两侧用同一个布尔函数决定对象是否属于自身，则不会产生矛盾．但项目由此得出「单比特对角不能产生矛盾」这条规则．这条规则忽略了一点：同一个公式在每一侧读的是该侧的序数，所以两侧可以用不同的函数决定对象是否属于自身．
 \end{itemize}
 
 \paragraph{进展的度量用错了} 多数轮次都在为越来越大的概括片段构造模型．但这并不能衡量离完整概括还有多远：两个公式可以在同一结构里各有见证，它们的合取却没有．人类主导者一再追问「统一的那一步在哪里」，指的就是这一差距．
