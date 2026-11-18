@@ -60,9 +60,15 @@ def lean_statements(lines):
     for block in re.split(r"\n(?=/--|theorem )", part3):
         if block.startswith("theorem ") and "'" not in block.split()[1]:
             stmts.append(block[:block.index(":=")].rstrip())
-    body = part1.rstrip() + "\n\n" + "\n\n".join(stmts)
-    body = re.sub(r"/-[-!].*?-/\n?", "", body, flags=re.S)   # doc comments
-    body = re.sub(r"\n{3,}", "\n\n", body).strip()
+    part1 = re.sub(r"/-[-!].*?-/\n?", "", part1, flags=re.S)  # doc comments
+    part1 = re.sub(r"\n{3,}", "\n\n", part1).strip()
+    # The doc comments include the file's part headings; mark the parts with
+    # comment lines instead, so the appendix shows where Parts I and III begin.
+    # Part III is kept as one unbreakable chunk: its statements are separated
+    # by lines holding a single space, which codeblock() does not split at.
+    body = ("-- Part I. Trusted part\n" + part1 + "\n\n"
+            "-- Part III. The theorems, statements only (Part II, the proofs, is omitted)\n"
+            + "\n \n".join(stmts))
     return "namespace DEST\n\n" + body + "\n"
 
 
@@ -82,6 +88,9 @@ def highlight(text, kws, tys, decl_after=None):
     assert not set("§«»") & set(text)
     out = []
     for line in text.split("\n"):
+        if line.lstrip().startswith("--"):
+            out.append("§cm«%s»" % line)
+            continue
         toks = TOKEN.findall(line)
         words = [t for t in toks if not t.isspace()]
         res, prev = [], None

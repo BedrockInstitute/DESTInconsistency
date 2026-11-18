@@ -4,6 +4,7 @@
 \begin{Verbatim}[fontsize=\codesize, commandchars=\§\«\», samepage=true, listparameters={\setlength{\topsep}{0pt}\setlength{\partopsep}{0pt}}]
 §kw«namespace» §ty«DEST»
 
+§cm«-- Part I. Trusted part»
 §kw«inductive» §fn«Side» §kw«where»
   | mem
   | eps
@@ -88,18 +89,15 @@
 
 \end{Verbatim}
 \begin{Verbatim}[fontsize=\codesize, commandchars=\§\«\», samepage=true, listparameters={\setlength{\topsep}{0pt}\setlength{\partopsep}{0pt}}]
+§cm«-- Part III. The theorems, statements only (Part II, the proofs, is omitted)»
 §kw«theorem» §fn«diagonal» (M : §ty«Type») (E : §ty«Side» → M → M → §ty«Prop») (C : §ty«Comp» M E)
     {k : §ty«Nat»} (P : §ty«Fm» (k + 1)) (ρ : §ty«Fin» k → M)
     (rρ : ∀ i : §ty«Fin» k, §ty«Regular» E (ρ i))
     {b c : §ty«Side»} (o : §ty«Opp» b c) : ¬ §ty«Asymmetric» E P ρ b c
-
-\end{Verbatim}
-\begin{Verbatim}[fontsize=\codesize, commandchars=\§\«\», samepage=true, listparameters={\setlength{\topsep}{0pt}\setlength{\partopsep}{0pt}}]
+ 
 §kw«theorem» §fn«inconsistent» (M : §ty«Type») (E : §ty«Side» → M → M → §ty«Prop»)
     (dne : ∀ P : §ty«Prop», ¬¬P → P) (T : §ty«DESTminus» M E) : §ty«False»
-
-\end{Verbatim}
-\begin{Verbatim}[fontsize=\codesize, commandchars=\§\«\», samepage=true, listparameters={\setlength{\topsep}{0pt}\setlength{\partopsep}{0pt}}]
+ 
 §kw«theorem» §fn«DEST_inconsistent» (M : §ty«Type») (E : §ty«Side» → M → M → §ty«Prop»)
     (dne : ∀ P : §ty«Prop», ¬¬P → P) (T : §ty«DEST» M E) : §ty«False»
 \end{Verbatim}

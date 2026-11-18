@@ -51,6 +51,8 @@ Code and formal proofs: \href{https://github.com/BedrockInstitute/DESTInconsiste
 \newcommand{\kw}[1]{\textcolor{codekw}{#1}}
 \newcommand{\fn}[1]{\textcolor{codefn}{#1}}
 \newcommand{\ty}[1]{\textcolor{codety}{#1}}
+\definecolor{codecm}{HTML}{6E7781}
+\newcommand{\cm}[1]{\textcolor{codecm}{#1}}
 
 \iflatexml
 % HTML: page layout, code boxes and inline code are left to the stylesheet (html/paper.css).
@@ -397,7 +399,7 @@ Peter Zhang led the research: he posed the questions, set the direction, made th
 \iflatexml\else\makeatletter\renewcommand{\@seccntformat}[1]{\appendixname\ \csname the#1\endcsname\quad}\makeatother\fi
 \section{Formal statements}\label{app:formal}
 
-This is Part~I of \icode{lean/DESTInconsistency.lean} and the statements of Part~III, with doc comments removed: all that has to be read to trust the Lean theorems.
+The Lean file \icode{lean/DESTInconsistency.lean} has three parts: Part~I defines the sides, the syntax of uniform formulas, their two readings, the axioms, and asymmetry; Part~II holds the proofs; Part~III states the theorems. Below are Part~I and the statements of the three main theorems, without doc comments or proofs; the primed variants, which use Lean's built-in classical logic, are omitted, and comment lines mark where the parts begin. This is all that has to be read to trust the Lean theorems.
 
 \input{lean-statements}
 

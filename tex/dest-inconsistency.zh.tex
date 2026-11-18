@@ -90,6 +90,8 @@
 \newcommand{\kw}[1]{\textcolor{codekw}{#1}}
 \newcommand{\fn}[1]{\textcolor{codefn}{#1}}
 \newcommand{\ty}[1]{\textcolor{codety}{#1}}
+\definecolor{codecm}{HTML}{6E7781}
+\newcommand{\cm}[1]{\textcolor{codecm}{#1}}
 
 \iflatexml
 % HTML：版式、代码框、行内代码交给样式表（html/paper.css）；中文排版命令在这里不起作用．
@@ -487,7 +489,7 @@ Peter Zhang 主导了这项研究：提出问题，把握方向，作出决定�
 \ctexset{section/name = {附录,}}
 \section{形式陈述}\label{app:formal}
 
-下面列出 \icode{lean/DESTInconsistency.lean} 第 I 部分的全部内容和第 III 部分的定理陈述，已去掉文档注释．要信任 Lean 的定理，只需读这些内容．
+Lean 文件 \icode{lean/DESTInconsistency.lean} 分为三部分：第 I 部分定义两侧、齐一公式的语法、两种读法、公理和不对称；第 II 部分是证明；第 III 部分陈述各定理．下面列出第 I 部分的全部内容和第 III 部分三个主要定理的陈述，已去掉文档注释和证明；带撇号的两个变体改用 Lean 内置的经典逻辑，这里从略．代码中用注释行标出第 I 部分与第 III 部分的起点．要信任 Lean 的定理，只需读这些内容．
 
 \input{lean-statements}
 
