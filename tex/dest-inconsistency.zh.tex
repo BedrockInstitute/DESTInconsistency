@@ -180,7 +180,7 @@
 \newtheorem*{remark*}{注}
 
 \newcommand{\eps}{\varepsilon}
-\newcommand{\os}{s'}
+\newcommand{\os}{\bar s}
 \newcommand{\ord}{\mathrm{ord}}
 \newcommand{\Ord}{\mathrm{Ord}}
 \newcommand{\ME}{\textup{ME}}
@@ -218,11 +218,11 @@ Holmes 借助均质性（regularity）公理证明了两种关系下的序数并
 \item[语言]\hspace*{2\ccwd}带等词的一阶逻辑，另有两种成员关系 $\in$、$\eps$。对任一侧 \mbox{$s \in \{{\in}, {\eps}\}$}，将这一侧的关系记为 $x \in_s y$，另一侧记为 $\os$，并称 $F_s(a) = \{x : x \in_s a\}$ 为 $a$ 的 \emph{$s$-面}（$s$-face）。若 $F_{\in}(a) = F_{\eps}(a)$，即两面相同，则称 $a$ 为\emph{均质}（regular）对象。
 \item[齐一（uniform）公式]\hspace*{2\ccwd}仅以 $\in$ 作为成员符号的公式。它的 \emph{$s$-读法}（$s$-reading） $\varphi^s$ 把这个符号解释为 $\in_s$。于是 $\varphi^{\in} = \varphi$，而 $\varphi^{\eps}$ 就是 Holmes 的对偶 $\varphi^*$。
 \item[\ME（混合外延性，mixed extensionality）]\phantomsection\label{ax:ME}\hspace*{2\ccwd}若 $F_{\in}(a) = F_{\eps}(b)$，则 $a = b$。
-\item[\COMP（概括，comprehension）]\phantomsection\label{ax:COMP}\hspace*{2\ccwd}对任意齐一公式 $\varphi(x, \bar r)$ 与均质参数 $\bar r$，存在对象 \mbox{$A = \{x \mid \varphi\}$}，使得
+\item[\COMP（概括，comprehension）]\phantomsection\label{ax:COMP}\hspace*{2\ccwd}对任意参数均质的齐一公式 $\varphi(x)$，存在对象 \mbox{$A = \{x \mid \varphi\}$}，使得
 \[
-  F_{\eps}(A) = \{x : \varphi^{\in}(x, \bar r)\}, \qquad F_{\in}(A) = \{x : \varphi^{\eps}(x, \bar r)\},
+  F_{\eps}(A) = \{x : \varphi^{\in}(x)\}, \qquad F_{\in}(A) = \{x : \varphi^{\eps}(x)\},
 \]
-也就是说，对两侧 $s$ 都有 $F_s(A) = \{x : \varphi^{\os}(x, \bar r)\}$。这种概括是\emph{交叉}的；\emph{同侧}的版本则用 $\varphi^s$。
+也就是说，对两侧 $s$ 都有 $F_s(A) = \{x : \varphi^{\os}(x)\}$。这种概括是\emph{交叉}的；\emph{同侧}的版本则用 $\varphi^s$。
 \item[\REG（均质性，regularity）]\phantomsection\label{ax:REG}\hspace*{2\ccwd}若对某一侧 $s$ 有 $F_s(a) \subseteq F_s(b)$，且 $b$ 两侧的成员都是均质对象，则 $a$ 均质。
 \end{description}
 
@@ -235,7 +235,7 @@ Holmes 借助均质性（regularity）公理证明了两种关系下的序数并
 谓词「是序数」可以写成不带参数的齐一公式 $\ord$：把 Holmes 的定义 \cite[\S5]{H05} 中的 $\beta \mathrel{\eps} S$ 一项换成「$\beta$ 有单元集」，就得到这样的公式；\hyperref[sec:4]{第 4 节}给出的是它的一个变体。Holmes 借助 \hyperref[ax:REG]{\REG}{} 证明了：适当命名两种关系后，每个 $\eps$-序数都是 $\in$-序数，而对象 $\Ord = \{x \mid \ord(x)\}$ 是 $\in$-序数，不是 $\eps$-序数 \cite[定理 5.1 及其后的讨论]{H05}。也就是说，$\Ord$ 只在一侧是序数。下面把所需性质提炼出来。
 
 \begin{definition*}\code{asym}
-设 $P(x, \bar r)$ 是参数均质的齐一公式，$b, c$ 为两侧，并将 $P^s(x, \bar r)$ 简记为 $P^s(x)$。若下列三条都成立，则称 $P$ \emph{从 $c$ 到 $b$ 不对称}（asymmetric from $c$ to $b$）：
+设 $P(x)$ 是参数均质的齐一公式，$b, c$ 为两侧。若下列三条都成立，则称 $P$ \emph{从 $c$ 到 $b$ 不对称}（asymmetric from $c$ to $b$）：
 \begin{enumerate}[label=(\roman*)]
 \item \label{cond:i}$P^c(x)$ 蕴涵 $P^b(x)$；
 \item \label{cond:ii}若 $P^b(x)$，则 $x$ 的每个 $b$-成员 $y$ 都不满足 $y \in_b y$；
@@ -261,7 +261,7 @@ Holmes 借助均质性（regularity）公理证明了两种关系下的序数并
 \[
   A = \{\, z \mid z = V \;\vee\; P(z) \;\vee\; \bigl(V \in z \wedge (z \in z \oplus \Theta(z))\bigr) \,\},
 \]
-其中参数为 $V$ 与 $\bar r$，$p \oplus q$ 表示 $(p \wedge \neg q) \vee (\neg p \wedge q)$。于是 $z \in_b A$ 当且仅当条件的 $c$-读法在 $z$ 处成立，$z \in_c A$ 当且仅当它的 $b$-读法成立。
+其中参数为 $V$ 与 $P$ 中的参数，$p \oplus q$ 表示 $(p \wedge \neg q) \vee (\neg p \wedge q)$。于是 $z \in_b A$ 当且仅当条件的 $c$-读法在 $z$ 处成立，$z \in_c A$ 当且仅当它的 $b$-读法成立。
 \begin{enumerate}[label=\arabic*.]
 \item 由 \hyperref[cond:ii]{(ii)} 可知 $P^b(V)$ 不成立，因为 $V \in_b V \in_b V$。又 $P^c(W)$ 不成立：否则由 \hyperref[cond:iii]{(iii)} 可得 $W \in_b W$，这与关于 $W$ 的 \hyperref[cond:ii]{(ii)} 矛盾。
 \item \textbf{\boldmath $\Theta^b(A)$ 成立}，因为 $W \notin_b A$。在 $W$ 处，条件的 $c$-读法中三个析取支都不成立：$P^b(W)$ 成立而 $P^b(V)$ 不成立，故 $W \neq V$；$P^c(W)$ 不成立；$V \in_c W$ 会由 \hyperref[cond:iii]{(iii)} 推出 $P^b(V)$，故也不成立。
@@ -288,7 +288,7 @@ $F_s(z) = F_s(g) = F_{\os}(g)$，故由 \hyperref[ax:ME]{\ME}{} 得 $z = g$。
 \end{proof}
 
 \begin{lemma}[{翻转，\cite[引理 2.11]{H05}}]\label{lem:2}\code{ordflip}
-设 $\theta(\bar r)$ 是参数均质的齐一句子，则 $\theta^{\in} \leftrightarrow \theta^{\eps}$。特别地，参数均质的齐一公式在每个均质对象处的两种读法一致。
+设 $\theta$ 是参数均质的齐一句子，则 $\theta^{\in} \leftrightarrow \theta^{\eps}$。特别地，参数均质的齐一公式在每个均质对象处的两种读法一致。
 \end{lemma}
 
 \begin{proof}
@@ -350,11 +350,11 @@ $\ord(a)$ 为下列条件的合取，是一个不带参数的齐一公式：
 \hyperref[thm:2]{定理~2} 可由\hyperref[thm:1]{定理~1} 与下面两个命题推出。
 
 \begin{proposition}[一侧序数均质]\label{prop:1}\code{one}
-若 $c$ 侧只有均质序数，则 $\ord$ 从 $c$ 到 $c'$ 不对称。
+若 $c$ 侧只有均质序数，则 $\ord$ 从 $c$ 到 $\bar c$ 不对称。
 \end{proposition}
 
 \begin{proof}
-记 $b = c'$。
+记 $b = \bar c$。
 \begin{enumerate}[label=(\roman*)]
 \item 设 $x$ 是 $c$-序数，则 $x$ 均质，由\hyperref[lem:4d]{引理~4(d)} 可知 $x$ 也是 $b$-序数。
 \item 即 \hyperref[ord:O3]{(O3)}。
@@ -394,7 +394,7 @@ $\ord(a)$ 为下列条件的合取，是一个不带参数的齐一公式：
 \end{proof}
 
 \begin{proof}[{\hyperref[thm:2]{定理~2}} 的证明]
-由\hyperref[prop:2]{命题~2} 与经典逻辑可知，某一侧 $c$ 只有均质序数。再由\hyperref[prop:1]{命题~1}，$\ord$ 从 $c$ 到 $c'$ 不对称，这与\hyperref[thm:1]{定理~1} 矛盾。
+由\hyperref[prop:2]{命题~2} 与经典逻辑可知，某一侧 $c$ 只有均质序数。再由\hyperref[prop:1]{命题~1}，$\ord$ 从 $c$ 到 $\bar c$ 不对称，这与\hyperref[thm:1]{定理~1} 矛盾。
 \end{proof}
 
 \begin{remark*}[用到的概括实例]

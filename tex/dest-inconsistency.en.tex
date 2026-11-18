@@ -97,7 +97,7 @@ Code and formal proofs: \href{https://github.com/BedrockInstitute/DESTInconsiste
 \newtheorem*{remark*}{Remark}
 
 \newcommand{\eps}{\varepsilon}
-\newcommand{\os}{s'}
+\newcommand{\os}{\bar s}
 \newcommand{\ord}{\mathrm{ord}}
 \newcommand{\Ord}{\mathrm{Ord}}
 \newcommand{\ME}{\textup{ME}}
@@ -134,11 +134,11 @@ satisfies $A \in A \leftrightarrow A \notin A$, and the same argument refutes ev
 \item[Language.] First-order logic with $=$ and two membership relations $\in$ and $\eps$. For a side $s$ (one of ${\in}$, ${\eps}$) we write $x \in_s y$, let $\os$ be the other side, and call \mbox{$F_s(a) = \{x : x \in_s a\}$} the \emph{$s$-face} of~$a$. An object $a$ is \emph{regular} if $F_{\in}(a) = F_{\eps}(a)$.
 \item[Uniform formulas.] A formula is uniform if its only membership symbol is $\in$. Its \emph{$s$-reading} $\varphi^s$ interprets that symbol as $\in_s$. Thus $\varphi^{\in} = \varphi$, and $\varphi^{\eps}$ is Holmes's dual $\varphi^*$.
 \item[\ME{} (mixed extensionality).]\phantomsection\label{ax:ME} If $F_{\in}(a) = F_{\eps}(b)$, then $a = b$.
-\item[\COMP{} (comprehension).]\phantomsection\label{ax:COMP} For every uniform $\varphi(x, \bar r)$ and regular $\bar r$ there is \mbox{$A = \{x \mid \varphi\}$} with
+\item[\COMP{} (comprehension).]\phantomsection\label{ax:COMP} For every uniform formula $\varphi(x)$ whose parameters are all regular there is \mbox{$A = \{x \mid \varphi\}$} with
 \[
-  F_{\eps}(A) = \{x : \varphi^{\in}(x, \bar r)\}, \qquad F_{\in}(A) = \{x : \varphi^{\eps}(x, \bar r)\},
+  F_{\eps}(A) = \{x : \varphi^{\in}(x)\}, \qquad F_{\in}(A) = \{x : \varphi^{\eps}(x)\},
 \]
-that is, $F_s(A) = \{x : \varphi^{\os}(x, \bar r)\}$ for each side $s$. Comprehension is thus \emph{crossed}; a \emph{same-sided} version would use $\varphi^s$.
+that is, $F_s(A) = \{x : \varphi^{\os}(x)\}$ for both sides $s$. Comprehension is thus \emph{crossed}; a \emph{same-sided} version would use $\varphi^s$.
 \item[\REG{} (regularity).]\phantomsection\label{ax:REG} If one face of $a$ is included in the same face of some $b$ whose members on both sides are all regular, then $a$ is regular.
 \end{description}
 
@@ -151,7 +151,7 @@ that is, $F_s(A) = \{x : \varphi^{\os}(x, \bar r)\}$ for each side $s$. Comprehe
 Being an ordinal is expressed by a parameter-free uniform formula $\ord$: Holmes's definition \cite[\S5]{H05} becomes one when its clause $\beta \mathrel{\eps} S$ is read as ``$\beta$ has a singleton'', and {\hyperref[sec:4]{Section~4}} gives a variant. Using {\hyperref[ax:REG]{\REG}}, Holmes showed that, with the relations suitably named, every $\eps$-ordinal is an $\in$-ordinal, and that the object $\Ord = \mbox{$\{x \mid \ord(x)\}$}$ is an $\in$-ordinal but not an $\eps$-ordinal \cite[Theorem 5.1 and the discussion after it]{H05}. So $\Ord$ is an ordinal on one side only. We isolate what is needed.
 
 \begin{definition*}\code{asym}
-Let $P(x, \bar r)$ be a uniform formula with regular parameters, write $P^s(x)$ for $P^s(x, \bar r)$, and let $b, c$ be the two sides. $P$ is \emph{asymmetric from $c$ to $b$} if
+Let $P(x)$ be a uniform formula with regular parameters, and let $b, c$ be the two sides. $P$ is \emph{asymmetric from $c$ to $b$} if
 \begin{enumerate}[label=(\roman*)]
 \item \label{cond:i}$P^c(x)$ implies $P^b(x)$;
 \item \label{cond:ii}if $P^b(x)$, then no $b$-member $y$ of $x$ has $y \in_b y$;
@@ -177,7 +177,7 @@ We prove {\hyperref[thm:1]{Theorem~1}}. Let $P$ be asymmetric from $c$ to $b$, w
 \[
   A = \{\, z \mid z = V \;\vee\; P(z) \;\vee\; \bigl(V \in z \wedge (z \in z \oplus \Theta(z))\bigr) \,\},
 \]
-with parameters $V$ and $\bar r$, where $p \oplus q$ is $(p \wedge \neg q) \vee (\neg p \wedge q)$. So $z \in_b A$ iff the $c$-reading of the condition holds at $z$, and $z \in_c A$ iff the $b$-reading does.
+with parameters $V$ and those of $P$, where $p \oplus q$ is $(p \wedge \neg q) \vee (\neg p \wedge q)$. So $z \in_b A$ iff the $c$-reading of the condition holds at $z$, and $z \in_c A$ iff the $b$-reading does.
 \begin{enumerate}[label=\arabic*.]
 \item $P^b(V)$ fails by {\hyperref[cond:ii]{(ii)}}, since $V \in_b V \in_b V$. $P^c(W)$ fails: otherwise $W \in_b W$ by {\hyperref[cond:iii]{(iii)}}, against {\hyperref[cond:ii]{(ii)}} for $W$.
 \item \textbf{\boldmath $\Theta^b(A)$ holds}, because $W \notin_b A$. Each disjunct fails in the $c$-reading at $W$: $W \neq V$, since $P^b(W)$ and not $P^b(V)$; $P^c(W)$ fails; and $V \in_c W$ would give $P^b(V)$ by {\hyperref[cond:iii]{(iii)}}.
@@ -204,7 +204,7 @@ $F_s(z) = F_s(g) = F_{\os}(g)$, so $z = g$ by {\hyperref[ax:ME]{\ME}}.
 \end{proof}
 
 \begin{lemma}[Flip {\cite[Lemma 2.11]{H05}}]\label{lem:2}\code{ordflip}
-Let $\theta(\bar r)$ be a uniform sentence with regular parameters. Then $\theta^{\in} \leftrightarrow \theta^{\eps}$. In particular, the two readings of a uniform formula with regular parameters agree at every regular object.
+Let $\theta$ be a uniform sentence with regular parameters. Then $\theta^{\in} \leftrightarrow \theta^{\eps}$. In particular, the two readings of a uniform formula with regular parameters agree at every regular object.
 \end{lemma}
 
 \begin{proof}
@@ -266,11 +266,11 @@ Let $\gamma = \{x \mid x \in \alpha \wedge x \in \beta\}$. Its $s$-face and $\os
 {\hyperref[thm:2]{Theorem~2}} follows from {\hyperref[thm:1]{Theorem~1}} and two propositions.
 
 \begin{proposition}[One regular side]\label{prop:1}\code{one}
-If every $c$-ordinal is regular, then $\ord$ is asymmetric from $c$ to $c'$.
+If every $c$-ordinal is regular, then $\ord$ is asymmetric from $c$ to $\bar c$.
 \end{proposition}
 
 \begin{proof}
-Let $b = c'$.
+Let $b = \bar c$.
 \begin{enumerate}[label=(\roman*)]
 \item A $c$-ordinal is regular, hence a $b$-ordinal by {\hyperref[lem:4d]{Lemma~4(d)}}.
 \item This is {\hyperref[ord:O3]{(O3)}}.
@@ -310,7 +310,7 @@ Suppose they do.
 \end{proof}
 
 \begin{proof}[Proof of {\hyperref[thm:2]{Theorem~2}}]
-By {\hyperref[prop:2]{Proposition~2}} and classical logic, some side $c$ has only regular ordinals. By {\hyperref[prop:1]{Proposition~1}}, $\ord$ is asymmetric from $c$ to $c'$, which contradicts {\hyperref[thm:1]{Theorem~1}}.
+By {\hyperref[prop:2]{Proposition~2}} and classical logic, some side $c$ has only regular ordinals. By {\hyperref[prop:1]{Proposition~1}}, $\ord$ is asymmetric from $c$ to $\bar c$, which contradicts {\hyperref[thm:1]{Theorem~1}}.
 \end{proof}
 
 \begin{remark*}[Instances of {\hyperref[ax:COMP]{\COMP}}{} used]
