@@ -1,5 +1,7 @@
 # Weak double extension set theory is inconsistent
 
+**English** · [中文](README.zh.md)
+
 We prove that Kisielewicz's weak double extension set theory DEST is inconsistent: already two of its axioms, mixed extensionality (ME) and comprehension with regular parameters (COMP), contradict each other. DEST has two membership relations, $\in$ and $\varepsilon$; it interprets ZF, and its consistency was an open problem.
 
 The core is a diagonal theorem: comprehension alone refutes every formula that is *asymmetric* between the two membership relations, and this needs neither mixed extensionality nor classical logic. Mixed extensionality and classical logic are used only to show that the ordinals are asymmetric.
@@ -68,29 +70,3 @@ See [`CITATION.bib`](CITATION.bib).
 All files are licensed under [CC BY-NC-SA 4.0](https://creativecommons.org/licenses/by-nc-sa/4.0/). The full text is in [`LICENSE`](LICENSE).
 
 © 2026 Bedrock Institute.
-
----
-
-# 弱双面外延集合论不一致
-
-我们证明了 Kisielewicz 的弱双面外延集合论 DEST 不一致：仅混合外延性与概括这两条公理就已互相矛盾，其中概括只允许均质（regular）参数。DEST 有 $\in$、$\varepsilon$ 两种成员关系，能解释 ZF，其一致性此前一直是开放问题。
-
-核心是一条对角定理：单凭概括就能驳倒一切在两种成员关系之间「不对称」的公式，而且这一定理的证明既不需要混合外延性，也不需要经典逻辑。混合外延性与经典逻辑只用来证明序数不对称。
-
-| 路径 | 内容 |
-|---|---|
-| `pdf/` | 论文：中文 `dest-inconsistency.zh.pdf`，英文 `dest-inconsistency.en.pdf` |
-| `tex/` | 两版论文的 LaTeX 源文件与构建脚本 `build.sh` |
-| `blind-test/diagonal-summary.zh.png` | 对角论证的一页摘要，即第二次盲测形式化的输入 |
-| `agda/DESTInconsistency.agda` | Agda 形式化：单文件，不导入任何模块 |
-| `lean/` | Lean 4 形式化：不依赖任何库；`Probes.lean` 做了几项辅助核对，详见论文第 6 节 |
-
-核对证明与构建论文的命令及说明见上文英文部分：在 `tex/` 下运行 `./build.sh`，即可生成两份 PDF。中文 PDF 优先使用 macOS 自带的宋体、黑体、楷体，没有时自动换成思源或 TeX 自带的 Fandol 字体。
-
-**作者与 AI 使用。** 通讯作者：Peter Zhang（peterzhangsg@gmail.com）。研究由他主导，借助 ChatGPT（Astra 6.2，OpenAI）与 Claude（Anthropic）完成，分工见论文的「工具与计算资源说明」（附录 B）。
-
-**引用。** 见 [`CITATION.bib`](CITATION.bib)。
-
-**许可。** 全部文件以 [CC BY-NC-SA 4.0](https://creativecommons.org/licenses/by-nc-sa/4.0/) 许可发布，全文见 [`LICENSE`](LICENSE)。
-
-© 2026 Bedrock Institute。
