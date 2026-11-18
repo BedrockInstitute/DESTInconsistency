@@ -354,7 +354,9 @@ The result came out of an AI-assisted project, recorded in more than four hundre
 
 \paragraph{Progress was measured by the wrong yardstick.} Most rounds built models for larger and larger fragments of comprehension. This does not measure the distance to the full scheme: two formulas can each have witnesses in a structure where their conjunction has none. The human lead's recurring question, where the unifying step was, pointed at exactly this gap.
 
-\paragraph{How the pieces were found.} The diagonal appeared once the question became whether some $A$ can make ``I omit an ordinal of my side'' true on one side and false on the other. For full \DEST{} every ordinal fact used was already in Holmes's paper. The derivation without {\hyperref[ax:REG]{\REG}}{} came from the last rounds of the project, and {\hyperref[thm:1]{Theorem~1}} from the second blind formalization.
+\paragraph{The impasse led to an external audit.} The rounds were carried out mainly by Claude. By round 401 the attempts at a consistency proof had stalled. The human lead then brought in ChatGPT (Astra~6.2), which had not taken part in the project, as an external auditor. Claude wrote it a self-contained brief: the project's assessments of where the problem was stuck, each to be confirmed or rejected, and a request for a model of \DEST, a contradiction, or a reduction of its consistency to a known problem.
+
+\paragraph{How the pieces were found.} The diagonal appeared once the question became whether some $A$ can make ``I omit an ordinal of my side'' true on one side and false on the other. For full \DEST{} every ordinal fact used was already in Holmes's paper. The audit first derived the asymmetry of the ordinals without {\hyperref[ax:REG]{\REG}}{} and then found the diagonal; {\hyperref[thm:1]{Theorem~1}} came from the second blind formalization.
 
 \section{Outlook}\label{sec:8}
 
@@ -370,7 +372,7 @@ This is Part~I of \icode{lean/DESTInconsistency.lean} and the statements of Part
 
 \section{Tool and computational resource disclosure}\label{app:B}
 
-Peter Zhang led the research: he posed the questions, set the direction, made the decisions, and takes responsibility for the content. The work was done with AI systems. ChatGPT (Astra~6.2, OpenAI), acting as an external auditor of the project, derived the asymmetry of the ordinals without {\hyperref[ax:REG]{\REG}}{} and found the diagonal argument. Claude \mbox{(Anthropic)} audited and simplified the argument, generalized it to {\hyperref[thm:1]{Theorem~1}}, wrote the Agda and Lean formalizations, and drafted this paper; most of this was done by Claude Opus~5.5 in Claude Code, and the blind formalizations were written by isolated Claude Opus~5.5 instances. Earlier rounds of the project, aimed at a consistency proof, used Claude and other AI systems. Software: Agda~2.8.0.2, Lean~4.36.0 with \icode{leanchecker}, nanoda~0.4.17, Tectonic.
+Peter Zhang led the research: he posed the questions, set the direction, made the decisions, and takes responsibility for the content. The work was done with AI systems. ChatGPT (Astra~6.2, OpenAI) became the project's external auditor after the attempts at a consistency proof had stalled ({\hyperref[sec:7]{Section~7}}); it derived the asymmetry of the ordinals without {\hyperref[ax:REG]{\REG}}{} and found the diagonal argument. Claude \mbox{(Anthropic)} audited and simplified the argument, generalized it to {\hyperref[thm:1]{Theorem~1}}, wrote the Agda and Lean formalizations, and drafted this paper; most of this was done by Claude Opus~5.5 in Claude Code, and the blind formalizations were written by isolated Claude Opus~5.5 instances. Earlier rounds of the project, aimed at a consistency proof, used Claude and other AI systems. Software: Agda~2.8.0.2, Lean~4.36.0 with \icode{leanchecker}, nanoda~0.4.17, Tectonic.
 
 % References in AMS style: titles in italics, volume numbers in bold, journal abbreviations as in MathSciNet.
 \begingroup\small

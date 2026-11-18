@@ -438,7 +438,9 @@ cd lean && lake build && lake env leanchecker DESTInconsistency
 
 \paragraph{进展的度量用错了} 多数轮次都在为越来越大的概括片段构造模型．但这并不能衡量离完整概括还有多远：两个公式可以在同一结构里各有见证，它们的合取却没有．人类主导者一再追问「统一的那一步在哪里」，指的就是这一差距．
 
-\paragraph{各部分从何而来} 问题后来换成了这样的问法：能否有某个 $A$，使「我漏掉了本侧某个序数」这句话在 $A$ 的两侧一真一假？换成这个问法之后，对角论证就出现了．对完整的 \DEST{}，所需的序数事实都已见于 Holmes 的论文；不用 \hyperref[ax:REG]{\REG}{} 的推导来自项目最后几轮的工作，\hyperref[thm:1]{定理~1} 则来自第二次盲测．
+\paragraph{僵局促成了外部审计} 这些轮次主要由 Claude 完成．到第 401 轮，证明一致性的尝试已经陷入僵局．人类主导者于是请没有参与项目的 ChatGPT（Astra~6.2）担任外部审计者．Claude 为它写了一份可以独立阅读的交接简报：列出项目对卡点所在的各项判断，请它逐条裁定；并请它寻找 \DEST{} 的模型或矛盾，或把一致性问题归约到已知的问题．
+
+\paragraph{各部分从何而来} 问题后来换成了这样的问法：能否有某个 $A$，使「我漏掉了本侧某个序数」这句话在 $A$ 的两侧一真一假？换成这个问法之后，对角论证就出现了．对完整的 \DEST{}，所需的序数事实都已见于 Holmes 的论文．外部审计先在不用 \hyperref[ax:REG]{\REG}{} 的情况下推出了序数的不对称，随后找到了对角论证；\hyperref[thm:1]{定理~1} 则来自第二次盲测．
 
 \section{展望}\label{sec:8}
 
@@ -454,7 +456,7 @@ cd lean && lake build && lake env leanchecker DESTInconsistency
 
 \section{工具与计算资源说明}\label{app:B}
 
-Peter Zhang 主导了这项研究：提出问题，把握方向，作出决定，并对内容负责．工作借助 AI 系统完成．ChatGPT（Astra~6.2，OpenAI）担任项目的外部审计者，在不用 \hyperref[ax:REG]{\REG}{} 的情况下推出了序数的不对称，并找到了对角论证．Claude（Anthropic）审核并简化了论证，将其推广为\hyperref[thm:1]{定理~1}，完成了 Agda 与 Lean 形式化，并起草了本文；其中大部分由 Claude Code 中的 Claude Opus~5.5 完成，两次盲测形式化则由相互隔离的 Claude Opus~5.5 实例完成．项目此前的轮次以证明一致性为目标，用到了 Claude 和其他 AI 系统．所用软件：Agda~2.8.0.2、Lean~4.36.0 及其 \icode{leanchecker}、nanoda~0.4.17、Tectonic．
+Peter Zhang 主导了这项研究：提出问题，把握方向，作出决定，并对内容负责．工作借助 AI 系统完成．项目证明一致性的尝试陷入僵局之后，ChatGPT（Astra~6.2，OpenAI）担任了外部审计者，经过见\hyperref[sec:7]{第 7 节}．它在不用 \hyperref[ax:REG]{\REG}{} 的情况下推出了序数的不对称，并找到了对角论证．Claude（Anthropic）审核并简化了论证，将其推广为\hyperref[thm:1]{定理~1}，完成了 Agda 与 Lean 形式化，并起草了本文；其中大部分由 Claude Code 中的 Claude Opus~5.5 完成，两次盲测形式化则由相互隔离的 Claude Opus~5.5 实例完成．项目此前的轮次以证明一致性为目标，用到了 Claude 和其他 AI 系统．所用软件：Agda~2.8.0.2、Lean~4.36.0 及其 \icode{leanchecker}、nanoda~0.4.17、Tectonic．
 
 % 参考文献：标题五号黑体，条目小五号，著录格式参照 GB/T 7714．
 \ctexset{section = {format = \bfseries\zihao{5}\raggedright, beforeskip = {12bp plus 4bp}, afterskip = {6bp}}}
