@@ -402,7 +402,18 @@ $\ord(a)$ 为下列条件的合取，是一个不带参数的齐一公式：
 \end{proof}
 
 \begin{remark*}[用到的概括实例]
-共八个：$x = x$；$x = r$；$\exists u\,(x \in u \wedge u \in h)$；与 $x$ 无关的 $\ord(r)$；$x \in \alpha \wedge x \in \beta$；「$x$ 有单元集」；$\ord(x)$；以及 $P = \ord$ 时以 $V$ 为参数的对角公式．每个实例至多含两个参数，量词秩至多为 5．
+\hyperref[thm:2]{定理~2} 的证明只用到 \hyperref[ax:COMP]{\COMP}{} 的八个实例，因此在经典逻辑下，\hyperref[ax:ME]{\ME}{} 加上这八个实例就已不一致．下面列出这些实例，以及各自给出的对象和用处：
+\begin{itemize}
+\item $x = x$：全集 $V$，用于\hyperref[sec:3]{第 3 节}与\hyperref[lem:2]{引理~2} 的证明；
+\item $x = r$，其中 $r$ 均质：$r$ 的单元集，用于\hyperref[lem:3]{引理~3} 的证明；
+\item $\exists u\,(x \in u \wedge u \in h)$：\hyperref[lem:3]{引理~3} 证明中的 $k$；
+\item 与 $x$ 无关的 $\ord(r)$：\hyperref[lem:2]{引理~2} 证明中的 $A$，用于\hyperref[lem:4d]{引理~4(4)}；
+\item $x \in \alpha \wedge x \in \beta$：\hyperref[lem:6]{引理~6} 证明中的 $\gamma$；
+\item 「$x$ 有单元集」：\hyperref[prop:2]{命题~2} 证明中的 $D$；
+\item $\ord(x)$：\hyperref[prop:1]{命题~1} 证明中的 $W$；
+\item $P = \ord$ 时以 $V$ 为参数的对角公式：\hyperref[sec:3]{第 3 节}中的 $A$．
+\end{itemize}
+每个实例至多含两个参数，量词秩至多为 5．可见矛盾已经出现在概括的一个很小的片段中．这一点对寻找模型的意义见\hyperref[sec:7]{第 7 节}．
 \end{remark*}
 
 \section{验证}\label{sec:6}
@@ -418,7 +429,7 @@ $\ord(a)$ 为下列条件的合取，是一个不带参数的齐一公式：
 cd agda && agda --safe --no-libraries DESTInconsistency.agda
 \end{Verbatim}
 \end{codebox}
-\item \textbf{Lean 4}\quad 版本为 v4.36.0，不依赖任何库．Lean 文件 \icode{lean/DESTInconsistency.lean} 的结构与 Agda 文件相同，信任部分即第 I 部分和第 III 部分的定理陈述，原样列于\hyperref[app:A]{附录~A}．与 Agda 不同，关系取值于 \icode{Prop}，\hyperref[ax:COMP]{\COMP}{} 只给出 $\exists$ 而不是 $\Sigma$．经典逻辑作为显式假设 \icode{∀ P : Prop, ¬¬P → P} 出现在 \icode{inconsistent} 与 \icode{DEST\_inconsistent} 中．用 \icode{\#print axioms} 查看，\icode{diagonal}、\icode{inconsistent}、\icode{DEST\_inconsistent} 都不依赖任何公理．\icode{leanchecker} 是 Lean 自带的检查器，它重新核对了编译结果．独立内核 nanoda~0.4.17 在禁止使用任何公理的设置下，重新核对了这三个定理所依赖的全部 251 个声明．另有 \icode{lean/Probes.lean} 核对了三件事：仅有 \hyperref[ax:ME]{\ME}{} 与罗素实例时，存在单点模型；\hyperref[ax:ME]{\ME}{} 与去掉参数均质限制的 \hyperref[ax:COMP]{\COMP}{} 不一致；若 \hyperref[ax:COMP]{\COMP}{} 改用同侧的读法，即要求 $F_s(A) = \{x : \varphi^s(x)\}$，则它本身就不一致．核对命令如下：
+\item \textbf{Lean 4}\quad 版本为 v4.36.0，不依赖任何库．Lean 文件 \icode{lean/DESTInconsistency.lean} 的结构与 Agda 文件相同，信任部分即第 I 部分和第 III 部分的定理陈述，原样列于\hyperref[app:formal]{附录~B}．与 Agda 不同，关系取值于 \icode{Prop}，\hyperref[ax:COMP]{\COMP}{} 只给出 $\exists$ 而不是 $\Sigma$．经典逻辑作为显式假设 \icode{∀ P : Prop, ¬¬P → P} 出现在 \icode{inconsistent} 与 \icode{DEST\_inconsistent} 中．用 \icode{\#print axioms} 查看，\icode{diagonal}、\icode{inconsistent}、\icode{DEST\_inconsistent} 都不依赖任何公理．\icode{leanchecker} 是 Lean 自带的检查器，它重新核对了编译结果．独立内核 nanoda~0.4.17 在禁止使用任何公理的设置下，重新核对了这三个定理所依赖的全部 251 个声明．另有 \icode{lean/Probes.lean} 核对了三件事：仅有 \hyperref[ax:ME]{\ME}{} 与罗素实例时，存在单点模型；\hyperref[ax:ME]{\ME}{} 与去掉参数均质限制的 \hyperref[ax:COMP]{\COMP}{} 不一致；若 \hyperref[ax:COMP]{\COMP}{} 改用同侧的读法，即要求 $F_s(A) = \{x : \varphi^s(x)\}$，则它本身就不一致．核对命令如下：
 \begin{codebox}
 \begin{Verbatim}[fontsize=\codesize]
 cd lean && lake build && lake env leanchecker DESTInconsistency
@@ -440,7 +451,7 @@ cd lean && lake build && lake env leanchecker DESTInconsistency
 \item 项目正确地证明了：若两侧用同一个布尔函数决定对象是否属于自身，则不会产生矛盾．但项目由此得出「单比特对角不能产生矛盾」这条规则．这条规则忽略了一点：同一个公式在每一侧读的是该侧的序数，所以两侧可以用不同的函数决定对象是否属于自身．
 \end{itemize}
 
-\paragraph{进展的度量用错了} 多数轮次都在为越来越大的概括片段构造模型．但这并不能衡量离完整概括还有多远：两个公式可以在同一结构里各有见证，它们的合取却没有．人类主导者一再追问「统一的那一步在哪里」，指的就是这一差距．
+\paragraph{进展的度量用错了} 多数轮次都在为越来越大的概括片段构造模型．但这并不能衡量离完整概括还有多远：两个公式可以在同一结构里各有见证，它们的合取却没有．人类主导者一再追问「统一的那一步在哪里」，指的就是这一差距．\hyperref[thm:2]{定理~2} 的证明具体说明了这一点：它只用到 \hyperref[ax:COMP]{\COMP}{} 的八个实例，每个至多含两个参数，量词秩至多为 5，见其后的注．因此，任何能与 \hyperref[ax:ME]{\ME}{} 一起有模型的概括片段，无论多大，都必须缺少这八个小实例中的至少一个．
 
 \paragraph{僵局促成了外部审计} 这些轮次主要由 Claude 完成．到第 401 轮，证明一致性的尝试已经陷入僵局．人类主导者于是请没有参与项目的 ChatGPT（Astra~6.2）担任外部审计者．Claude 为它写了一份可以独立阅读的交接简报：列出项目对卡点所在的各项判断，请它逐条裁定；并请它寻找 \DEST{} 的模型或矛盾，或把一致性问题归约到已知的问题．
 
@@ -448,23 +459,11 @@ cd lean && lake build && lake env leanchecker DESTInconsistency
 
 \section{展望}\label{sec:8}
 
-不一致并不意味着双面外延集合论（double extension set theory）的研究就此终结．被列为开放问题的那个理论已被否定，寻找一致的公理化反而比以往更难．自然的表述已被排除，必须先找到替代表述，再证明它一致．\hyperref[thm:1]{定理~1} 指明了保留交叉概括的替代表述必须避免什么：不能有任何齐一公式不对称．至于 \DESTm{} 在直觉主义逻辑下是否不一致，我们尚不清楚．每一次规避矛盾的尝试都可能让理论弱一些，但这不一定使它失去意义．我们认为，只要最终得到的理论被证明一致，仍能解释 ZF，仍有罗素集 $\{x \mid x \notin x\}$ 这类基本的异质对象，且公理读起来自然、没有针对已知悖论打补丁的痕迹，它就有意义．
-
-\appendix
-\ctexset{section/name = {附录,}}
-\section{形式陈述}\label{app:A}
-
-下面列出 \icode{lean/DESTInconsistency.lean} 第 I 部分的全部内容和第 III 部分的定理陈述，已去掉文档注释．要信任 Lean 的定理，只需读这些内容．
-
-\input{lean-statements}
-
-\section{工具与计算资源说明}\label{app:B}
-
-Peter Zhang 主导了这项研究：提出问题，把握方向，作出决定，并对内容负责．工作借助 AI 系统完成．项目证明一致性的尝试陷入僵局之后，ChatGPT（Astra~6.2，OpenAI）担任了外部审计者，经过见\hyperref[sec:7]{第 7 节}．它在不用 \hyperref[ax:REG]{\REG}{} 的情况下推出了序数的不对称，并找到了对角论证．Claude（Anthropic）审核并简化了论证，将其推广为\hyperref[thm:1]{定理~1}，完成了 Agda 与 Lean 形式化，并起草了本文；其中大部分由 Claude Code 中的 Claude Opus~5.5 完成，两次盲测形式化则由相互隔离的 Claude Opus~5.5 实例完成．项目此前的轮次以证明一致性为目标，用到了 Claude 和其他 AI 系统．所用软件：Agda~2.8.0.2、Lean~4.36.0 及其 \icode{leanchecker}、nanoda~0.4.17、Tectonic．
+不一致并不意味着双面外延集合论的研究就此终结．被列为开放问题的那个理论已被否定，寻找一致的公理化反而比以往更难．自然的表述已被排除，必须先找到替代表述，再证明它一致．\hyperref[thm:1]{定理~1} 指明了保留交叉概括的替代表述必须避免什么：不能有任何齐一公式不对称．至于 \DESTm{} 在直觉主义逻辑下是否不一致，我们尚不清楚．每一次规避矛盾的尝试都可能让理论弱一些，但这不一定使它失去意义．我们认为，只要最终得到的理论被证明一致，仍能解释 ZF，仍有罗素集 $\{x \mid x \notin x\}$ 这类基本的异质对象，且公理读起来自然、没有针对已知悖论打补丁的痕迹，它就有意义．
 
 % 参考文献：标题五号黑体，条目小五号，著录格式参照 GB/T 7714．
-\ctexset{section = {format = \bfseries\zihao{5}\raggedright, beforeskip = {12bp plus 4bp}, afterskip = {6bp}}}
 \begingroup\zihao{-5}
+\ctexset{section = {format = \bfseries\zihao{5}\raggedright, beforeskip = {12bp plus 4bp}, afterskip = {6bp}}}
 \begin{thebibliography}{HFL}\setlength{\itemsep}{0pt}\setlength{\parsep}{0pt}
 \bibitem[H04]{H04} Holmes M R. Paradoxes in double extension set theories. Studia Logica, 2004, 77: 41--57
 \bibitem[H05]{H05} Holmes M R. The structure of the ordinals and the interpretation of ZF in double extension set theory. Studia Logica, 2005, 79: 357--372
@@ -474,5 +473,17 @@ Peter Zhang 主导了这项研究：提出问题，把握方向，作出决定�
 \bibitem[SEP]{SEP} Holmes M R. Alternative axiomatic set theories. In: Stanford Encyclopedia of Philosophy.\newline \href{https://plato.stanford.edu/entries/settheory-alternative/}{\texttt{plato.stanford.edu/entries/settheory-alternative}}
 \end{thebibliography}
 \endgroup
+
+\appendix
+\ctexset{section/name = {附录,}}
+\section{工具与计算资源说明}\label{app:tools}
+
+Peter Zhang 主导了这项研究：提出问题，把握方向，作出决定，并对内容负责．工作借助 AI 系统完成．项目证明一致性的尝试陷入僵局之后，ChatGPT（Astra~6.2，OpenAI）担任了外部审计者，经过见\hyperref[sec:7]{第 7 节}．它在不用 \hyperref[ax:REG]{\REG}{} 的情况下推出了序数的不对称，并找到了对角论证．Claude（Anthropic）审核并简化了论证，将其推广为\hyperref[thm:1]{定理~1}，完成了 Agda 与 Lean 形式化，并起草了本文；其中大部分由 Claude Code 中的 Claude Opus~5.5 完成，两次盲测形式化则由相互隔离的 Claude Opus~5.5 实例完成．项目此前的轮次以证明一致性为目标，用到了 Claude 和其他 AI 系统．所用软件：Agda~2.8.0.2、Lean~4.36.0 及其 \icode{leanchecker}、nanoda~0.4.17、Tectonic．
+
+\section{形式陈述}\label{app:formal}
+
+下面列出 \icode{lean/DESTInconsistency.lean} 第 I 部分的全部内容和第 III 部分的定理陈述，已去掉文档注释．要信任 Lean 的定理，只需读这些内容．
+
+\input{lean-statements}
 
 \end{document}

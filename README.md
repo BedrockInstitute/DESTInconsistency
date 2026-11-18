@@ -35,7 +35,7 @@ Sections 0–1 of the file (logic, syntax, the two readings, the axioms, asymmet
 lake build
 ```
 
-Part I and the statements in Part III of `DESTInconsistency.lean` are the trusted part; they are reproduced in Appendix A of the paper. For the main file, the build prints:
+Part I and the statements in Part III of `DESTInconsistency.lean` are the trusted part; they are reproduced in Appendix B of the paper. For the main file, the build prints:
 
 ```
 'DEST.diagonal' does not depend on any axioms

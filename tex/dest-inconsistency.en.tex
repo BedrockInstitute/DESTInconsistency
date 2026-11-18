@@ -317,8 +317,19 @@ Suppose they do.
 By {\hyperref[prop:2]{Proposition~2}} and classical logic, some side $c$ has only regular ordinals. By {\hyperref[prop:1]{Proposition~1}}, $\ord$ is asymmetric from $c$ to $\bar c$, which contradicts {\hyperref[thm:1]{Theorem~1}}.
 \end{proof}
 
-\begin{remark*}[Instances of {\hyperref[ax:COMP]{\COMP}}{} used]
-There are eight: $x = x$; $x = r$; $\exists u\,(x \in u \wedge u \in h)$; $\ord(r)$ with $x$ not free; $x \in \alpha \wedge x \in \beta$; ``$x$ has a singleton''; $\ord(x)$; and the diagonal for $P = \ord$, with parameter $V$. Each has at most two parameters and quantifier rank at most 5.
+\begin{remark*}[The instances of {\hyperref[ax:COMP]{\COMP}}{} used]
+The proof of {\hyperref[thm:2]{Theorem~2}} uses only eight instances of {\hyperref[ax:COMP]{\COMP}}{}, so {\hyperref[ax:ME]{\ME}}{} together with these eight instances is already inconsistent in classical logic. Here they are, with the object each one gives and where it is used:
+\begin{itemize}
+\item $x = x$: the universal set $V$, in {\hyperref[sec:3]{Section~3}} and the proof of {\hyperref[lem:2]{Lemma~2}};
+\item $x = r$ with $r$ regular: a singleton of $r$, in the proof of {\hyperref[lem:3]{Lemma~3}};
+\item $\exists u\,(x \in u \wedge u \in h)$: the object $k$ in the proof of {\hyperref[lem:3]{Lemma~3}};
+\item $\ord(r)$, with $x$ not free: the object $A$ in the proof of {\hyperref[lem:2]{Lemma~2}}, as used for {\hyperref[lem:4d]{Lemma~4(4)}};
+\item $x \in \alpha \wedge x \in \beta$: the object $\gamma$ in the proof of {\hyperref[lem:6]{Lemma~6}};
+\item ``$x$ has a singleton'': the object $D$ in the proof of {\hyperref[prop:2]{Proposition~2}};
+\item $\ord(x)$: the object $W$ in the proof of {\hyperref[prop:1]{Proposition~1}};
+\item the diagonal formula of {\hyperref[sec:3]{Section~3}} for $P = \ord$, with parameter $V$: the object $A$ there.
+\end{itemize}
+Each has at most two parameters and quantifier rank at most 5, so the contradiction already lies in a small fragment of comprehension. {\hyperref[sec:7]{Section~7}} says what this means for the search for models.
 \end{remark*}
 
 \section{Verification}\label{sec:6}
@@ -334,7 +345,7 @@ The links \textup{\footnotesize[Agda\,$\cdot$\,Lean]} after the heads of definit
 cd agda && agda --safe --no-libraries DESTInconsistency.agda
 \end{Verbatim}
 \end{codebox}
-\item \textbf{Lean 4} (v4.36.0, no libraries). \icode{lean/DESTInconsistency.lean} has the same structure; its trusted part, Part~I and the statements of Part~III, is reproduced in {\hyperref[app:A]{Appendix~A}}. Unlike in Agda, relations are \icode{Prop}-valued and {\hyperref[ax:COMP]{\COMP}}{} yields $\exists$ rather than $\Sigma$; classical logic is the explicit hypothesis \icode{∀ P : Prop, ¬¬P → P} of \icode{inconsistent} and \icode{DEST\_inconsistent}. \icode{\#print axioms} reports that \icode{diagonal}, \icode{inconsistent}, and \icode{DEST\_inconsistent} depend on no axioms. Lean's \icode{leanchecker} re-checks the compiled development, and the independent kernel nanoda~0.4.17 re-checks the 251 declarations these three theorems depend on, with no axioms permitted. \icode{lean/Probes.lean} checks three things: {\hyperref[ax:ME]{\ME}}{} plus Russell's instance alone has a one-point model; {\hyperref[ax:ME]{\ME}}{} plus {\hyperref[ax:COMP]{\COMP}}{} without the regularity condition on parameters is inconsistent; and {\hyperref[ax:COMP]{\COMP}}{} is inconsistent by itself once each face uses the reading of its own side, $F_s(A) = \{x : \varphi^s(x)\}$. Check with
+\item \textbf{Lean 4} (v4.36.0, no libraries). \icode{lean/DESTInconsistency.lean} has the same structure; its trusted part, Part~I and the statements of Part~III, is reproduced in {\hyperref[app:formal]{Appendix~B}}. Unlike in Agda, relations are \icode{Prop}-valued and {\hyperref[ax:COMP]{\COMP}}{} yields $\exists$ rather than $\Sigma$; classical logic is the explicit hypothesis \icode{∀ P : Prop, ¬¬P → P} of \icode{inconsistent} and \icode{DEST\_inconsistent}. \icode{\#print axioms} reports that \icode{diagonal}, \icode{inconsistent}, and \icode{DEST\_inconsistent} depend on no axioms. Lean's \icode{leanchecker} re-checks the compiled development, and the independent kernel nanoda~0.4.17 re-checks the 251 declarations these three theorems depend on, with no axioms permitted. \icode{lean/Probes.lean} checks three things: {\hyperref[ax:ME]{\ME}}{} plus Russell's instance alone has a one-point model; {\hyperref[ax:ME]{\ME}}{} plus {\hyperref[ax:COMP]{\COMP}}{} without the regularity condition on parameters is inconsistent; and {\hyperref[ax:COMP]{\COMP}}{} is inconsistent by itself once each face uses the reading of its own side, $F_s(A) = \{x : \varphi^s(x)\}$. Check with
 \begin{codebox}
 \begin{Verbatim}[fontsize=\codesize]
 cd lean && lake build && lake env leanchecker DESTInconsistency
@@ -356,7 +367,7 @@ The result came out of an AI-assisted project, recorded in more than four hundre
 \item The project proved correctly that if both sides use the same Boolean function to decide whether an object belongs to itself, no contradiction arises, and drew from it the rule that a one-bit diagonal cannot give a contradiction. The rule overlooked that a formula read on the two sides can act differently, because it consults the ordinals of its own side.
 \end{itemize}
 
-\paragraph{Progress was measured by the wrong yardstick.} Most rounds built models for larger and larger fragments of comprehension. This does not measure the distance to the full scheme: two formulas can each have witnesses in a structure where their conjunction has none. The human lead's recurring question, where the unifying step was, pointed at exactly this gap.
+\paragraph{Progress was measured by the wrong yardstick.} Most rounds built models for larger and larger fragments of comprehension. This does not measure the distance to the full scheme: two formulas can each have witnesses in a structure where their conjunction has none. The human lead's recurring question, where the unifying step was, pointed at exactly this gap. The proof of {\hyperref[thm:2]{Theorem~2}} makes this concrete: it needs only eight instances of {\hyperref[ax:COMP]{\COMP}}, each with at most two parameters and quantifier rank at most 5 (see the remark after it). So any fragment of comprehension that has a model together with {\hyperref[ax:ME]{\ME}}, however large, leaves out at least one of these eight small instances.
 
 \paragraph{The impasse led to an external audit.} The rounds were carried out mainly by Claude. By round 401 the attempts at a consistency proof had stalled. The human lead then brought in ChatGPT (Astra~6.2), which had not taken part in the project, as an external auditor. Claude wrote it a self-contained brief: the project's assessments of where the problem was stuck, each to be confirmed or rejected, and a request for a model of \DEST, a contradiction, or a reduction of its consistency to a known problem.
 
@@ -365,18 +376,6 @@ The result came out of an AI-assisted project, recorded in more than four hundre
 \section{Outlook}\label{sec:8}
 
 The inconsistency does not end the study of double extension. The theory recorded as open fails, and the search for a consistent axiomatization becomes harder than before: the natural formulation is gone, and a replacement has to be found and then shown consistent. {\hyperref[thm:1]{Theorem~1}} says what a replacement that keeps crossed comprehension must avoid: no uniform formula may be asymmetric. We do not know whether \DESTm{} is inconsistent in intuitionistic logic. Each attempt to avoid the contradiction may weaken the theory a little, but that need not make it pointless. In our view, a theory that is finally shown consistent is worth having if it still interprets ZF, still has the basic irregular objects such as Russell's $\{x \mid x \notin x\}$, and has axioms that read naturally rather than as patches against known paradoxes.
-
-\appendix
-\iflatexml\else\makeatletter\renewcommand{\@seccntformat}[1]{\appendixname\ \csname the#1\endcsname\quad}\makeatother\fi
-\section{Formal statements}\label{app:A}
-
-This is Part~I of \icode{lean/DESTInconsistency.lean} and the statements of Part~III, with doc comments removed: all that has to be read to trust the Lean theorems.
-
-\input{lean-statements}
-
-\section{Tool and computational resource disclosure}\label{app:B}
-
-Peter Zhang led the research: he posed the questions, set the direction, made the decisions, and takes responsibility for the content. The work was done with AI systems. ChatGPT (Astra~6.2, OpenAI) became the project's external auditor after the attempts at a consistency proof had stalled ({\hyperref[sec:7]{Section~7}}); it derived the asymmetry of the ordinals without {\hyperref[ax:REG]{\REG}}{} and found the diagonal argument. Claude \mbox{(Anthropic)} audited and simplified the argument, generalized it to {\hyperref[thm:1]{Theorem~1}}, wrote the Agda and Lean formalizations, and drafted this paper; most of this was done by Claude Opus~5.5 in Claude Code, and the blind formalizations were written by isolated Claude Opus~5.5 instances. Earlier rounds of the project, aimed at a consistency proof, used Claude and other AI systems. Software: Agda~2.8.0.2, Lean~4.36.0 with \icode{leanchecker}, nanoda~0.4.17, Tectonic.
 
 % References in AMS style: titles in italics, volume numbers in bold, journal abbreviations as in MathSciNet.
 \begingroup\small
@@ -389,5 +388,17 @@ Peter Zhang led the research: he posed the questions, set the direction, made th
 \bibitem[SEP]{SEP} M.~R. Holmes, \emph{Alternative axiomatic set theories}, The Stanford Encyclopedia of Philosophy, \href{https://plato.stanford.edu/entries/settheory-alternative/}{\texttt{plato.stanford.edu/entries/settheory-alternative}}.
 \end{thebibliography}
 \endgroup
+
+\appendix
+\iflatexml\else\makeatletter\renewcommand{\@seccntformat}[1]{\appendixname\ \csname the#1\endcsname\quad}\makeatother\fi
+\section{Tool and computational resource disclosure}\label{app:tools}
+
+Peter Zhang led the research: he posed the questions, set the direction, made the decisions, and takes responsibility for the content. The work was done with AI systems. ChatGPT (Astra~6.2, OpenAI) became the project's external auditor after the attempts at a consistency proof had stalled ({\hyperref[sec:7]{Section~7}}); it derived the asymmetry of the ordinals without {\hyperref[ax:REG]{\REG}}{} and found the diagonal argument. Claude \mbox{(Anthropic)} audited and simplified the argument, generalized it to {\hyperref[thm:1]{Theorem~1}}, wrote the Agda and Lean formalizations, and drafted this paper; most of this was done by Claude Opus~5.5 in Claude Code, and the blind formalizations were written by isolated Claude Opus~5.5 instances. Earlier rounds of the project, aimed at a consistency proof, used Claude and other AI systems. Software: Agda~2.8.0.2, Lean~4.36.0 with \icode{leanchecker}, nanoda~0.4.17, Tectonic.
+
+\section{Formal statements}\label{app:formal}
+
+This is Part~I of \icode{lean/DESTInconsistency.lean} and the statements of Part~III, with doc comments removed: all that has to be read to trust the Lean theorems.
+
+\input{lean-statements}
 
 \end{document}

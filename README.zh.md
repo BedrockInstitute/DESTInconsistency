@@ -35,7 +35,7 @@ agda --safe --no-libraries DESTInconsistency.agda
 lake build
 ```
 
-信任部分即 `DESTInconsistency.lean` 的第 I 部分和第 III 部分的定理陈述，论文附录 A 原样列出了它们．构建主文件时输出：
+信任部分即 `DESTInconsistency.lean` 的第 I 部分和第 III 部分的定理陈述，论文附录 B 原样列出了它们．构建主文件时输出：
 
 ```
 'DEST.diagonal' does not depend on any axioms
@@ -59,7 +59,7 @@ lake build
 
 ## 作者与 AI 使用
 
-通讯作者：Peter Zhang（peterzhangsg@gmail.com）．研究由他主导，借助 ChatGPT（Astra 6.2，OpenAI）与 Claude（Anthropic）完成，分工见论文的「工具与计算资源说明」（附录 B）．
+通讯作者：Peter Zhang（peterzhangsg@gmail.com）．研究由他主导，借助 ChatGPT（Astra 6.2，OpenAI）与 Claude（Anthropic）完成，分工见论文的「工具与计算资源说明」（附录 A）．
 
 ## 引用
 
