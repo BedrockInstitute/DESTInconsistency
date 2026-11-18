@@ -222,7 +222,7 @@ Holmes 借助均质性（regularity）公理证明了两种关系下的序数并
 \[
   F_{\eps}(A) = \{x : \varphi^{\in}(x)\}, \qquad F_{\in}(A) = \{x : \varphi^{\eps}(x)\},
 \]
-也就是说，对两侧 $s$ 都有 $F_s(A) = \{x : \varphi^{\os}(x)\}$，即 $A$ 的 $s$-面由 $\varphi$ 的 $\os$-读法给出．这种概括因此称为\emph{交叉}概括．若改用同侧的读法，要求 $F_s(A) = \{x : \varphi^s(x)\}$，就得到 \COMP{} 的\emph{同侧}版本．
+也就是说，对两侧 $s$ 都有 $F_s(A) = \{x : \varphi^{\os}(x)\}$，即 $A$ 的 $s$-面由 $\varphi$ 的 $\os$-读法给出．这种概括因此称为\emph{交叉}概括．
 \item[\REG（均质性，regularity）]\phantomsection\label{ax:REG}\hspace*{2\ccwd}若对某一侧 $s$ 有 $F_s(a) \subseteq F_s(b)$，且 $b$ 两侧的成员都是均质对象，则 $a$ 均质．
 \end{description}
 
@@ -414,7 +414,7 @@ $\ord(a)$ 为下列条件的合取，是一个不带参数的齐一公式：
 cd agda && agda --safe --no-libraries DESTInconsistency.agda
 \end{Verbatim}
 \end{codebox}
-\item \textbf{Lean 4}\quad 版本为 v4.36.0，不依赖任何库．Lean 文件 \icode{lean/DESTInconsistency.lean} 的结构与 Agda 文件相同，信任部分即第 I 部分和第 III 部分的定理陈述，原样列于\hyperref[app:A]{附录~A}．与 Agda 不同，关系取值于 \icode{Prop}，\hyperref[ax:COMP]{\COMP}{} 只给出 $\exists$ 而不是 $\Sigma$．经典逻辑作为显式假设 \icode{∀ P : Prop, ¬¬P → P} 出现在 \icode{inconsistent} 与 \icode{DEST\_inconsistent} 中．用 \icode{\#print axioms} 查看，\icode{diagonal}、\icode{inconsistent}、\icode{DEST\_inconsistent} 都不依赖任何公理．\icode{leanchecker} 是 Lean 自带的检查器，它重新核对了编译结果．独立内核 nanoda~0.4.17 在禁止使用任何公理的设置下，重新核对了这三个定理所依赖的全部 251 个声明．另有 \icode{lean/Probes.lean} 核对了三件事：仅有 \hyperref[ax:ME]{\ME}{} 与罗素实例时，存在单点模型；\hyperref[ax:ME]{\ME}{} 与去掉参数均质限制的 \hyperref[ax:COMP]{\COMP}{} 不一致；改为同侧版本的 \hyperref[ax:COMP]{\COMP}{} 本身就不一致．核对命令如下：
+\item \textbf{Lean 4}\quad 版本为 v4.36.0，不依赖任何库．Lean 文件 \icode{lean/DESTInconsistency.lean} 的结构与 Agda 文件相同，信任部分即第 I 部分和第 III 部分的定理陈述，原样列于\hyperref[app:A]{附录~A}．与 Agda 不同，关系取值于 \icode{Prop}，\hyperref[ax:COMP]{\COMP}{} 只给出 $\exists$ 而不是 $\Sigma$．经典逻辑作为显式假设 \icode{∀ P : Prop, ¬¬P → P} 出现在 \icode{inconsistent} 与 \icode{DEST\_inconsistent} 中．用 \icode{\#print axioms} 查看，\icode{diagonal}、\icode{inconsistent}、\icode{DEST\_inconsistent} 都不依赖任何公理．\icode{leanchecker} 是 Lean 自带的检查器，它重新核对了编译结果．独立内核 nanoda~0.4.17 在禁止使用任何公理的设置下，重新核对了这三个定理所依赖的全部 251 个声明．另有 \icode{lean/Probes.lean} 核对了三件事：仅有 \hyperref[ax:ME]{\ME}{} 与罗素实例时，存在单点模型；\hyperref[ax:ME]{\ME}{} 与去掉参数均质限制的 \hyperref[ax:COMP]{\COMP}{} 不一致；若 \hyperref[ax:COMP]{\COMP}{} 改用同侧的读法，即要求 $F_s(A) = \{x : \varphi^s(x)\}$，则它本身就不一致．核对命令如下：
 \begin{codebox}
 \begin{Verbatim}[fontsize=\codesize]
 cd lean && lake build && lake env leanchecker DESTInconsistency
