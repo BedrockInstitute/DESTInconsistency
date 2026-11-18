@@ -97,7 +97,7 @@ Code and formal proofs: \href{https://github.com/BedrockInstitute/DESTInconsiste
 \newtheorem*{remark*}{Remark}
 
 \newcommand{\eps}{\varepsilon}
-\newcommand{\os}{\bar s}
+\newcommand{\os}{s'}
 \newcommand{\ord}{\mathrm{ord}}
 \newcommand{\Ord}{\mathrm{Ord}}
 \newcommand{\ME}{\textup{ME}}
@@ -138,7 +138,7 @@ satisfies $A \in A \leftrightarrow A \notin A$, and the same argument refutes ev
 \[
   F_{\eps}(A) = \{x : \varphi^{\in}(x, \bar r)\}, \qquad F_{\in}(A) = \{x : \varphi^{\eps}(x, \bar r)\},
 \]
-that is, $F_s(A) = \{x : \varphi^{\os}(x, \bar r)\}$ for both sides $s$. Comprehension is thus \emph{crossed}; a \emph{same-sided} version would use $\varphi^s$.
+that is, $F_s(A) = \{x : \varphi^{\os}(x, \bar r)\}$ for each side $s$. Comprehension is thus \emph{crossed}; a \emph{same-sided} version would use $\varphi^s$.
 \item[\REG{} (regularity).]\phantomsection\label{ax:REG} If one face of $a$ is included in the same face of some $b$ whose members on both sides are all regular, then $a$ is regular.
 \end{description}
 
@@ -148,7 +148,7 @@ that is, $F_s(A) = \{x : \varphi^{\os}(x, \bar r)\}$ for both sides $s$. Compreh
 
 \section{Asymmetry and the results}\label{sec:2}
 
-Being an ordinal is expressed by a parameter-free uniform formula $\ord$: Holmes's definition \cite[\S5]{H05} becomes one when its clause $\beta \in_{\eps} S$ is read as ``$\beta$ has a singleton'', and {\hyperref[sec:4]{Section~4}} gives a variant. Using {\hyperref[ax:REG]{\REG}}, Holmes showed that, with the relations suitably named, every $\eps$-ordinal is an $\in$-ordinal, and that the object $\Ord = \mbox{$\{x \mid \ord(x)\}$}$ is an $\in$-ordinal but not an $\eps$-ordinal \cite[Theorem 5.1 and the discussion after it]{H05}. So $\Ord$ is an ordinal on one side only. We isolate what is needed.
+Being an ordinal is expressed by a parameter-free uniform formula $\ord$: Holmes's definition \cite[\S5]{H05} becomes one when its clause $\beta \mathrel{\eps} S$ is read as ``$\beta$ has a singleton'', and {\hyperref[sec:4]{Section~4}} gives a variant. Using {\hyperref[ax:REG]{\REG}}, Holmes showed that, with the relations suitably named, every $\eps$-ordinal is an $\in$-ordinal, and that the object $\Ord = \mbox{$\{x \mid \ord(x)\}$}$ is an $\in$-ordinal but not an $\eps$-ordinal \cite[Theorem 5.1 and the discussion after it]{H05}. So $\Ord$ is an ordinal on one side only. We isolate what is needed.
 
 \begin{definition*}\code{asym}
 Let $P(x, \bar r)$ be a uniform formula with regular parameters, write $P^s(x)$ for $P^s(x, \bar r)$, and let $b, c$ be the two sides. $P$ is \emph{asymmetric from $c$ to $b$} if
@@ -169,7 +169,7 @@ Under {\hyperref[ax:COMP]{\COMP}}, no formula is asymmetric. The proof uses neit
 \DESTm{} is inconsistent in classical logic. Hence \DEST{} is inconsistent.
 \end{theorem}
 
-\noindent With Holmes's facts, {\hyperref[thm:1]{Theorem~1}} already refutes full \DEST. {\hyperref[thm:2]{Theorem~2}} removes {\hyperref[ax:REG]{\REG}}: from {\hyperref[ax:ME]{\ME}}{} and {\hyperref[ax:COMP]{\COMP}}{} alone, the ordinals are asymmetric from one side to the other ({\hyperref[sec:5]{Section~5}}), and {\hyperref[thm:1]{Theorem~1}} gives the contradiction. {\hyperref[sec:3]{Section~3}} proves {\hyperref[thm:1]{Theorem~1}}; {\hyperref[sec:4]{Section~4}} collects the facts about regular objects and ordinals used in {\hyperref[sec:5]{Section~5}}.
+\noindent {\hyperref[thm:1]{Theorem~1}} and the asymmetry of the ordinals together give a contradiction. The asymmetry has two sources. First, Holmes's two facts, proved with {\hyperref[ax:REG]{\REG}}, provide it, so {\hyperref[thm:1]{Theorem~1}} already refutes full \DEST. Second, the proof of {\hyperref[thm:2]{Theorem~2}} does without {\hyperref[ax:REG]{\REG}}: {\hyperref[ax:ME]{\ME}}{} and {\hyperref[ax:COMP]{\COMP}}{} alone make the ordinals asymmetric from one side to the other, and {\hyperref[thm:1]{Theorem~1}} gives the contradiction. The rest of the paper is arranged as follows. {\hyperref[sec:3]{Section~3}} proves {\hyperref[thm:1]{Theorem~1}}; {\hyperref[sec:4]{Section~4}} collects facts about regular objects and ordinals; {\hyperref[sec:5]{Section~5}} derives from them the asymmetry of the ordinals and completes the proof of {\hyperref[thm:2]{Theorem~2}}.
 
 \section{Comprehension refutes asymmetry}\label{sec:3}
 
@@ -266,11 +266,11 @@ Let $\gamma = \{x \mid x \in \alpha \wedge x \in \beta\}$. Its $s$-face and $\os
 {\hyperref[thm:2]{Theorem~2}} follows from {\hyperref[thm:1]{Theorem~1}} and two propositions.
 
 \begin{proposition}[One regular side]\label{prop:1}\code{one}
-If every $c$-ordinal is regular, then $\ord$ is asymmetric from $c$ to $\bar c$.
+If every $c$-ordinal is regular, then $\ord$ is asymmetric from $c$ to $c'$.
 \end{proposition}
 
 \begin{proof}
-Let $b = \bar c$.
+Let $b = c'$.
 \begin{enumerate}[label=(\roman*)]
 \item A $c$-ordinal is regular, hence a $b$-ordinal by {\hyperref[lem:4d]{Lemma~4(d)}}.
 \item This is {\hyperref[ord:O3]{(O3)}}.
@@ -302,7 +302,7 @@ Suppose they do.
 \end{itemize}
 \item \textbf{Conclusion.} By {\hyperref[step:descent]{Descent}}, take such a $p$ on side $\in$ and such a $q$ on side $\eps$.
 \begin{itemize}
-\item Each $\in$-member $x$ of $p$ is a regular $\in$-ordinal, hence an $\eps$-ordinal by {\hyperref[lem:4d]{Lemma~4(d)}}. Its members on either side are its $\in$-members, since $x$ is regular; these lie in $p$ by {\hyperref[ord:O1]{(O1)}}, so they are regular. By {\hyperref[step:cut]{Cut}}, $x \in_{\eps} q$.
+\item Each $\in$-member $x$ of $p$ is a regular $\in$-ordinal, hence an $\eps$-ordinal by {\hyperref[lem:4d]{Lemma~4(d)}}. Its members on either side are its $\in$-members, since $x$ is regular; these lie in $p$ by {\hyperref[ord:O1]{(O1)}}, so they are regular. By {\hyperref[step:cut]{Cut}}, $x \mathrel{\eps} q$.
 \item Symmetrically, every $\eps$-member of $q$ is an $\in$-member of $p$.
 \item So $F_{\in}(p) = F_{\eps}(q)$, and $p = q$ by {\hyperref[ax:ME]{\ME}}. Then $F_{\eps}(p) = F_{\in}(p)$, so $p$ is regular, a contradiction. \qedhere
 \end{itemize}
@@ -310,7 +310,7 @@ Suppose they do.
 \end{proof}
 
 \begin{proof}[Proof of {\hyperref[thm:2]{Theorem~2}}]
-By {\hyperref[prop:2]{Proposition~2}} and classical logic, some side $c$ has only regular ordinals. By {\hyperref[prop:1]{Proposition~1}}, $\ord$ is asymmetric from $c$ to $\bar c$, which contradicts {\hyperref[thm:1]{Theorem~1}}.
+By {\hyperref[prop:2]{Proposition~2}} and classical logic, some side $c$ has only regular ordinals. By {\hyperref[prop:1]{Proposition~1}}, $\ord$ is asymmetric from $c$ to $c'$, which contradicts {\hyperref[thm:1]{Theorem~1}}.
 \end{proof}
 
 \begin{remark*}[Instances of {\hyperref[ax:COMP]{\COMP}}{} used]

@@ -180,7 +180,7 @@
 \newtheorem*{remark*}{注}
 
 \newcommand{\eps}{\varepsilon}
-\newcommand{\os}{\bar s}
+\newcommand{\os}{s'}
 \newcommand{\ord}{\mathrm{ord}}
 \newcommand{\Ord}{\mathrm{Ord}}
 \newcommand{\ME}{\textup{ME}}
@@ -232,7 +232,7 @@ Holmes 借助均质性（regularity）公理证明了两种关系下的序数并
 
 \section{不对称与结果}\label{sec:2}
 
-谓词「是序数」可以写成不带参数的齐一公式 $\ord$：把 Holmes 的定义 \cite[\S5]{H05} 中的 $\beta \in_{\eps} S$ 一项换成「$\beta$ 有单元集」，就得到这样的公式；\hyperref[sec:4]{第 4 节}给出的是它的一个变体。Holmes 借助 \hyperref[ax:REG]{\REG}{} 证明了：适当命名两种关系后，每个 $\eps$-序数都是 $\in$-序数，而对象 $\Ord = \{x \mid \ord(x)\}$ 是 $\in$-序数，不是 $\eps$-序数 \cite[定理 5.1 及其后的讨论]{H05}。也就是说，$\Ord$ 只在一侧是序数。下面把所需性质提炼出来。
+谓词「是序数」可以写成不带参数的齐一公式 $\ord$：把 Holmes 的定义 \cite[\S5]{H05} 中的 $\beta \mathrel{\eps} S$ 一项换成「$\beta$ 有单元集」，就得到这样的公式；\hyperref[sec:4]{第 4 节}给出的是它的一个变体。Holmes 借助 \hyperref[ax:REG]{\REG}{} 证明了：适当命名两种关系后，每个 $\eps$-序数都是 $\in$-序数，而对象 $\Ord = \{x \mid \ord(x)\}$ 是 $\in$-序数，不是 $\eps$-序数 \cite[定理 5.1 及其后的讨论]{H05}。也就是说，$\Ord$ 只在一侧是序数。下面把所需性质提炼出来。
 
 \begin{definition*}\code{asym}
 设 $P(x, \bar r)$ 是参数均质的齐一公式，$b, c$ 为两侧，并将 $P^s(x, \bar r)$ 简记为 $P^s(x)$。若下列三条都成立，则称 $P$ \emph{从 $c$ 到 $b$ 不对称}（asymmetric from $c$ to $b$）：
@@ -253,7 +253,7 @@ Holmes 借助均质性（regularity）公理证明了两种关系下的序数并
 在经典逻辑下 \DESTm{} 不一致，因而 \DEST{} 不一致。
 \end{theorem}
 
-借助 Holmes 的结论，\hyperref[thm:1]{定理~1} 已经驳倒完整的 \DEST。\hyperref[thm:2]{定理~2} 则去掉 \hyperref[ax:REG]{\REG}：\hyperref[sec:5]{第 5 节}仅用 \hyperref[ax:ME]{\ME}{} 与 \hyperref[ax:COMP]{\COMP}{} 推出序数从一侧到另一侧不对称，再由\hyperref[thm:1]{定理~1} 得出矛盾。\hyperref[sec:3]{第 3 节}证明\hyperref[thm:1]{定理~1}；\hyperref[sec:4]{第 4 节}汇总均质对象与序数的若干事实，供\hyperref[sec:5]{第 5 节}使用。
+\hyperref[thm:1]{定理~1} 与序数的不对称合在一起，就能得出矛盾。序数的不对称有两个来源。其一，Holmes 借助 \hyperref[ax:REG]{\REG}{} 得到的两条结论给出了这种不对称，因此\hyperref[thm:1]{定理~1} 已经驳倒完整的 \DEST。其二，\hyperref[thm:2]{定理~2} 的证明不用 \hyperref[ax:REG]{\REG}，仅凭 \hyperref[ax:ME]{\ME}{} 与 \hyperref[ax:COMP]{\COMP}{} 就推出序数从一侧到另一侧不对称，再由\hyperref[thm:1]{定理~1} 得出矛盾。后文安排如下：\hyperref[sec:3]{第 3 节}证明\hyperref[thm:1]{定理~1}；\hyperref[sec:4]{第 4 节}汇总均质对象与序数的若干事实；\hyperref[sec:5]{第 5 节}据此推出序数的不对称，并完成\hyperref[thm:2]{定理~2} 的证明。
 
 \section{概括驳倒不对称}\label{sec:3}
 
@@ -272,7 +272,7 @@ Holmes 借助均质性（regularity）公理证明了两种关系下的序数并
 上述每一步都不使用 \hyperref[ax:ME]{\ME}，也不使用经典逻辑。\qed
 
 \begin{remark*}[对角论证为何奏效]
-在罗素实例 $R = \{x \mid x \notin x\}$ 中，$R \in R$ 与 $R \in_{\eps} R$ 互为否定，二者构成一个含两次否定的环。这个环有解，结果只是 $R$ 异质（irregular）。这里 $\Theta(A)$ 在一种读法下为真、在另一种读法下为假，环上便只剩一次否定。
+在罗素实例 $R = \{x \mid x \notin x\}$ 中，$R \in R$ 与 $R \mathrel{\eps} R$ 互为否定，二者构成一个含两次否定的环。这个环有解，结果只是 $R$ 异质（irregular）。这里 $\Theta(A)$ 在一种读法下为真、在另一种读法下为假，环上便只剩一次否定。
 \end{remark*}
 
 \section{均质对象与序数}\label{sec:4}
@@ -350,11 +350,11 @@ $\ord(a)$ 为下列条件的合取，是一个不带参数的齐一公式：
 \hyperref[thm:2]{定理~2} 可由\hyperref[thm:1]{定理~1} 与下面两个命题推出。
 
 \begin{proposition}[一侧序数均质]\label{prop:1}\code{one}
-若 $c$ 侧只有均质序数，则 $\ord$ 从 $c$ 到 $\bar c$ 不对称。
+若 $c$ 侧只有均质序数，则 $\ord$ 从 $c$ 到 $c'$ 不对称。
 \end{proposition}
 
 \begin{proof}
-记 $b = \bar c$。
+记 $b = c'$。
 \begin{enumerate}[label=(\roman*)]
 \item 设 $x$ 是 $c$-序数，则 $x$ 均质，由\hyperref[lem:4d]{引理~4(d)} 可知 $x$ 也是 $b$-序数。
 \item 即 \hyperref[ord:O3]{(O3)}。
@@ -386,7 +386,7 @@ $\ord(a)$ 为下列条件的合取，是一个不带参数的齐一公式：
 \end{itemize}
 \item \textbf{结论}\quad 由\hyperref[step:descent]{第 2 步}，分别在 $\in$ 侧和 $\eps$ 侧取这样的 $p$ 与 $q$。
 \begin{itemize}
-\item $p$ 的每个 $\in$-成员 $x$ 都是均质的 $\in$-序数，由\hyperref[lem:4d]{引理~4(d)} 也是 $\eps$-序数。由于 $x$ 均质，它两侧的成员都是它的 $\in$-成员；再由 \hyperref[ord:O1]{(O1)}，这些成员都在 $p$ 中，因而都是均质对象。由\hyperref[step:cut]{第 1 步}，$x \in_{\eps} q$。
+\item $p$ 的每个 $\in$-成员 $x$ 都是均质的 $\in$-序数，由\hyperref[lem:4d]{引理~4(d)} 也是 $\eps$-序数。由于 $x$ 均质，它两侧的成员都是它的 $\in$-成员；再由 \hyperref[ord:O1]{(O1)}，这些成员都在 $p$ 中，因而都是均质对象。由\hyperref[step:cut]{第 1 步}，$x \mathrel{\eps} q$。
 \item 对称地，$q$ 的每个 $\eps$-成员都是 $p$ 的 $\in$-成员。
 \item 所以 $F_{\in}(p) = F_{\eps}(q)$，由 \hyperref[ax:ME]{\ME}{} 得 $p = q$。于是 $F_{\eps}(p) = F_{\in}(p)$，即 $p$ 均质，矛盾。\qedhere
 \end{itemize}
@@ -394,7 +394,7 @@ $\ord(a)$ 为下列条件的合取，是一个不带参数的齐一公式：
 \end{proof}
 
 \begin{proof}[{\hyperref[thm:2]{定理~2}} 的证明]
-由\hyperref[prop:2]{命题~2} 与经典逻辑可知，某一侧 $c$ 只有均质序数。再由\hyperref[prop:1]{命题~1}，$\ord$ 从 $c$ 到 $\bar c$ 不对称，这与\hyperref[thm:1]{定理~1} 矛盾。
+由\hyperref[prop:2]{命题~2} 与经典逻辑可知，某一侧 $c$ 只有均质序数。再由\hyperref[prop:1]{命题~1}，$\ord$ 从 $c$ 到 $c'$ 不对称，这与\hyperref[thm:1]{定理~1} 矛盾。
 \end{proof}
 
 \begin{remark*}[用到的概括实例]
