@@ -232,7 +232,30 @@ opp : {s c : Side} → Opp s c → Opp c s
 opp ∈ε = ε∈
 opp ε∈ = ∈ε
 
--- 3.1 Renaming does what it should.
+-- 3.1 Equality and equivalence are congruences.
+
+subst₂ : {A : Set} (P : A → A → Set) {x y u v : A} → x ≡ y → u ≡ v → P x u → P y v
+subst₂ P refl refl p = p
+
+↔-refl : {A : Set} → A ↔ A
+↔-refl = (λ a → a) , (λ a → a)
+↔-trans : {A B C : Set} → A ↔ B → B ↔ C → A ↔ C
+↔-trans (f , g) (h , k) = (λ a → h (f a)) , (λ c → g (k c))
+¬-cong : {A B : Set} → A ↔ B → ¬ A ↔ ¬ B
+¬-cong (f , g) = (λ n b → n (g b)) , (λ n a → n (f a))
+×-cong : {A B C D : Set} → A ↔ B → C ↔ D → A × C ↔ B × D
+×-cong (f , g) (h , k) = (λ { (a , c) → f a , h c }) , (λ { (b , d) → g b , k d })
+⊎-cong : {A B C D : Set} → A ↔ B → C ↔ D → A ⊎ C ↔ B ⊎ D
+⊎-cong (f , g) (h , k) = (λ { (inl a) → inl (f a) ; (inr c) → inr (h c) })
+                       , (λ { (inl b) → inl (g b) ; (inr d) → inr (k d) })
+→-cong : {A B C D : Set} → A ↔ B → C ↔ D → (A → C) ↔ (B → D)
+→-cong (f , g) (h , k) = (λ u b → h (u (g b))) , (λ v a → k (v (f a)))
+Π-cong : {A : Set} {B C : A → Set} → ((a : A) → B a ↔ C a) → ((a : A) → B a) ↔ ((a : A) → C a)
+Π-cong h = (λ u a → fst (h a) (u a)) , (λ v a → snd (h a) (v a))
+Σ-cong : {A : Set} {B C : A → Set} → ((a : A) → B a ↔ C a) → Σ A B ↔ Σ A C
+Σ-cong h = (λ { (a , b) → a , fst (h a) b }) , (λ { (a , c) → a , snd (h a) c })
+
+-- 3.2 Renaming does what it should.
 
 module _ {M : Set} (E : Rel M) (s : Side) where
 
@@ -243,31 +266,31 @@ module _ {M : Set} (E : Rel M) (s : Side) where
 
   sat-ren : {m n : ℕ} (f : Fin m → Fin n) (φ : Fm m) (ρ : Fin n → M) (σ : Fin m → M) →
             ((i : Fin m) → ρ (f i) ≡ σ i) → Sat E s (ren f φ) ρ ↔ Sat E s φ σ
-  sat-ren f (i ∈̇ j) ρ σ h =
-      (λ a → subst (λ v → E s v (σ j)) (h i) (subst (E s (ρ (f i))) (h j) a))
-    , (λ a → subst (λ v → E s v (ρ (f j))) (sym (h i)) (subst (E s (σ i)) (sym (h j)) a))
-  sat-ren f (i ≐ j) ρ σ h =
-      (λ e → trans (sym (h i)) (trans e (h j))) , (λ e → trans (h i) (trans e (sym (h j))))
-  sat-ren f (¬̇ φ) ρ σ h =
-    let r = sat-ren f φ ρ σ h in (λ n a → n (snd r a)) , (λ n a → n (fst r a))
-  sat-ren f (φ ∧̇ ψ) ρ σ h =
-    let r = sat-ren f φ ρ σ h ; q = sat-ren f ψ ρ σ h in
-      (λ { (a , b) → fst r a , fst q b }) , (λ { (a , b) → snd r a , snd q b })
-  sat-ren f (φ ∨̇ ψ) ρ σ h =
-    let r = sat-ren f φ ρ σ h ; q = sat-ren f ψ ρ σ h in
-      (λ { (inl a) → inl (fst r a) ; (inr b) → inr (fst q b) })
-    , (λ { (inl a) → inl (snd r a) ; (inr b) → inr (snd q b) })
-  sat-ren f (φ ⇒̇ ψ) ρ σ h =
-    let r = sat-ren f φ ρ σ h ; q = sat-ren f ψ ρ σ h in
-      (λ g a → fst q (g (snd r a))) , (λ g a → snd q (g (fst r a)))
-  sat-ren f (⋀ φ) ρ σ h =
-      (λ g x → fst (sat-ren (lift f) φ (x ∷ ρ) (x ∷ σ) (lift-ok f ρ σ h x)) (g x))
-    , (λ g x → snd (sat-ren (lift f) φ (x ∷ ρ) (x ∷ σ) (lift-ok f ρ σ h x)) (g x))
-  sat-ren f (⋁ φ) ρ σ h =
-      (λ { (x , a) → x , fst (sat-ren (lift f) φ (x ∷ ρ) (x ∷ σ) (lift-ok f ρ σ h x)) a })
-    , (λ { (x , a) → x , snd (sat-ren (lift f) φ (x ∷ ρ) (x ∷ σ) (lift-ok f ρ σ h x)) a })
+  sat-ren f (i ∈̇ j) ρ σ h = subst₂ (λ u v → E s (ρ (f i)) (ρ (f j)) ↔ E s u v) (h i) (h j) ↔-refl
+  sat-ren f (i ≐ j) ρ σ h = subst₂ (λ u v → ρ (f i) ≡ ρ (f j) ↔ u ≡ v) (h i) (h j) ↔-refl
+  sat-ren f (¬̇ φ)   ρ σ h = ¬-cong (sat-ren f φ ρ σ h)
+  sat-ren f (φ ∧̇ ψ) ρ σ h = ×-cong (sat-ren f φ ρ σ h) (sat-ren f ψ ρ σ h)
+  sat-ren f (φ ∨̇ ψ) ρ σ h = ⊎-cong (sat-ren f φ ρ σ h) (sat-ren f ψ ρ σ h)
+  sat-ren f (φ ⇒̇ ψ) ρ σ h = →-cong (sat-ren f φ ρ σ h) (sat-ren f ψ ρ σ h)
+  sat-ren f (⋀ φ)   ρ σ h = Π-cong λ x → sat-ren (lift f) φ (x ∷ ρ) (x ∷ σ) (lift-ok f ρ σ h x)
+  sat-ren f (⋁ φ)   ρ σ h = Σ-cong λ x → sat-ren (lift f) φ (x ∷ ρ) (x ∷ σ) (lift-ok f ρ σ h x)
 
--- 3.2 What comprehension alone gives.
+-- 3.3 The exclusive-or lemma.  Propositional and intuitionistic.
+
+Xor : Set → Set → Set
+Xor X Y = X × ¬ Y ⊎ ¬ X × Y
+
+-- With X = (A ∈_s A), Y = (A ∈_s̄ A), S = φ^s(A), T = φ^s̄(A):
+-- if X ↔ (Y ⊕ T) and Y ↔ (X ⊕ S), then S and ¬T do not both hold.
+xor-lemma : {X Y S T : Set} → (X ↔ Xor Y T) → (Y ↔ Xor X S) → S → ¬ T → ⊥
+xor-lemma {X} hx hy s nt = nx (snd hx (inl (snd hy (inr (nx , s)) , nt)))
+  where
+  nx : ¬ X
+  nx x = case fst hx x of λ
+    { (inl (y , _)) → case fst hy y of λ { (inl (_ , ns)) → ns s ; (inr (n , _)) → n x }
+    ; (inr (_ , t)) → nt t }
+
+-- 3.4 What comprehension alone gives.
 
 module Basic (M : Set) (E : Rel M) (COMP : Comp M E) where
 
@@ -303,7 +326,7 @@ module Basic (M : Set) (E : Rel M) (COMP : Comp M E) where
   U-reg : Reg U
   U-reg x = (λ _ → full ε x) , (λ _ → full ∈ x)
 
--- 3.3 The diagonal.  Comprehension alone; no ME, no DNE.
+-- 3.5 The diagonal.  Comprehension alone; no ME, no DNE.
 
 module Diagonal (M : Set) (E : Rel M) (COMP : Comp M E) {k : ℕ} (P : Fm (suc k))
                 (ρ : Fin k → M) (rρ : (i : Fin k) → Regular E (ρ i))
@@ -318,12 +341,10 @@ module Diagonal (M : Set) (E : Rel M) (COMP : Comp M E) {k : ℕ} (P : Fm (suc k
   --   Θ(z) = ∃u (P(u) ∧ u ∉ z)
   --   Φ(z) = z = U ∨ P(z) ∨ (U ∈ z ∧ (z ∈ z  xor  Θ(z)))
   at-z : Fin (suc k) → Fin (suc (suc k))
-  at-z fz     = fz
-  at-z (fs i) = fs (fs i)
+  at-z = lift fs
 
   at-u : Fin (suc k) → Fin (suc (suc (suc k)))
-  at-u fz     = fz
-  at-u (fs i) = fs (fs (fs i))
+  at-u = lift (λ i → fs (fs i))
 
   θ-f : Fm (suc (suc k))
   θ-f = ⋁ (ren at-u P ∧̇ ¬̇ (fz ∈̇ fs fz))
@@ -334,46 +355,30 @@ module Diagonal (M : Set) (E : Rel M) (COMP : Comp M E) {k : ℕ} (P : Fm (suc k
   Θ : Side → M → Set
   Θ t z = Σ M λ u → Pt t u × ¬ E t u z
 
-  Xor : Set → Set → Set
-  Xor X Y = X × ¬ Y ⊎ ¬ X × Y
-
   Φ : Side → M → Set
   Φ t z = z ≡ U ⊎ Pt t z ⊎ E t U z × Xor (E t z z) (Θ t z)
 
-  P-z : (t : Side) (z : M) → Sat E t (ren at-z P) (z ∷ U ∷ ρ) ↔ Pt t z
-  P-z t z = sat-ren E t at-z P (z ∷ U ∷ ρ) (z ∷ ρ) (λ { fz → refl ; (fs i) → refl })
-
-  P-u : (t : Side) (u z : M) → Sat E t (ren at-u P) (u ∷ z ∷ U ∷ ρ) ↔ Pt t u
-  P-u t u z = sat-ren E t at-u P (u ∷ z ∷ U ∷ ρ) (u ∷ ρ) (λ { fz → refl ; (fs i) → refl })
-
   θ-sat : (t : Side) (z : M) → Sat E t θ-f (z ∷ U ∷ ρ) ↔ Θ t z
-  θ-sat t z = (λ { (u , pu , nu) → u , fst (P-u t u z) pu , nu })
-            , (λ { (u , pu , nu) → u , snd (P-u t u z) pu , nu })
+  θ-sat t z = Σ-cong λ u →
+    ×-cong (sat-ren E t at-u P (u ∷ z ∷ U ∷ ρ) (u ∷ ρ) (λ { fz → refl ; (fs i) → refl })) ↔-refl
 
   Φ-sat : (t : Side) (z : M) → Sat E t Φ-f (z ∷ U ∷ ρ) ↔ Φ t z
-  Φ-sat t z = to , from
-    where
-    to : Sat E t Φ-f (z ∷ U ∷ ρ) → Φ t z
-    to (inl e) = inl e
-    to (inr (inl p)) = inr (inl (fst (P-z t z) p))
-    to (inr (inr (uz , inl (zz , nθ)))) = inr (inr (uz , inl (zz , λ θ → nθ (snd (θ-sat t z) θ))))
-    to (inr (inr (uz , inr (nzz , θ)))) = inr (inr (uz , inr (nzz , fst (θ-sat t z) θ)))
-    from : Φ t z → Sat E t Φ-f (z ∷ U ∷ ρ)
-    from (inl e) = inl e
-    from (inr (inl p)) = inr (inl (snd (P-z t z) p))
-    from (inr (inr (uz , inl (zz , nθ)))) = inr (inr (uz , inl (zz , λ θ → nθ (fst (θ-sat t z) θ))))
-    from (inr (inr (uz , inr (nzz , θ)))) = inr (inr (uz , inr (nzz , snd (θ-sat t z) θ)))
+  Φ-sat t z =
+    ⊎-cong ↔-refl (⊎-cong (sat-ren E t at-z P (z ∷ U ∷ ρ) (z ∷ ρ) (λ { fz → refl ; (fs i) → refl }))
+      (×-cong ↔-refl (⊎-cong (×-cong ↔-refl (¬-cong (θ-sat t z))) (×-cong ↔-refl (θ-sat t z)))))
 
   -- A := {z | Φ(z)}
   A₀ = comp o Φ-f (U ∷ ρ) (λ { fz → U-reg ; (fs i) → rρ i })
   A = fst A₀
   Ab : (z : M) → E b z A ↔ Φ c z
-  Ab z = (λ h → fst (Φ-sat c z) (fst (fst (snd A₀) z) h)) , (λ h → snd (fst (snd A₀) z) (snd (Φ-sat c z) h))
+  Ab z = ↔-trans (fst (snd A₀) z) (Φ-sat c z)
   Ac : (z : M) → E c z A ↔ Φ b z
-  Ac z = (λ h → fst (Φ-sat b z) (fst (snd (snd A₀) z) h)) , (λ h → snd (snd (snd A₀) z) (snd (Φ-sat b z) h))
+  Ac z = ↔-trans (snd (snd A₀) z) (Φ-sat b z)
 
   contradiction : Asymmetric E P ρ b c → ⊥
-  contradiction (rich , irr , W , Wb , Wc , PW) = no-x (y→x (nx→y no-x))
+  contradiction (rich , irr , W , Wb , Wc , PW) =
+    xor-lemma (↔-trans (Ab A) (last UAc λ pa → A-not (rich A pa)))
+              (↔-trans (Ac A) (last UAb A-not)) θb nθc
     where
     U-not : ¬ Pt b U
     U-not pu = irr U U pu (full b U) (full b U)
@@ -400,27 +405,13 @@ module Diagonal (M : Set) (E : Rel M) (COMP : Comp M E) {k : ℕ} (P : Fm (suc k
     A-not : ¬ Pt b A
     A-not pa = irr A U pa UAb (full b U)
 
-    -- At z = A only the last disjunct can hold.
-    x→y : E b A A → E c A A
-    x→y x = case fst (Ab A) x of λ
-      { (inl e) → ⊥-elim (A≢U e)
-      ; (inr (inl pa)) → ⊥-elim (A-not (rich A pa))
-      ; (inr (inr (_ , inl (y , _)))) → y
-      ; (inr (inr (_ , inr (_ , θ)))) → ⊥-elim (nθc θ) }
-    y→x : E c A A → E b A A
-    y→x y = snd (Ab A) (inr (inr (UAc , inl (y , nθc))))
-    y→nx : E c A A → ¬ E b A A
-    y→nx y = case fst (Ac A) y of λ
-      { (inl e) → ⊥-elim (A≢U e)
-      ; (inr (inl pa)) → ⊥-elim (A-not pa)
-      ; (inr (inr (_ , inl (_ , nθ)))) → ⊥-elim (nθ θb)
-      ; (inr (inr (_ , inr (nx , _)))) → nx }
-    nx→y : ¬ E b A A → E c A A
-    nx→y nx = snd (Ac A) (inr (inr (UAb , inr (nx , θb))))
-    no-x : ¬ E b A A
-    no-x x = y→nx (x→y x) x
+    -- At z = A only the last disjunct can hold, so the exclusive-or lemma applies.
+    last : {t : Side} → E t U A → ¬ Pt t A → Φ t A ↔ Xor (E t A A) (Θ t A)
+    last UA np = (λ { (inl e) → ⊥-elim (A≢U e) ; (inr (inl pa)) → ⊥-elim (np pa)
+                    ; (inr (inr (_ , x))) → x })
+               , (λ x → inr (inr (UA , x)))
 
--- 3.4 The ordinals are asymmetric.  ME, COMP and DNE.
+-- 3.6 The ordinals are asymmetric.  ME, COMP and DNE.
 
 module Proof (M : Set) (E : Rel M) (T : DEST⁻ M E) (dne : DNE) where
   open DEST⁻ T
@@ -493,13 +484,10 @@ module Proof (M : Set) (E : Rel M) (T : DEST⁻ M E) (dne : DNE) where
     cy = subst (λ v → (x : M) → E c x v ↔ E s x y) (sym e₂) ck
 
   -- At a regular point the two readings of the ordinal formula agree
-  -- (Holmes Lemma 2.11, by the constant-column argument).
+  -- (Holmes Lemma 2.11): the exclusive-or lemma for {x | x ∈ x ⊕ ord(r)}.
   ord-flip : {s c : Side} → Opp s c → {r : M} → Reg r → Ord s r → Ord c r
-  ord-flip {s} {c} o {r} rr or = fst (fst (snd A) U) (subst (E s U) (sym A≡U) (full s U))
-    where
-    A = comp o (ord-f (fs fz)) (r ∷ []) (λ { fz → rr })
-    A≡U : fst A ≡ U
-    A≡U = me (opp o) (fst A) U (λ x → (λ _ → full s x) , (λ _ → snd (snd (snd A) x) or))
+  ord-flip o {r} rr or = dne _ λ n → xor-lemma (fst (snd A) (fst A)) (snd (snd A) (fst A)) or n
+    where A = comp o (xor-f (fz ∈̇ fz) (ord-f (fs fz))) (r ∷ []) (λ { fz → rr })
 
   -- Ordinals.
 
@@ -564,64 +552,15 @@ module Proof (M : Set) (E : Rel M) (T : DEST⁻ M E) (dne : DNE) where
     tγ : Trans s γ
     tγ y z zy yγ = let (yα , yβ) = fst (g y) yγ in snd (g z) (o-tr oα y z zy yα , o-tr oβ y z zy yβ)
     cases : γ ≡ α ⊎ E s γ α → γ ≡ β ⊎ E s γ β → E s α β ⊎ α ≡ β ⊎ E s β α
-    cases (inl a) (inl b) = inr (inl (trans (sym a) b))
+    cases (inl a) (inl b) = inr (inl (subst (λ v → v ≡ β) a b))
     cases (inl a) (inr b) = inl (subst (λ v → E s v β) a b)
     cases (inr a) (inl b) = inr (inr (subst (λ v → E s v α) b a))
     cases (inr a) (inr b) = ⊥-elim (o-irr oα γ a (snd (g γ) (a , b)))
 
-  -- An irregular ordinal p contains every regular ordinal t whose members
-  -- are regular.
-  cut : {s c : Side} → Opp s c → {p t : M} → Ord s p → ¬ Reg p →
-        Reg t → Ord s t → ((y : M) → E s y t → Reg y) → E s t p
-  cut {s} o {p} {t} op np rt ot tpure = inside rt ot sub
-    where
-    inside : {z : M} → Reg z → Ord s z → ((x : M) → E s x z → E s x p) → E s z p
-    inside rz oz zp = case seg o op rz (o-tr oz) zp of λ
-      { (inl e) → ⊥-elim (np (subst Reg e rz)) ; (inr zp′) → zp′ }
-    sub : (x : M) → E s x t → E s x p
-    sub x xt = dne _ λ nxp →
-      let (z , zx , nzp , zp) = o-wf ot p x xt nxp
-          zt = down ot xt zx
-      in nzp (inside (tpure z zt) (member-ord ot zt) zp)
-
-  -- Below an irregular ordinal there is one whose members are regular.
-  descent : {s c : Side} → Opp s c → {α : M} → Ord s α → ¬ Reg α →
-            Σ M λ p → Ord s p × ¬ Reg p × ((y : M) → E s y p → Reg y)
-  descent {s} {c} o {α} oα nα = dne _ λ none →
-    let (x , xα , nx) = impure none
-        (z , zx , nzD , zD) = o-wf oα D x xα
-                                (λ xD → nx (sing-sing o (o-ms oα x xα) (fst (fst (snd D₀) x) xD)))
-        zα = down oα xα zx
-    in none ( z , member-ord oα zα
-            , (λ rz → nzD (snd (fst (snd D₀) z) (sing-reg (opp o) rz)))
-            , (λ y yz → sing-sing o (o-ms oα y (o-tr oα z y yz zα)) (fst (fst (snd D₀) y) (zD y yz))))
-    where
-    -- D := {x | x has a singleton}; its s-face: has a c-singleton.
-    D₀ = comp o (sing-f fz) [] (λ ())
-    D = fst D₀
-    impure : ¬ (Σ M λ p → Ord s p × ¬ Reg p × ((y : M) → E s y p → Reg y)) →
-             Σ M λ x → E s x α × ¬ Reg x
-    impure none = dne _ λ nx → none (α , oα , nα , λ y yα → dne _ λ ny → nx (y , yα , ny))
-
-  -- Case B: both sides have irregular ordinals.  Their pure representatives
-  -- p, q both have face "all regular ordinals with regular members", so ME
-  -- identifies them and p is regular.
-  both : {p q : M} → Ord ∈ p → ¬ Reg p → ((y : M) → E ∈ y p → Reg y) →
-                      Ord ε q → ¬ Reg q → ((y : M) → E ε y q → Reg y) → ⊥
-  both {p} {q} op np pp oq nq pq = np (subst (λ v → (x : M) → E ∈ x p ↔ E ε x v) (sym (ME p q face)) face)
-    where
-    face : (x : M) → E ∈ x p ↔ E ε x q
-    face x = (λ xp → cut ε∈ oq nq (pp x xp) (ord-flip ∈ε (pp x xp) (member-ord op xp))
-                         (λ y yx → pp y (o-tr op x y (move ε ∈ (pp x xp) yx) xp)))
-           , (λ xq → cut ∈ε op np (pq x xq) (ord-flip ε∈ (pq x xq) (member-ord oq xq))
-                         (λ y yx → pq y (o-tr oq x y (move ∈ ε (pq x xq) yx) xq)))
-
-  -- Case A: every ordinal of side c is regular.  Then the ordinal formula is
-  -- asymmetric from c to b, with W := {x | ord(x)}, and the diagonal applies.
-  one : {b c : Side} → Opp b c → ((x : M) → Ord c x → Reg x) → ⊥
-  one {b} {c} o poor =
-    Diagonal.contradiction M E COMP (ord-f fz) [] (λ ()) o
-      (rich , (λ x y ox → o-irr ox y) , w , wb , wc , w-ord)
+  -- Proposition 1: if every ordinal of side c is regular, the ordinal formula
+  -- is asymmetric from c to b, with W := {x | ord(x)}.
+  one : {b c : Side} → Opp b c → ((x : M) → Ord c x → Reg x) → Asymmetric E (ord-f fz) [] b c
+  one {b} {c} o poor = rich , (λ x y ox → o-irr ox y) , w , wb , wc , w-ord
     where
     W = comp o (ord-f fz) [] (λ ())
     w = fst W
@@ -642,17 +581,65 @@ module Proof (M : Set) (E : Rel M) (T : DEST⁻ M E) (dne : DNE) where
                              compare o (poor y oy) (poor z oz) (rich y oy) (rich z oz))
           , (λ k x xw nxk → self-wf (rich x (fst (wb x) xw)) nxk)
 
-  -- Each side has an irregular ordinal (else Case A); then Case B.
-  irregular : {b c : Side} → Opp b c → Σ M λ a → Ord c a × ¬ Reg a
-  irregular o = dne _ λ none → one o (λ x ox → dne _ λ nx → none (x , ox , nx))
+  -- Cut: an irregular ordinal p contains every regular ordinal t whose
+  -- members are regular.
+  cut : {s c : Side} → Opp s c → {p t : M} → Ord s p → ¬ Reg p →
+        Reg t → Ord s t → ((y : M) → E s y t → Reg y) → E s t p
+  cut {s} o {p} {t} op np rt ot tpure = inside rt ot sub
+    where
+    inside : {z : M} → Reg z → Ord s z → ((x : M) → E s x z → E s x p) → E s z p
+    inside rz oz zp = case seg o op rz (o-tr oz) zp of λ
+      { (inl e) → ⊥-elim (np (subst Reg e rz)) ; (inr zp′) → zp′ }
+    sub : (x : M) → E s x t → E s x p
+    sub x xt = dne _ λ nxp →
+      let (z , zx , nzp , zp) = o-wf ot p x xt nxp
+          zt = down ot xt zx
+      in nzp (inside (tpure z zt) (member-ord ot zt) zp)
 
+  -- Descent: below an irregular ordinal there is one whose members are regular.
+  descent : {s c : Side} → Opp s c → {α : M} → Ord s α → ¬ Reg α →
+            Σ M λ p → Ord s p × ¬ Reg p × ((y : M) → E s y p → Reg y)
+  descent {s} {c} o {α} oα nα = dne _ λ none →
+    let (x , xα , nx) = impure none
+        (z , zx , nzD , zD) = o-wf oα D x xα
+                                (λ xD → nx (sing-sing o (o-ms oα x xα) (fst (fst (snd D₀) x) xD)))
+        zα = down oα xα zx
+    in none ( z , member-ord oα zα
+            , (λ rz → nzD (snd (fst (snd D₀) z) (sing-reg (opp o) rz)))
+            , (λ y yz → sing-sing o (o-ms oα y (o-tr oα z y yz zα)) (fst (fst (snd D₀) y) (zD y yz))))
+    where
+    -- D := {x | x has a singleton}; its s-face: has a c-singleton.
+    D₀ = comp o (sing-f fz) [] (λ ())
+    D = fst D₀
+    impure : ¬ (Σ M λ p → Ord s p × ¬ Reg p × ((y : M) → E s y p → Reg y)) →
+             Σ M λ x → E s x α × ¬ Reg x
+    impure none = dne _ λ nx → none (α , oα , nα , λ y yα → dne _ λ ny → nx (y , yα , ny))
+
+  -- Proposition 2: the two sides do not both have irregular ordinals.  By
+  -- descent, take p and q whose members are regular; by cut, F_∈(p) = F_ε(q),
+  -- so ME identifies them and p is regular.
+  both : {a a′ : M} → Ord ∈ a → ¬ Reg a → Ord ε a′ → ¬ Reg a′ → ⊥
+  both oa na oa′ na′ =
+    let (p , op , np , pp) = descent ∈ε oa na
+        (q , oq , nq , pq) = descent ε∈ oa′ na′
+        face : (x : M) → E ∈ x p ↔ E ε x q
+        face x = (λ xp → cut ε∈ oq nq (pp x xp) (ord-flip ∈ε (pp x xp) (member-ord op xp))
+                             (λ y yx → pp y (o-tr op x y (move ε ∈ (pp x xp) yx) xp)))
+               , (λ xq → cut ∈ε op np (pq x xq) (ord-flip ε∈ (pq x xq) (member-ord oq xq))
+                             (λ y yx → pq y (o-tr oq x y (move ∈ ε (pq x xq) yx) xq)))
+    in np (subst (λ v → (x : M) → E ∈ x p ↔ E ε x v) (sym (ME p q face)) face)
+
+  -- By Proposition 1 and the diagonal, each side has an irregular ordinal.
+  irregular : {b c : Side} → Opp b c → Σ M λ a → Ord c a × ¬ Reg a
+  irregular o = dne _ λ none → Diagonal.contradiction M E COMP (ord-f fz) [] (λ ()) o
+                                 (one o (λ x ox → dne _ λ nx → none (x , ox , nx)))
+
+  -- Theorem 2: irregular ordinals on both sides contradict Proposition 2.
   refutation : ⊥
   refutation =
     let (a , oa , na) = irregular ε∈
         (a′ , oa′ , na′) = irregular ∈ε
-        (p , op , np , pp) = descent ∈ε oa na
-        (q , oq , nq , pq) = descent ε∈ oa′ na′
-    in both op np pp oq nq pq
+    in both oa na oa′ na′
 
 ------------------------------------------------------------------------
 -- 4. The theorems

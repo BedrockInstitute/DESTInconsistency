@@ -1,8 +1,11 @@
 name = "DESTInconsistency"
-defaultTargets = ["DESTInconsistency", "Probes"]
+defaultTargets = ["DESTInconsistency", "Probes", "Intuitionistic"]
 
 [[lean_lib]]
 name = "DESTInconsistency"
 
 [[lean_lib]]
 name = "Probes"
+
+[[lean_lib]]
+name = "Intuitionistic"

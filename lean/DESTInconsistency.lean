@@ -200,19 +200,6 @@ def Ord (s : Side) (a : M) : Prop :=
 
 def Xor (P Q : Prop) : Prop := P ∧ ¬ Q ∨ ¬ P ∧ Q
 
-variable {E}
-
-theorem sat_sing (s : Side) (i : Fin n) (ρ : Fin n → M) :
-    Sat E s (singF i) ρ ↔ Sing E s (ρ i) := Iff.rfl
-theorem sat_trans (s : Side) (i : Fin n) (ρ : Fin n → M) :
-    Sat E s (transF i) ρ ↔ Trans E s (ρ i) := Iff.rfl
-theorem sat_tri (s : Side) (i : Fin n) (ρ : Fin n → M) :
-    Sat E s (triF i) ρ ↔ Tri E s (ρ i) := Iff.rfl
-theorem sat_wf (s : Side) (i : Fin n) (ρ : Fin n → M) :
-    Sat E s (wfF i) ρ ↔ WF E s (ρ i) := Iff.rfl
-theorem sat_ord (s : Side) (i : Fin n) (ρ : Fin n → M) :
-    Sat E s (ordF i) ρ ↔ Ord E s (ρ i) := Iff.rfl
-
 end Readings
 
 /-! ### Sides -/
@@ -269,6 +256,11 @@ theorem not_self (oa : Ord E s a) : ¬ E s a a := fun aa => o_irr oa a aa aa
 
 /-! ### Renaming does what it should -/
 
+theorem lift_ok {f : Fin m → Fin n} {ρ : Fin n → M} {σ : Fin m → M}
+    (h : ∀ i, ρ (f i) = σ i) (x : M) : ∀ i, cons x ρ (lift f i) = cons x σ i
+  | ⟨0, _⟩ => rfl
+  | ⟨j + 1, hj⟩ => h ⟨j, Nat.lt_of_succ_lt_succ hj⟩
+
 theorem sat_ren {s : Side} : ∀ {m n : Nat} (f : Fin m → Fin n) (φ : Fm m) (ρ : Fin n → M)
     (σ : Fin m → M), (∀ i, ρ (f i) = σ i) → (Sat E s (ren f φ) ρ ↔ Sat E s φ σ)
   | _, _, f, .mem i j, ρ, σ, h => by
@@ -277,40 +269,12 @@ theorem sat_ren {s : Side} : ∀ {m n : Nat} (f : Fin m → Fin n) (φ : Fm m) (
   | _, _, f, .eq i j, ρ, σ, h => by
     show ρ (f i) = ρ (f j) ↔ σ i = σ j
     rw [h i, h j]
-  | _, _, f, .not φ, ρ, σ, h => by
-    show ¬ Sat E s (ren f φ) ρ ↔ ¬ Sat E s φ σ
-    have r := sat_ren (s := s) f φ ρ σ h
-    exact ⟨fun n a => n (r.mpr a), fun n a => n (r.mp a)⟩
-  | _, _, f, .and φ ψ, ρ, σ, h => by
-    show Sat E s (ren f φ) ρ ∧ Sat E s (ren f ψ) ρ ↔ Sat E s φ σ ∧ Sat E s ψ σ
-    have r := sat_ren (s := s) f φ ρ σ h
-    have q := sat_ren (s := s) f ψ ρ σ h
-    exact ⟨fun ⟨a, b⟩ => ⟨r.mp a, q.mp b⟩, fun ⟨a, b⟩ => ⟨r.mpr a, q.mpr b⟩⟩
-  | _, _, f, .or φ ψ, ρ, σ, h => by
-    show Sat E s (ren f φ) ρ ∨ Sat E s (ren f ψ) ρ ↔ Sat E s φ σ ∨ Sat E s ψ σ
-    have r := sat_ren (s := s) f φ ρ σ h
-    have q := sat_ren (s := s) f ψ ρ σ h
-    exact ⟨fun | .inl a => .inl (r.mp a) | .inr b => .inr (q.mp b),
-           fun | .inl a => .inl (r.mpr a) | .inr b => .inr (q.mpr b)⟩
-  | _, _, f, .imp φ ψ, ρ, σ, h => by
-    show (Sat E s (ren f φ) ρ → Sat E s (ren f ψ) ρ) ↔ (Sat E s φ σ → Sat E s ψ σ)
-    have r := sat_ren (s := s) f φ ρ σ h
-    have q := sat_ren (s := s) f ψ ρ σ h
-    exact ⟨fun g a => q.mp (g (r.mpr a)), fun g a => q.mpr (g (r.mp a))⟩
-  | _, _, f, .all φ, ρ, σ, h => by
-    show (∀ x, Sat E s (ren (lift f) φ) (cons x ρ)) ↔ ∀ x, Sat E s φ (cons x σ)
-    have l : ∀ x, ∀ i, cons x ρ (lift f i) = cons x σ i := fun x => fun
-      | ⟨0, _⟩ => rfl
-      | ⟨j + 1, hj⟩ => h ⟨j, Nat.lt_of_succ_lt_succ hj⟩
-    exact ⟨fun g x => (sat_ren (s := s) (lift f) φ _ _ (l x)).mp (g x),
-           fun g x => (sat_ren (s := s) (lift f) φ _ _ (l x)).mpr (g x)⟩
-  | _, _, f, .ex φ, ρ, σ, h => by
-    show (∃ x, Sat E s (ren (lift f) φ) (cons x ρ)) ↔ ∃ x, Sat E s φ (cons x σ)
-    have l : ∀ x, ∀ i, cons x ρ (lift f i) = cons x σ i := fun x => fun
-      | ⟨0, _⟩ => rfl
-      | ⟨j + 1, hj⟩ => h ⟨j, Nat.lt_of_succ_lt_succ hj⟩
-    exact ⟨fun ⟨x, a⟩ => ⟨x, (sat_ren (s := s) (lift f) φ _ _ (l x)).mp a⟩,
-           fun ⟨x, a⟩ => ⟨x, (sat_ren (s := s) (lift f) φ _ _ (l x)).mpr a⟩⟩
+  | _, _, f, .not φ, ρ, σ, h => not_congr (sat_ren f φ ρ σ h)
+  | _, _, f, .and φ ψ, ρ, σ, h => and_congr (sat_ren f φ ρ σ h) (sat_ren f ψ ρ σ h)
+  | _, _, f, .or φ ψ, ρ, σ, h => or_congr (sat_ren f φ ρ σ h) (sat_ren f ψ ρ σ h)
+  | _, _, f, .imp φ ψ, ρ, σ, h => imp_congr (sat_ren f φ ρ σ h) (sat_ren f ψ ρ σ h)
+  | _, _, f, .all φ, ρ, σ, h => forall_congr' fun x => sat_ren (lift f) φ _ _ (lift_ok h x)
+  | _, _, f, .ex φ, ρ, σ, h => exists_congr fun x => sat_ren (lift f) φ _ _ (lift_ok h x)
 
 /-! ### The reading of the diagonal formula -/
 
@@ -321,30 +285,24 @@ def PhiS (E : Side → M → M → Prop) {k : Nat} (P : Fm (k + 1)) (ρ : Fin k 
     (E t U z ∧ Xor (E t z z) (∃ u, Sat E t P (cons u ρ) ∧ ¬ E t u z))
 
 theorem sat_diagF {k : Nat} (P : Fm (k + 1)) (ρ : Fin k → M) (U : M) (t : Side) (z : M) :
-    Sat E t (diagF P) (cons z (cons U ρ)) ↔ PhiS E P ρ U t z := by
-  have hz : Sat E t (ren atZ P) (cons z (cons U ρ)) ↔ Sat E t P (cons z ρ) :=
-    sat_ren atZ P (cons z (cons U ρ)) (cons z ρ) fun
-      | ⟨0, _⟩ => rfl
-      | ⟨_ + 1, _⟩ => rfl
-  have hu : ∀ u, Sat E t (ren atU P) (cons u (cons z (cons U ρ))) ↔ Sat E t P (cons u ρ) :=
-    fun u => sat_ren atU P (cons u (cons z (cons U ρ))) (cons u ρ) fun
-      | ⟨0, _⟩ => rfl
-      | ⟨_ + 1, _⟩ => rfl
+    Sat E t (diagF P) (cons z (cons U ρ)) ↔ PhiS E P ρ U t z :=
   have hθ : Sat E t (thetaF P) (cons z (cons U ρ)) ↔ ∃ u, Sat E t P (cons u ρ) ∧ ¬ E t u z :=
-    ⟨fun ⟨u, pu, nu⟩ => ⟨u, (hu u).mp pu, nu⟩, fun ⟨u, pu, nu⟩ => ⟨u, (hu u).mpr pu, nu⟩⟩
-  constructor
-  · intro h
-    rcases h with e | p | ⟨uz, ⟨zz, nθ⟩ | ⟨nzz, θ⟩⟩
-    · exact .inl e
-    · exact .inr (.inl (hz.mp p))
-    · exact .inr (.inr ⟨uz, .inl ⟨zz, fun θ' => nθ (hθ.mpr θ')⟩⟩)
-    · exact .inr (.inr ⟨uz, .inr ⟨nzz, hθ.mp θ⟩⟩)
-  · intro h
-    rcases h with e | p | ⟨uz, ⟨zz, nθ⟩ | ⟨nzz, θ⟩⟩
-    · exact .inl e
-    · exact .inr (.inl (hz.mpr p))
-    · exact .inr (.inr ⟨uz, .inl ⟨zz, fun θ' => nθ (hθ.mp θ')⟩⟩)
-    · exact .inr (.inr ⟨uz, .inr ⟨nzz, hθ.mpr θ⟩⟩)
+    exists_congr fun _ =>
+      and_congr (sat_ren atU P _ _ fun | ⟨0, _⟩ => rfl | ⟨_ + 1, _⟩ => rfl) .rfl
+  or_congr .rfl (or_congr (sat_ren atZ P _ _ fun | ⟨0, _⟩ => rfl | ⟨_ + 1, _⟩ => rfl)
+    (and_congr .rfl (or_congr (and_congr .rfl (not_congr hθ)) (and_congr .rfl hθ))))
+
+/-! ### The exclusive-or lemma: propositional and intuitionistic -/
+
+/-- With X = (A ∈_s A), Y = (A ∈_s̄ A), S = φ^s(A), T = φ^s̄(A):
+if X ↔ (Y ⊕ T) and Y ↔ (X ⊕ S), then S and ¬T do not both hold. -/
+theorem xor_lemma (hx : X ↔ Xor Y T) (hy : Y ↔ Xor X S) (s : S) (nt : ¬ T) : False :=
+  have nx : ¬ X := fun x => match hx.mp x with
+    | .inl ⟨y, _⟩ => match hy.mp y with
+      | .inl ⟨_, ns⟩ => ns s
+      | .inr ⟨n, _⟩ => n x
+    | .inr ⟨_, t⟩ => nt t
+  nx (hx.mpr (.inl ⟨hy.mpr (.inr ⟨nx, s⟩), nt⟩))
 
 /-! ### What comprehension alone gives -/
 
@@ -394,23 +352,13 @@ theorem diagonal_core {k : Nat} (P : Fm (k + 1)) (ρ : Fin k → M)
   have UAb : E b U A := (Ab U).mpr (.inl rfl)
   have UAc : E c U A := (Ac U).mpr (.inl rfl)
   have A_not : ¬ Sat E b P (cons A ρ) := fun pa => irr A U pa UAb (full b U)
-  -- At z = A only the last disjunct can hold.
-  have x_y : E b A A → E c A A := fun x => by
-    rcases (Ab A).mp x with e | pa | ⟨_, ⟨y, _⟩ | ⟨_, θ⟩⟩
-    · exact absurd e AU
-    · exact absurd (rich A pa) A_not
-    · exact y
-    · exact absurd θ nθc
-  have y_x : E c A A → E b A A := fun y => (Ab A).mpr (.inr (.inr ⟨UAc, .inl ⟨y, nθc⟩⟩))
-  have y_nx : E c A A → ¬ E b A A := fun y => by
-    rcases (Ac A).mp y with e | pa | ⟨_, ⟨_, nθ⟩ | ⟨nx, _⟩⟩
-    · exact absurd e AU
-    · exact absurd pa A_not
-    · exact absurd θb nθ
-    · exact nx
-  have nx_y : ¬ E b A A → E c A A := fun nx => (Ac A).mpr (.inr (.inr ⟨UAb, .inr ⟨nx, θb⟩⟩))
-  have no_x : ¬ E b A A := fun x => y_nx (x_y x) x
-  exact no_x (y_x (nx_y no_x))
+  -- At z = A only the last disjunct can hold, so the exclusive-or lemma applies.
+  have last : ∀ {t}, E t U A → ¬ Sat E t P (cons A ρ) →
+      (PhiS E P ρ U t A ↔ Xor (E t A A) (∃ u, Sat E t P (cons u ρ) ∧ ¬ E t u A)) :=
+    fun UA np => ⟨fun | .inl e => absurd e AU | .inr (.inl pa) => absurd pa np
+                      | .inr (.inr ⟨_, x⟩) => x, fun x => .inr (.inr ⟨UA, x⟩)⟩
+  exact xor_lemma ((Ab A).trans (last UAc fun pa => A_not (rich A pa)))
+    ((Ac A).trans (last UAb A_not)) θb nθc
 
 end WithC
 
@@ -456,18 +404,16 @@ theorem sing_sing (o : Opp s c) : Sing E s y → Sing E c y → Regular E y := b
   subst e₂
   exact reg_of o fun x => (ck x).symm
 
-/-- At a regular point the two readings of the ordinal formula agree
-(Holmes Lemma 2.11, by the constant-column argument). -/
-theorem ord_flip (o : Opp s c) (rr : Regular E r) (or : Ord E s r) : Ord E c r := by
-  obtain ⟨U, full⟩ := univ T.COMP
-  obtain ⟨A, hA⟩ := comp T.COMP o (ordF (fs fz)) (cons r nil) (regCons rr regNil)
-  have e : A = U := me T o.symm A U fun x => ⟨fun _ => full s x, fun _ => (hA x).2.mpr or⟩
-  have hUA : E s U A := by rw [e]; exact full s U
-  exact (hA U).1.mp hUA
-
 section WithDNE
 variable (dne : ∀ P : Prop, ¬¬P → P)
 include dne
+
+/-- At a regular point the two readings of the ordinal formula agree
+(Holmes Lemma 2.11): the exclusive-or lemma for {x | x ∈ x ⊕ ord(r)}. -/
+theorem ord_flip (o : Opp s c) (rr : Regular E r) (or : Ord E s r) : Ord E c r := by
+  obtain ⟨A, hA⟩ := comp T.COMP o (xorF (.mem fz fz) (ordF (fs fz))) (cons r nil)
+    (regCons rr regNil)
+  exact dne _ fun n => xor_lemma (hA A).1 (hA A).2 or n
 
 omit T in
 theorem self_wf (ox : Ord E s x) (nxk : ¬ E s x k) :
@@ -513,8 +459,26 @@ theorem compare (o : Opp s c) (rα : Regular E α) (rβ : Regular E β)
   · exact .inr (.inr (b ▸ a))
   · exact absurd ((g γ).mpr ⟨a, b⟩) (o_irr oα γ a)
 
-/-- An irregular ordinal p contains every regular ordinal t whose members are
-regular. -/
+/-- Proposition 1: if every ordinal of side c is regular, the ordinal formula is
+asymmetric from c to b, with W := {x | ord(x)}. -/
+theorem one (o : Opp b c) (poor : ∀ x, Ord E c x → Regular E x) :
+    Asymmetric E (ordF fz) nil b c := by
+  obtain ⟨w, hW⟩ := comp T.COMP o (ordF fz) nil regNil
+  have wb : ∀ x, E b x w ↔ Ord E c x := fun x => (hW x).1
+  have rich : ∀ x, Ord E c x → Ord E b x := fun x ox => ord_flip T dne o.symm (poor x ox) ox
+  have w_ord : Ord E b w :=
+    ⟨fun y z zy yw => (wb z).mpr
+        (member_ord ((wb y).mp yw) (move b c (poor y ((wb y).mp yw)) zy)),
+     fun y yw => o_tr (rich y ((wb y).mp yw)),
+     fun y yw => not_self (rich y ((wb y).mp yw)),
+     fun y yw => sing_reg T o (poor y ((wb y).mp yw)),
+     fun y z yw zw => compare T dne o (poor y ((wb y).mp yw)) (poor z ((wb z).mp zw))
+        (rich y ((wb y).mp yw)) (rich z ((wb z).mp zw)),
+     fun _ x xw nxk => self_wf dne (rich x ((wb x).mp xw)) nxk⟩
+  exact ⟨rich, fun _ y ox => o_irr ox y, w, wb, fun x => (hW x).2, w_ord⟩
+
+/-- Cut: an irregular ordinal p contains every regular ordinal t whose members
+are regular. -/
 theorem cut (o : Opp s c) (op : Ord E s p) (np : ¬ Regular E p) (rt : Regular E t)
     (ot : Ord E s t) (tpure : ∀ y, E s y t → Regular E y) : E s t p := by
   have inside : ∀ z, Regular E z → Ord E s z → (∀ x, E s x z → E s x p) → E s z p :=
@@ -527,7 +491,7 @@ theorem cut (o : Opp s c) (op : Ord E s p) (np : ¬ Regular E p) (rt : Regular E
     have zt := down ot xt zx
     exact nzp (inside z (tpure z zt) (member_ord ot zt) zp)
 
-/-- Below an irregular ordinal there is one whose members are regular. -/
+/-- Descent: below an irregular ordinal there is one whose members are regular. -/
 theorem descent (o : Opp s c) (oα : Ord E s α) (nα : ¬ Regular E α) :
     ∃ p : M, Ord E s p ∧ ¬ Regular E p ∧ ∀ y, E s y p → Regular E y := by
   -- D := {x | x has a singleton}; its s-face: has a c-singleton.
@@ -543,47 +507,32 @@ theorem descent (o : Opp s c) (oα : Ord E s α) (nα : ¬ Regular E α) :
     fun rz => nzD ((hD z).1.mpr (sing_reg T o.symm rz)),
     fun y yz => sing_sing T o (o_ms oα y (o_tr oα z y yz zα)) ((hD y).1.mp (zD y yz))⟩
 
-/-- Case B: both sides have irregular ordinals.  Their pure representatives
-have the same face, so ME identifies them and p is regular. -/
-theorem both (op : Ord E .mem p) (np : ¬ Regular E p) (pp : ∀ y, E .mem y p → Regular E y)
-    (oq : Ord E .eps q) (nq : ¬ Regular E q) (pq : ∀ y, E .eps y q → Regular E y) : False := by
+/-- Proposition 2: the two sides do not both have irregular ordinals.  By
+descent, take p and q whose members are regular; by cut, F_∈(p) = F_ε(q), so ME
+identifies them and p is regular. -/
+theorem both (oa : Ord E .mem a) (na : ¬ Regular E a) (oa' : Ord E .eps a')
+    (na' : ¬ Regular E a') : False := by
+  obtain ⟨p, op, np, pp⟩ := descent T dne .me oa na
+  obtain ⟨q, oq, nq, pq⟩ := descent T dne .em oa' na'
   have face : ∀ x, E .mem x p ↔ E .eps x q := fun x =>
-    ⟨fun xp => cut T dne .em oq nq (pp x xp) (ord_flip T .me (pp x xp) (member_ord op xp))
+    ⟨fun xp => cut T dne .em oq nq (pp x xp) (ord_flip T dne .me (pp x xp) (member_ord op xp))
         fun y yx => pp y (o_tr op x y (move .eps .mem (pp x xp) yx) xp),
-     fun xq => cut T dne .me op np (pq x xq) (ord_flip T .em (pq x xq) (member_ord oq xq))
+     fun xq => cut T dne .me op np (pq x xq) (ord_flip T dne .em (pq x xq) (member_ord oq xq))
         fun y yx => pq y (o_tr oq x y (move .mem .eps (pq x xq) yx) xq)⟩
   have e : p = q := T.ME p q face
   subst e
   exact np face
 
-/-- Case A: every ordinal of side c is regular.  Then the ordinal formula is
-asymmetric from c to b, with W := {x | ord(x)}, and the diagonal applies. -/
-theorem one (o : Opp b c) (poor : ∀ x, Ord E c x → Regular E x) : False := by
-  obtain ⟨w, hW⟩ := comp T.COMP o (ordF fz) nil regNil
-  have wb : ∀ x, E b x w ↔ Ord E c x := fun x => (hW x).1
-  have rich : ∀ x, Ord E c x → Ord E b x := fun x ox => ord_flip T o.symm (poor x ox) ox
-  have w_ord : Ord E b w :=
-    ⟨fun y z zy yw => (wb z).mpr
-        (member_ord ((wb y).mp yw) (move b c (poor y ((wb y).mp yw)) zy)),
-     fun y yw => o_tr (rich y ((wb y).mp yw)),
-     fun y yw => not_self (rich y ((wb y).mp yw)),
-     fun y yw => sing_reg T o (poor y ((wb y).mp yw)),
-     fun y z yw zw => compare T dne o (poor y ((wb y).mp yw)) (poor z ((wb z).mp zw))
-        (rich y ((wb y).mp yw)) (rich z ((wb z).mp zw)),
-     fun _ x xw nxk => self_wf dne (rich x ((wb x).mp xw)) nxk⟩
-  exact diagonal_core T.COMP (ordF fz) nil regNil o
-    ⟨rich, fun _ y ox => o_irr ox y, w, wb, fun x => (hW x).2, w_ord⟩
-
-/-- Each side has an irregular ordinal (else Case A). -/
+/-- By Proposition 1 and the diagonal, each side has an irregular ordinal. -/
 theorem irregular (o : Opp b c) : ∃ a : M, Ord E c a ∧ ¬ Regular E a :=
-  dne _ fun none => one T dne o fun x ox => dne _ fun nx => none ⟨x, ox, nx⟩
+  dne _ fun none => diagonal_core T.COMP (ordF fz) nil regNil o
+    (one T dne o fun x ox => dne _ fun nx => none ⟨x, ox, nx⟩)
 
+/-- Theorem 2: irregular ordinals on both sides contradict Proposition 2. -/
 theorem refutation : False := by
   obtain ⟨a, oa, na⟩ := irregular T dne Opp.em
   obtain ⟨a', oa', na'⟩ := irregular T dne Opp.me
-  obtain ⟨p, op, np, pp⟩ := descent T dne .me oa na
-  obtain ⟨q, oq, nq, pq⟩ := descent T dne .em oa' na'
-  exact both T dne op np pp oq nq pq
+  exact both T dne oa na oa' na'
 
 end WithDNE
 end WithT

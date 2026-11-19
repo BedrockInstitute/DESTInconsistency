@@ -11,8 +11,12 @@ The core is a diagonal theorem: comprehension alone refutes every formula that i
 | `pdf/` | The paper, English (`dest-inconsistency.en.pdf`) and Chinese (`dest-inconsistency.zh.pdf`) |
 | `tex/` | LaTeX sources of both versions and the build script `build.sh` |
 | `blind-test/diagonal-summary.zh.png` | One-page summary of the diagonal, the input of the second blind formalization |
+| `blind-test/intuitionistic-input.md` | Input of the third blind formalization: Sections 1–5 of the first version of the paper as plain text, and a draft of the intuitionistic proof in Chinese. The lines mentioning the code were filtered out, which also removed the first line of each definition, theorem, lemma and proposition, and two lines of the draft |
+| `blind-test/intuitionistic.lean` | Output of the third blind formalization: a Lean 4 formalization of the intuitionistic proof; check with `lean intuitionistic.lean` (Lean v4.36.0) |
 | `agda/DESTInconsistency.agda` | Agda formalization: one file, no imports |
 | `lean/` | Lean 4 formalization: no libraries; `Probes.lean` holds sanity checks |
+| `agda/Intuitionistic.agda`, `lean/Intuitionistic.lean` | Additional code: a variant of the proof that uses no classical logic, with a different ordinal formula (paper, Sections 2 and 6) |
+| `agda/Supplement.agda` | Additional code: `kisielewicz-strict`, `me-localized`, `irregular-ordinals`, cited in Sections 1, 5 and 8 of the paper |
 
 ## Checking the proofs
 
@@ -28,6 +32,15 @@ Sections 0–1 of the file (logic, syntax, the two readings, the axioms, asymmet
 - `DEST-inconsistent : (M : Set) (E : Rel M) → DEST M E → DNE → ⊥`
 
 `DEST⁻` is ME + COMP; `DNE` is double-negation elimination, i.e. classical logic.
+
+The additional Agda files are checked in the same way:
+
+```
+agda --safe --no-libraries Intuitionistic.agda
+agda --safe --no-libraries Supplement.agda
+```
+
+`Intuitionistic.agda` has the trusted part of the main file without `DNE`; its theorems `inconsistent` and `DEST-inconsistent` take no `DNE` hypothesis. `Supplement.agda` imports nothing either; its trusted part is Sections 0–2 (Sections 0–1 and the ordinal formula of the main file, verbatim, and five definitions used in the statements) and the statements in Section 4 of `kisielewicz-strict`, `irregular-ordinals` and `me-localized`.
 
 **Lean 4**, in the `lean` directory (the toolchain `v4.36.0` is pinned in `lean-toolchain`; there are no dependencies):
 
@@ -46,6 +59,16 @@ Part I and the statements in Part III of `DESTInconsistency.lean` are the truste
 ```
 
 `inconsistent` takes classical logic as the explicit hypothesis `∀ P : Prop, ¬¬P → P`; the primed versions use Lean's built-in classical logic instead. `lake env leanchecker DESTInconsistency` re-checks the compiled development.
+
+`lake build` also builds the additional file `Intuitionistic.lean`, whose trusted part is that of the main file without the classical hypothesis. For it, the build prints:
+
+```
+'DEST.diagonal' does not depend on any axioms
+'DEST.inconsistent' does not depend on any axioms
+'DEST.DEST_inconsistent' does not depend on any axioms
+```
+
+`lake env leanchecker Intuitionistic` re-checks it.
 
 ## Building the paper
 

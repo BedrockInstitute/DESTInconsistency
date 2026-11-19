@@ -73,6 +73,9 @@
 \fi
 \newcommand{\defcode}[3]{\expandafter\def\csname code@#1\endcsname{\codepair{#2}{#3}}}
 \newcommand{\code}[1]{\ifcsname code@#1\endcsname\csname code@#1\endcsname\else\errmessage{Unknown code key #1}\fi}
+% 附加代码中的声明：正文里写作行内代码，链接到它所在的行．
+\newcommand{\defline}[3]{\expandafter\def\csname line@#1\endcsname{\href{\repo/#2\#L#3}}}
+\newcommand{\codeat}[2]{\ifcsname line@#1\endcsname\else\errmessage{Unknown code key #1}\fi\icode{\csname line@#1\endcsname{#2}}}
 \input{codelinks}
 
 % 脚注统一用符号：署名的标题注为 *，正文脚注依次为 \dag 等．
@@ -216,7 +219,7 @@ Holmes 借助均质性（regularity）公理证明了两种关系下的序数并
 \[
   A = \{\, z \mid z = V \;\vee\; \ord(z) \;\vee\; \bigl(V \in z \wedge (z \in z \oplus \Theta(z))\bigr) \,\}
 \]
-满足 $A \in A \leftrightarrow A \notin A$；同一论证可以驳倒一切在这个意义下不对称的公式．接着，我们不用均质性公理，仅用混合外延性与概括推出了序数的不对称．这一不对称的方向可能与 Holmes 的相反．全文只有这一步用到经典逻辑．两部分都已用 Agda 和 Lean~4 形式化．
+满足 $A \in A \leftrightarrow A \notin A$；同一论证可以驳倒一切在这个意义下不对称的公式．接着，我们不用均质性公理，仅用混合外延性与概括推出了序数的不对称．这一不对称的方向可能与 Holmes 的相反．全文只有这一步用到经典逻辑．两部分都已用 Agda 和 Lean~4 形式化．另有一个不用经典逻辑的证明变体，作为附加代码形式化．
 \end{abstract}
 
 \section{理论}\label{sec:1}
@@ -236,7 +239,7 @@ Holmes 借助均质性（regularity）公理证明了两种关系下的序数并
 
 \DEST{} 即 \hyperref[ax:ME]{\ME}{} + \hyperref[ax:COMP]{\COMP}{} + \hyperref[ax:REG]{\REG}{} \cite[\S2]{H05}，\cite[\S8.1]{HFL}．\DESTm{} 即 \hyperref[ax:ME]{\ME}{} + \hyperref[ax:COMP]{\COMP}．
 
-\paragraph{关于表述} 在 \cite{H05} 中，公理 2.8 把「存在 $\{x \mid \varphi\}$」写在了参数的全称量词之前．我们按照 Holmes 在证明中的用法，将其读作「对一切均质参数，存在 $A$」；若按字面理解，这条公理本身就已不一致．Kisielewicz 在 \cite{K98} 中削弱了他在 \cite{K89} 中的理论．他没有单列 \hyperref[ax:REG]{\REG}，而是通过参数条件把它并入 \hyperref[ax:COMP]{\COMP}：参数必须部分包含于某个合适的均质对象．这里 $x$ 部分包含于 $y$，是指对某一侧 $s$ 有 $F_s(x) \subseteq F_s(y)$\footnote{若这一条件还要求该均质对象的成员全是均质对象，就需要看证明用了哪些参数．\hyperref[thm:2]{定理~2} 的证明所用参数只有两个例外，其余都是均质对象，且其成员也全是均质对象．一个例外是全集 $V$，可以消去：把 $z = V$ 换成 $\forall y\,(y \in z)$，把 $V \in z$ 换成 ${\exists v\,(\forall y\,(y \in v)} \wedge {v \in z)}$；由 \hyperref[ax:ME]{\ME}，$s$-面为全域的对象只有 $V$．另一个例外是\hyperref[lem:3]{引理~3} 证明中的 $h$：它均质，但其成员未必均质．证明只在这一处依赖 Holmes 的等价论断．}．Holmes \cite[\S2]{H04} 指出，这与上面的写法等价．\cite[\S8.1]{HFL} 与 \cite[\S10]{SEP} 也正是按上面的写法，把这一理论列为开放问题．
+\paragraph{关于表述} 在 \cite{H05} 中，公理 2.8 把「存在 $\{x \mid \varphi\}$」写在了参数的全称量词之前．我们按照 Holmes 在证明中的用法，将其读作「对一切均质参数，存在 $A$」；若按字面理解，这条公理本身就已不一致．Kisielewicz 在 \cite{K98} 中削弱了他在 \cite{K89} 中的理论．他没有单列 \hyperref[ax:REG]{\REG}，而是通过参数条件把它并入 \hyperref[ax:COMP]{\COMP}：参数必须部分包含于某个合适的均质对象．这里 $x$ 部分包含于 $y$，是指对某一侧 $s$ 有 $F_s(x) \subseteq F_s(y)$\footnote{若这一条件还要求该均质对象的成员全是均质对象，就需要看证明用了哪些参数．\hyperref[thm:2]{定理~2} 的证明所用参数只有两个例外，其余都是均质对象，且其成员也全是均质对象．一个例外是全集 $V$，可以消去：把 $z = V$ 换成 $\forall y\,(y \in z)$，把 $V \in z$ 换成 ${\exists v\,(\forall y\,(y \in v)} \wedge {v \in z)}$；由 \hyperref[ax:ME]{\ME}，$s$-面为全域的对象只有 $V$．另一个例外是\hyperref[lem:4]{引理~4} 证明中的 $h$：它均质，但其成员未必均质．把 \hyperref[ord:O4]{(O4)} 与\hyperref[prop:2]{命题~2} 的 $D$ 中的「有单元集」换成「有一个本身有单元集的单元集」，这一例外也可以消去：此时\hyperref[lem:4]{引理~4} 的证明以 $h$ 的单元集为参数，这个单元集均质，唯一的成员 $h$ 也均质．所以按这种读法，理论在经典逻辑下同样不一致，见 \icode{agda/Supplement.agda} 中的 \codeat{kstrict}{kisielewicz-strict}．}．Holmes \cite[\S2]{H04} 指出，这与上面的写法等价．\cite[\S8.1]{HFL} 与 \cite[\S10]{SEP} 也正是按上面的写法，把这一理论列为开放问题．
 
 \section{不对称与结果}\label{sec:2}
 
@@ -261,37 +264,53 @@ Holmes 借助均质性（regularity）公理证明了两种关系下的序数并
 在经典逻辑下 \DESTm{} 不一致，因而 \DEST{} 不一致．
 \end{theorem}
 
-\hyperref[thm:1]{定理~1} 与序数的不对称合在一起，就能得出矛盾．序数的不对称有两种证法，任取其一即可．其一，Holmes 借助 \hyperref[ax:REG]{\REG}{} 得到的两条结论给出了这种不对称，因此\hyperref[thm:1]{定理~1} 已经驳倒完整的 \DEST．其二，\hyperref[thm:2]{定理~2} 的证明不用 \hyperref[ax:REG]{\REG}，仅凭 \hyperref[ax:ME]{\ME}{} 与 \hyperref[ax:COMP]{\COMP}{} 就推出序数从一侧到另一侧不对称，再由\hyperref[thm:1]{定理~1} 得出矛盾．后文安排如下：\hyperref[sec:3]{第 3 节}证明\hyperref[thm:1]{定理~1}；\hyperref[sec:4]{第 4 节}汇总均质对象与序数的若干事实；\hyperref[sec:5]{第 5 节}据此推出序数的不对称，并完成\hyperref[thm:2]{定理~2} 的证明．
+\hyperref[thm:1]{定理~1} 与序数的不对称合在一起，就能得出矛盾．序数的不对称有两种证法，任取其一即可．其一，Holmes 借助 \hyperref[ax:REG]{\REG}{} 得到的两条结论给出了这种不对称，因此\hyperref[thm:1]{定理~1} 已经驳倒完整的 \DEST．其二，\hyperref[thm:2]{定理~2} 的证明不用 \hyperref[ax:REG]{\REG}，仅凭 \hyperref[ax:ME]{\ME}{} 与 \hyperref[ax:COMP]{\COMP}{} 就推出序数从一侧到另一侧不对称，再由\hyperref[thm:1]{定理~1} 得出矛盾．换用另一个序数公式，证明可以不用经典逻辑；这一变体只在 \codeat{intagda}{agda/Intuitionistic.agda} 与 \codeat{intlean}{lean/Intuitionistic.lean} 中给出，由它过渡到一阶直觉主义逻辑所需的条件见\hyperref[sec:6]{第 6 节}．后文安排如下：\hyperref[sec:3]{第 3 节}证明\hyperref[thm:1]{定理~1}；\hyperref[sec:4]{第 4 节}汇总均质对象与序数的若干事实；\hyperref[sec:5]{第 5 节}据此推出序数的不对称，并完成\hyperref[thm:2]{定理~2} 的证明．
 
 \section{概括驳倒不对称}\label{sec:3}
 
-本节证明\hyperref[thm:1]{定理~1}．设 $P$ 从 $c$ 到 $b$ 不对称，$W$ 如 \hyperref[cond:iii]{(iii)} 所述．令 $V = \{x \mid x = x\}$，则它的两个面都是全域，因此 $V$ 均质，且 $V \in_s V$．令 $\Theta(z)$ 为 $\exists u\,(P(u) \wedge u \notin z)$，并令
+\hyperref[thm:1]{定理~1} 证明的最后一步只用到命题逻辑．\hyperref[lem:3]{引理~3} 的证明也用到这一步，所以先把它写成引理．
+
+\begin{lemma}[异或]\label{lem:1}\code{xor}
+设 $\varphi(z)$ 是齐一公式，对象 $A$ 对两侧 $s$ 都满足
+\[
+  A \in_s A \leftrightarrow \bigl(A \in_{\os} A \oplus \varphi^{\os}(A)\bigr),
+\]
+其中 $\oplus$ 表示异或：$z \in z \oplus \varphi(z)$ 即 \mbox{$(z \in z \wedge \neg\varphi(z)) \vee (z \notin z \wedge \varphi(z))$}，右边是它在 $A$ 处的 $\os$-读法．则不存在一侧 $s$，使 $\varphi^s(A)$ 与 $\neg\varphi^{\os}(A)$ 同时成立．
+\end{lemma}
+
+\begin{proof}
+设 $\varphi^s(A)$ 与 $\neg\varphi^{\os}(A)$ 成立，则上式取 $s$ 与取 $\os$ 时分别化为 $A \in_s A \leftrightarrow A \in_{\os} A$ 与 $A \in_{\os} A \leftrightarrow A \notin_s A$．若 $A \in_s A$，两式便给出 $A \notin_s A$，故 $A \notin_s A$．由此 $A \in_{\os} A$，进而 $A \in_s A$，矛盾．
+\end{proof}
+
+\begin{proof}[{\hyperref[thm:1]{定理~1}} 的证明]
+设 $P$ 从 $c$ 到 $b$ 不对称，$W$ 如 \hyperref[cond:iii]{(iii)} 所述．令 $V = \{x \mid x = x\}$，则它的两个面都是全域，因此 $V$ 均质，且 $V \in_s V$．令 $\Theta(z)$ 为 $\exists u\,(P(u) \wedge u \notin z)$，并令
 \[
   A = \{\, z \mid z = V \;\vee\; P(z) \;\vee\; \bigl(V \in z \wedge (z \in z \oplus \Theta(z))\bigr) \,\},
 \]
-其中参数为 $V$ 与 $P$ 中的参数；$\oplus$ 表示异或，$z \in z \oplus \Theta(z)$ 即 \mbox{$(z \in z \wedge \neg\Theta(z)) \vee (z \notin z \wedge \Theta(z))$}．于是 $z \in_b A$ 当且仅当条件的 $c$-读法在 $z$ 处成立，$z \in_c A$ 当且仅当它的 $b$-读法成立．
+其中参数为 $V$ 与 $P$ 中的参数．于是 $z \in_b A$ 当且仅当条件的 $c$-读法在 $z$ 处成立，$z \in_c A$ 当且仅当它的 $b$-读法成立．
 \begin{enumerate}[label=\arabic*.]
 \item 由 \hyperref[cond:ii]{(ii)} 可知 $P^b(V)$ 不成立，因为 $V \in_b V \in_b V$．又 $P^c(W)$ 不成立：否则由 \hyperref[cond:iii]{(iii)} 可得 $W \in_b W$，这与关于 $W$ 的 \hyperref[cond:ii]{(ii)} 矛盾．
 \item \textbf{\boldmath $\Theta^b(A)$ 成立}，因为 $W \notin_b A$．在 $W$ 处，条件的 $c$-读法中三个析取支都不成立：$P^b(W)$ 成立而 $P^b(V)$ 不成立，故 $W \neq V$；$P^c(W)$ 不成立；$V \in_c W$ 会由 \hyperref[cond:iii]{(iii)} 推出 $P^b(V)$，故也不成立．
 \item \textbf{\boldmath $\Theta^c(A)$ 不成立}\quad 若 $P^c(u)$，则由 \hyperref[cond:i]{(i)} 得 $P^b(u)$，从而 $u \in_c A$．
 \item \textbf{\boldmath 在 $z = A$ 处只剩最后一支}\quad 由第一支可知，$V \in_b A$ 且 $V \in_c A$．又 $A \neq V$，因为 $W \in_b V$ 而 $W \notin_b A$．由 \hyperref[cond:ii]{(ii)} 可知 $P^b(A)$ 不成立，因为 $V \in_b A$ 且 $V \in_b V$；再由 \hyperref[cond:i]{(i)} 可知 $P^c(A)$ 也不成立．
-\item 于是 $A \in_b A \leftrightarrow A \in_c A$，且 $A \in_c A \leftrightarrow A \notin_b A$．若 $A \in_b A$，两式便给出 $A \notin_b A$，故 $A \notin_b A$．由此 $A \in_c A$，进而 $A \in_b A$，矛盾．
+\item 于是对两侧 $s$ 都有 $A \in_s A \leftrightarrow (A \in_{\os} A \oplus \Theta^{\os}(A))$．由第 2、3 步，$\Theta^b(A)$ 成立而 $\Theta^c(A)$ 不成立，这与取 $\varphi = \Theta$ 应用\hyperref[lem:1]{引理~1} 的结论矛盾．
 \end{enumerate}
-上述每一步都不使用 \hyperref[ax:ME]{\ME}，也不使用经典逻辑．\qed
+这一证明与\hyperref[lem:1]{引理~1} 的证明都不使用 \hyperref[ax:ME]{\ME}，也不使用经典逻辑．
+\end{proof}
 
 \begin{remark*}[对角论证为何有效]
 罗素实例 $R = \{x \mid x \notin x\}$ 给出两个等价式：
 \[
   R \mathrel{\eps} R \leftrightarrow R \notin R, \qquad R \in R \leftrightarrow \neg(R \mathrel{\eps} R).
 \]
-两式合起来给出 $R \in R \leftrightarrow \neg\neg(R \in R)$，这并不矛盾：只要 $R \in R$ 与 $R \mathrel{\eps} R$ 一真一假，两式就都成立，结果只是 $R$ 异质（irregular）．对角对象 $A$ 则不同：$\Theta^b(A)$ 成立而 $\Theta^c(A)$ 不成立，于是只剩一次否定．由 $A \in_b A \leftrightarrow A \in_c A$ 与 $A \in_c A \leftrightarrow A \notin_b A$ 得 $A \in_b A \leftrightarrow A \notin_b A$，矛盾．
+两式合起来给出 $R \in R \leftrightarrow \neg\neg(R \in R)$，这并不矛盾：只要 $R \in R$ 与 $R \mathrel{\eps} R$ 一真一假，两式就都成立，结果只是 $R$ 异质（irregular）．对角对象 $A$ 则不同：$\Theta^b(A)$ 成立而 $\Theta^c(A)$ 不成立，于是\hyperref[lem:1]{引理~1} 证明中的两式只剩一次否定，得 $A \in_b A \leftrightarrow A \notin_b A$，矛盾．
 \end{remark*}
 
 \section{均质对象与序数}\label{sec:4}
 
 本节与下一节证明\hyperref[thm:2]{定理~2}，全文只有这两节用到 \hyperref[ax:ME]{\ME}{} 与经典逻辑．先列出关于均质对象的三条事实．
 
-\begin{lemma}[刚性]\label{lem:1}\code{same}
+\begin{lemma}[刚性]\label{lem:2}\code{same}
 若 $g$ 均质且 $F_s(z) = F_s(g)$，则 $z = g$．
 \end{lemma}
 
@@ -299,15 +318,15 @@ Holmes 借助均质性（regularity）公理证明了两种关系下的序数并
 $F_s(z) = F_s(g) = F_{\os}(g)$，故由 \hyperref[ax:ME]{\ME}{} 得 $z = g$．
 \end{proof}
 
-\begin{lemma}[{翻转，\cite[引理 2.11]{H05}}]\label{lem:2}\code{ordflip}
+\begin{lemma}[{翻转，\cite[引理 2.11]{H05}}]\label{lem:3}\code{ordflip}
 设 $\sigma$ 是参数均质的齐一句子，则 $\sigma^{\in} \leftrightarrow \sigma^{\eps}$．特别地，参数均质的齐一公式在每个均质对象处的两种读法一致．
 \end{lemma}
 
 \begin{proof}
-令 $V = \{x \mid x = x\}$，$A = \{x \mid \sigma\}$，其中 $x$ 不在 $\sigma$ 中出现．设 $\sigma^{\os}$ 成立，则 $F_s(A)$ 为全域，即 $F_{\os}(V)$，故由 \hyperref[ax:ME]{\ME}{} 得 $A = V$．于是 $F_{\os}(A)$ 也为全域；而这个面仅在 $\sigma^s$ 成立时非空．
+令 $A = \{x \mid x \in x \oplus \sigma\}$．由 \hyperref[ax:COMP]{\COMP}，对两侧 $s$ 都有 $A \in_s A \leftrightarrow (A \in_{\os} A \oplus \sigma^{\os})$．取 $\varphi = \sigma$ 应用\hyperref[lem:1]{引理~1}，可知不存在一侧 $s$ 使 $\sigma^s$ 与 $\neg\sigma^{\os}$ 同时成立，故由经典逻辑得 $\sigma^{\in} \leftrightarrow \sigma^{\eps}$．
 \end{proof}
 
-\begin{lemma}[{单元集，\cite[引理 2.10]{H05}}]\label{lem:3}\code{singreg}
+\begin{lemma}[{单元集，\cite[引理 2.10]{H05}}]\label{lem:4}\code{singreg}
 若 $F_s(h) = \{y\}$，则称 $h$ 为 $y$ 的 \emph{$s$-单元集}．均质对象在两侧都有单元集；反之，两侧都有单元集的对象必定均质．
 \end{lemma}
 
@@ -328,38 +347,36 @@ $\ord(a)$ 为下列条件的合取，是一个不带参数的齐一公式：
 满足 $\ord^s$ 的对象称为 \emph{$s$-序数}．在 ZF 中，$\ord$ 恰好定义了冯\jiange{}诺依曼序数．
 \end{definition*}
 
-\begin{lemma}[序数]\label{lem:4}\code{memberord}
+\begin{lemma}[序数]\label{lem:5}\code{memberord}
 \begin{enumerate}[label=(\arabic*)]
-\item \label{lem:4a}$s$-序数的 $s$-成员是 $s$-序数．
-\item \label{lem:4b}$s$-序数不是自身的 $s$-成员．
-\item \label{lem:4c}若 $x$ 是 $s$-序数且 $x \notin_s C$，则存在 $z$ 同时满足：$z = x$ 或 $z \in_s x$；$z \notin_s C$；$F_s(z) \subseteq F_s(C)$．
-\item \label{lem:4d}均质的 $s$-序数也是 $\os$-序数．
+\item \label{lem:5a}$s$-序数的 $s$-成员是 $s$-序数．
+\item \label{lem:5b}$s$-序数不是自身的 $s$-成员．
+\item \label{lem:5c}若 $x$ 是 $s$-序数且 $x \notin_s C$，则存在 $z$ 同时满足：$z = x$ 或 $z \in_s x$；$z \notin_s C$；$F_s(z) \subseteq F_s(C)$．
+\item \label{lem:5d}均质的 $s$-序数也是 $\os$-序数．
 \end{enumerate}
 \end{lemma}
 
 \begin{proof}
-(1) 设 $y$ 是 $a$ 的成员．由 $a$ 的 \hyperref[ord:O1]{(O1)}，$y$ 的成员都是 $a$ 的成员；于是 $y$ 的 \hyperref[ord:O1]{(O1)} 即 $a$ 的 \hyperref[ord:O2]{(O2)}，而 $y$ 的 \hyperref[ord:O2]{(O2)}--\hyperref[ord:O6]{(O6)} 都可由 $a$ 的相应条件推出．(2) 由 \hyperref[ord:O3]{(O3)} 即得．(3) 若 $F_s(x) \subseteq F_s(C)$，取 $z = x$．否则，对 $x$ 的某个不在 $C$ 中的成员应用 $x$ 的 \hyperref[ord:O6]{(O6)}，再应用 $x$ 的 \hyperref[ord:O1]{(O1)}．(4) 由\hyperref[lem:2]{引理~2} 即得．
+(1) 设 $y$ 是 $a$ 的成员．由 $a$ 的 \hyperref[ord:O1]{(O1)}，$y$ 的成员都是 $a$ 的成员；于是 $y$ 的 \hyperref[ord:O1]{(O1)} 即 $a$ 的 \hyperref[ord:O2]{(O2)}，而 $y$ 的 \hyperref[ord:O2]{(O2)}--\hyperref[ord:O6]{(O6)} 都可由 $a$ 的相应条件推出．(2) 由 \hyperref[ord:O3]{(O3)} 即得．(3) 若 $F_s(x) \subseteq F_s(C)$，取 $z = x$．否则，对 $x$ 的某个不在 $C$ 中的成员应用 $x$ 的 \hyperref[ord:O6]{(O6)}，再应用 $x$ 的 \hyperref[ord:O1]{(O1)}．(4) 由\hyperref[lem:3]{引理~3} 即得．
 \end{proof}
 
-\begin{lemma}[初始段]\label{lem:5}\code{seg}
+\begin{lemma}[初始段]\label{lem:6}\code{seg}
 设 $\alpha$ 是 $s$-序数，$\gamma$ 是均质对象，$F_s(\gamma) \subseteq F_s(\alpha)$，且由 $z \in_s y \in_s \gamma$ 可推出 $z \in_s \gamma$，则 $\gamma = \alpha$ 或 $\gamma \in_s \alpha$．
 \end{lemma}
 
 \begin{proof}
-若 $F_s(\alpha) \subseteq F_s(\gamma)$，则由\hyperref[lem:1]{引理~1} 得 $\gamma = \alpha$．否则，取 $x \in_s \alpha$ 且 $x \notin_s \gamma$，对 $\alpha$ 应用 \hyperref[ord:O6]{(O6)} 并取 $C = \gamma$，可得 $z \in_s \alpha$、$z \notin_s \gamma$，且 $F_s(z) \subseteq F_s(\gamma)$．另一方面，设 $y \in_s \gamma$，则 $y \in_s \alpha$；由 \hyperref[ord:O5]{(O5)}，$y \in_s z$、$y = z$、$z \in_s y$ 三者必居其一，而后两种都会使 $z$ 属于 $\gamma$．因此 $F_s(z) = F_s(\gamma)$，再由\hyperref[lem:1]{引理~1} 得 $z = \gamma$，于是 $\gamma \in_s \alpha$．
+若 $F_s(\alpha) \subseteq F_s(\gamma)$，则由\hyperref[lem:2]{引理~2} 得 $\gamma = \alpha$．否则，取 $x \in_s \alpha$ 且 $x \notin_s \gamma$，对 $\alpha$ 应用 \hyperref[ord:O6]{(O6)} 并取 $C = \gamma$，可得 $z \in_s \alpha$、$z \notin_s \gamma$，且 $F_s(z) \subseteq F_s(\gamma)$．另一方面，设 $y \in_s \gamma$，则 $y \in_s \alpha$；由 \hyperref[ord:O5]{(O5)}，$y \in_s z$、$y = z$、$z \in_s y$ 三者必居其一，而后两种都会使 $z$ 属于 $\gamma$．因此 $F_s(z) = F_s(\gamma)$，再由\hyperref[lem:2]{引理~2} 得 $z = \gamma$，于是 $\gamma \in_s \alpha$．
 \end{proof}
 
-\begin{lemma}[可比性]\label{lem:6}\code{compare}
+\begin{lemma}[可比性]\label{lem:7}\code{compare}
 设 $\alpha, \beta$ 是均质的 $s$-序数，则 $\alpha \in_s \beta$、$\alpha = \beta$、$\beta \in_s \alpha$ 三者必居其一．
 \end{lemma}
 
 \begin{proof}
-令 $\gamma = \{x \mid x \in \alpha \wedge x \in \beta\}$．它的 $s$-面与 $\os$-面分别是 $F_{\os}(\alpha) \cap F_{\os}(\beta)$ 与 $F_s(\alpha) \cap F_s(\beta)$；由于 $\alpha, \beta$ 均质，二者相等．因此 $\gamma$ 均质；又由 $\alpha, \beta$ 的 \hyperref[ord:O1]{(O1)} 可知，它满足\hyperref[lem:5]{引理~5} 的条件．根据\hyperref[lem:5]{引理~5}，$\gamma = \alpha$ 或 $\gamma \in_s \alpha$，且 $\gamma = \beta$ 或 $\gamma \in_s \beta$．若 $\gamma \in_s \alpha$ 且 $\gamma \in_s \beta$，则 $\gamma \in_s \gamma$，这与 $\alpha$ 的 \hyperref[ord:O3]{(O3)} 矛盾．其余三种组合恰好给出结论．
+令 $\gamma = \{x \mid x \in \alpha \wedge x \in \beta\}$．它的 $s$-面与 $\os$-面分别是 $F_{\os}(\alpha) \cap F_{\os}(\beta)$ 与 $F_s(\alpha) \cap F_s(\beta)$；由于 $\alpha, \beta$ 均质，二者相等．因此 $\gamma$ 均质；又由 $\alpha, \beta$ 的 \hyperref[ord:O1]{(O1)} 可知，它满足\hyperref[lem:6]{引理~6} 的条件．根据\hyperref[lem:6]{引理~6}，$\gamma = \alpha$ 或 $\gamma \in_s \alpha$，且 $\gamma = \beta$ 或 $\gamma \in_s \beta$．若 $\gamma \in_s \alpha$ 且 $\gamma \in_s \beta$，则 $\gamma \in_s \gamma$，这与 $\alpha$ 的 \hyperref[ord:O3]{(O3)} 矛盾．其余三种组合恰好给出结论．
 \end{proof}
 
 \section{序数的不对称}\label{sec:5}
-
-\hyperref[thm:2]{定理~2} 可由\hyperref[thm:1]{定理~1} 与下面两个命题推出．
 
 \begin{proposition}[一侧序数均质]\label{prop:1}\code{one}
 若 $c$ 侧只有均质序数，则 $\ord$ 从 $c$ 到 $\bar c$ 不对称．
@@ -368,15 +385,15 @@ $\ord(a)$ 为下列条件的合取，是一个不带参数的齐一公式：
 \begin{proof}
 记 $b = \bar c$．
 \begin{enumerate}[label=(\roman*)]
-\item 设 $x$ 是 $c$-序数，则 $x$ 均质，由\hyperref[lem:4d]{引理~4(4)} 可知 $x$ 也是 $b$-序数．
+\item 设 $x$ 是 $c$-序数，则 $x$ 均质，由\hyperref[lem:5d]{引理~5(4)} 可知 $x$ 也是 $b$-序数．
 \item 即 \hyperref[ord:O3]{(O3)}．
 \item 令 $W = \{x \mid \ord(x)\}$，则 $F_b(W)$ 为全体 $c$-序数，$F_c(W)$ 为全体 $b$-序数．$W$ 是 $b$-序数：它的 $b$-成员都是均质的 $c$-序数，从而是均质的 $b$-序数．下面逐条验证：
 \begin{itemize}
-\item \hyperref[ord:O1]{(O1)}：若 $z \in_b y \in_b W$，则由 $y$ 均质得 $z \in_c y$；再由\hyperref[lem:4a]{引理~4(1)} 知 $z$ 是 $c$-序数，因此 $z \in_b W$；
-\item \hyperref[ord:O2]{(O2)}、\hyperref[ord:O3]{(O3)}：成员都是 $b$-序数，用\hyperref[lem:4b]{引理~4(2)} 即得；
-\item \hyperref[ord:O4]{(O4)}：\hyperref[lem:3]{引理~3}；
-\item \hyperref[ord:O5]{(O5)}：\hyperref[lem:6]{引理~6}；
-\item \hyperref[ord:O6]{(O6)}：对成员 $x$ 应用\hyperref[lem:4c]{引理~4(3)}．\qedhere
+\item \hyperref[ord:O1]{(O1)}：若 $z \in_b y \in_b W$，则由 $y$ 均质得 $z \in_c y$；再由\hyperref[lem:5a]{引理~5(1)} 知 $z$ 是 $c$-序数，因此 $z \in_b W$；
+\item \hyperref[ord:O2]{(O2)}、\hyperref[ord:O3]{(O3)}：成员都是 $b$-序数，用\hyperref[lem:5b]{引理~5(2)} 即得；
+\item \hyperref[ord:O4]{(O4)}：\hyperref[lem:4]{引理~4}；
+\item \hyperref[ord:O5]{(O5)}：\hyperref[lem:7]{引理~7}；
+\item \hyperref[ord:O6]{(O6)}：对成员 $x$ 应用\hyperref[lem:5c]{引理~5(3)}．\qedhere
 \end{itemize}
 \end{enumerate}
 \end{proof}
@@ -386,19 +403,19 @@ $\ord(a)$ 为下列条件的合取，是一个不带参数的齐一公式：
 \end{proposition}
 
 \begin{proof}
-假设两侧都有．
+这一命题出自 \cite[定理 5.1 后]{H05}，那里的证明用到 \hyperref[ax:REG]{\REG}，这里不用．假设两侧都有．
 \begin{enumerate}[label=\arabic*.]
-\item\label{step:cut} \textbf{切割}\quad 设 $p$ 是异质的 $s$-序数，$t$ 是均质的 $s$-序数，且 $t$ 的 $s$-成员全是均质对象，则 $t \in_s p$．事实上，若均质的 $s$-序数 $z$ 满足 $F_s(z) \subseteq F_s(p)$，则由\hyperref[lem:5]{引理~5} 可得 $z = p$ 或 $z \in_s p$，引理的条件正是 $z$ 的 \hyperref[ord:O1]{(O1)}；而 $z = p$ 会使 $p$ 均质，所以 $z \in_s p$．若 $t$ 有 $s$-成员不在 $p$ 中，则对 $t$ 应用 \hyperref[ord:O6]{(O6)} 并取 $C = p$，可得 $z \in_s t$、$z \notin_s p$，且 $F_s(z) \subseteq F_s(p)$；而 $z$ 是均质的 $s$-序数，这不可能．所以 $F_s(t) \subseteq F_s(p)$，于是 $t \in_s p$．
+\item\label{step:cut} \textbf{切割}\quad 设 $p$ 是异质的 $s$-序数，$t$ 是均质的 $s$-序数，且 $t$ 的 $s$-成员全是均质对象，则 $t \in_s p$．事实上，若均质的 $s$-序数 $z$ 满足 $F_s(z) \subseteq F_s(p)$，则由\hyperref[lem:6]{引理~6} 可得 $z = p$ 或 $z \in_s p$，引理的条件正是 $z$ 的 \hyperref[ord:O1]{(O1)}；而 $z = p$ 会使 $p$ 均质，所以 $z \in_s p$．若 $t$ 有 $s$-成员不在 $p$ 中，则对 $t$ 应用 \hyperref[ord:O6]{(O6)} 并取 $C = p$，可得 $z \in_s t$、$z \notin_s p$，且 $F_s(z) \subseteq F_s(p)$；而 $z$ 是均质的 $s$-序数，这不可能．所以 $F_s(t) \subseteq F_s(p)$，于是 $t \in_s p$．
 \item\label{step:descent} \textbf{下降}\quad 若存在异质的 $s$-序数 $\alpha$，则存在异质的 $s$-序数 $p$，其 $s$-成员全是均质对象．
 \begin{itemize}
 \item 令 $D = \{x \mid x \text{ 有单元集}\}$，则 $F_s(D)$ 由所有具有 $\os$-单元集的对象组成．
-\item 由 \hyperref[ord:O4]{(O4)} 知 $\alpha$ 的 $s$-成员都有 $s$-单元集；因此由\hyperref[lem:3]{引理~3}，$\alpha$ 的 $s$-成员属于 $F_s(D)$ 当且仅当它均质．
+\item 由 \hyperref[ord:O4]{(O4)} 知 $\alpha$ 的 $s$-成员都有 $s$-单元集；因此由\hyperref[lem:4]{引理~4}，$\alpha$ 的 $s$-成员属于 $F_s(D)$ 当且仅当它均质．
 \item 若 $\alpha$ 的 $s$-成员全是均质对象，则取 $p = \alpha$．否则存在异质的 $x \in_s \alpha$，满足 $x \notin_s D$．对 $\alpha$ 应用 \hyperref[ord:O6]{(O6)} 并取 $C = D$，可得 $z \in_s \alpha$、$z \notin_s D$，且 $F_s(z) \subseteq F_s(D)$．
-\item $z$ 的 $s$-成员既在 $\alpha$ 中又在 $D$ 中，因而都是均质对象．$z$ 本身异质，否则 $z \in_s D$．由\hyperref[lem:4a]{引理~4(1)} 知 $z$ 是 $s$-序数；取 $p = z$．
+\item $z$ 的 $s$-成员既在 $\alpha$ 中又在 $D$ 中，因而都是均质对象．$z$ 本身异质，否则 $z \in_s D$．由\hyperref[lem:5a]{引理~5(1)} 知 $z$ 是 $s$-序数；取 $p = z$．
 \end{itemize}
 \item \textbf{结论}\quad 由\hyperref[step:descent]{第 2 步}，分别在 $\in$ 侧和 $\eps$ 侧取这样的 $p$ 与 $q$．
 \begin{itemize}
-\item $p$ 的每个 $\in$-成员 $x$ 都是均质的 $\in$-序数，由\hyperref[lem:4d]{引理~4(4)} 也是 $\eps$-序数．由于 $x$ 均质，它两侧的成员都是它的 $\in$-成员；再由 \hyperref[ord:O1]{(O1)}，这些成员都在 $p$ 中，因而都是均质对象．由\hyperref[step:cut]{第 1 步}，$x \mathrel{\eps} q$．
+\item $p$ 的每个 $\in$-成员 $x$ 都是均质的 $\in$-序数，由\hyperref[lem:5d]{引理~5(4)} 也是 $\eps$-序数．由于 $x$ 均质，它两侧的成员都是它的 $\in$-成员；再由 \hyperref[ord:O1]{(O1)}，这些成员都在 $p$ 中，因而都是均质对象．由\hyperref[step:cut]{第 1 步}，$x \mathrel{\eps} q$．
 \item 对称地，$q$ 的每个 $\eps$-成员都是 $p$ 的 $\in$-成员．
 \item 所以 $F_{\in}(p) = F_{\eps}(q)$，由 \hyperref[ax:ME]{\ME}{} 得 $p = q$．于是 $F_{\eps}(p) = F_{\in}(p)$，即 $p$ 均质，矛盾．\qedhere
 \end{itemize}
@@ -412,16 +429,20 @@ $\ord(a)$ 为下列条件的合取，是一个不带参数的齐一公式：
 \begin{remark*}[用到的概括实例]
 \hyperref[thm:2]{定理~2} 的证明只用到 \hyperref[ax:COMP]{\COMP}{} 的八个实例，因此在经典逻辑下，\hyperref[ax:ME]{\ME}{} 加上这八个实例就已不一致．下面列出这些实例，以及各自给出的对象和用处：
 \begin{itemize}
-\item $x = x$：全集 $V$，用于\hyperref[sec:3]{第 3 节}与\hyperref[lem:2]{引理~2} 的证明；
-\item $x = r$，其中 $r$ 均质：$r$ 的单元集，用于\hyperref[lem:3]{引理~3} 的证明；
-\item $\exists u\,(x \in u \wedge u \in h)$：\hyperref[lem:3]{引理~3} 证明中的 $k$；
-\item 与 $x$ 无关的 $\ord(r)$：\hyperref[lem:2]{引理~2} 证明中的 $A$，用于\hyperref[lem:4d]{引理~4(4)}；
-\item $x \in \alpha \wedge x \in \beta$：\hyperref[lem:6]{引理~6} 证明中的 $\gamma$；
+\item $x = x$：全集 $V$，用于\hyperref[sec:3]{第 3 节}；
+\item $x = r$，其中 $r$ 均质：$r$ 的单元集，用于\hyperref[lem:4]{引理~4} 的证明；
+\item $\exists u\,(x \in u \wedge u \in h)$：\hyperref[lem:4]{引理~4} 证明中的 $k$；
+\item $x \in x \oplus \ord(r)$：\hyperref[lem:3]{引理~3} 证明中的 $A$，用于\hyperref[lem:5d]{引理~5(4)}；
+\item $x \in \alpha \wedge x \in \beta$：\hyperref[lem:7]{引理~7} 证明中的 $\gamma$；
 \item 「$x$ 有单元集」：\hyperref[prop:2]{命题~2} 证明中的 $D$；
 \item $\ord(x)$：\hyperref[prop:1]{命题~1} 证明中的 $W$；
 \item $P = \ord$ 时以 $V$ 为参数的对角公式：\hyperref[sec:3]{第 3 节}中的 $A$．
 \end{itemize}
 每个实例至多含两个参数，量词秩至多为 5．可见矛盾已经出现在概括的一个很小的片段中．这一点对寻找模型的意义见\hyperref[sec:7]{第 7 节}．
+\end{remark*}
+
+\begin{remark*}[{\hyperref[ax:ME]{\ME}{} 的用处}]
+\hyperref[thm:2]{定理~2} 的证明只在两处对两个未知是否均质的对象使用 \hyperref[ax:ME]{\ME}：\hyperref[lem:4]{引理~4} 的后一结论，以及\hyperref[prop:2]{命题~2} 的 $p = q$．事实上，在经典逻辑下，\hyperref[ax:COMP]{\COMP}{} 与下列三条已不一致：限于 $x$、$y$ 之一均质的 \hyperref[ax:ME]{\ME}，限于 $x$ 的 $\in$-成员全均质的 \hyperref[ax:ME]{\ME}，以及\hyperref[lem:4]{引理~4} 的后一结论，见 \codeat{melocal}{me-localized}．
 \end{remark*}
 
 \section{验证}\label{sec:6}
@@ -431,20 +452,21 @@ $\ord(a)$ 为下列条件的合取，是一个不带参数的齐一公式：
 \begin{itemize}
 \item \textbf{Agda}\quad 版本为 2.8.0.2．证明写在单个文件 \icode{agda/DESTInconsistency.agda} 中，不导入任何模块，文件头声明了 \icode{-{}-safe -{}-without-K} 选项．信任部分有两块：一是文件的第 0--1 节，给出逻辑、语法、两种读法、公理和不对称的定义；二是文件第 4 节中的定理陈述．定理原文如下：
 \input{agda-statements}
-\noindent 其中 \icode{DNE} 是双重否定消去，即经典逻辑；\icode{diagonal} 既不使用 \hyperref[ax:ME]{\ME}，也不使用 \icode{DNE}．核对命令如下：
+\noindent 其中 \icode{DNE} 是双重否定消去，即经典逻辑；\icode{diagonal} 既不使用 \hyperref[ax:ME]{\ME}，也不使用 \icode{DNE}．核对命令如下：\nopagebreak
 \begin{codebox}
 \begin{Verbatim}[fontsize=\codesize]
 cd agda && agda --safe --no-libraries DESTInconsistency.agda
 \end{Verbatim}
 \end{codebox}
-\item \textbf{Lean 4}\quad 版本为 v4.36.0，不依赖任何库．Lean 文件 \icode{lean/DESTInconsistency.lean} 的结构与 Agda 文件相同，信任部分即第 I 部分和第 III 部分的定理陈述，原样列于\hyperref[app:formal]{附录~A}．与 Agda 不同，关系取值于 \icode{Prop}，\hyperref[ax:COMP]{\COMP}{} 只给出 $\exists$ 而不是 $\Sigma$．经典逻辑作为显式假设 \icode{∀ P : Prop, ¬¬P → P} 出现在 \icode{inconsistent} 与 \icode{DEST\_inconsistent} 中．用 \icode{\#print axioms} 查看，\icode{diagonal}、\icode{inconsistent}、\icode{DEST\_inconsistent} 都不依赖任何公理．\icode{leanchecker} 是 Lean 自带的检查器，它重新核对了编译结果．独立内核 nanoda~0.4.17 在禁止使用任何公理的设置下，重新核对了这三个定理所依赖的全部 251 个声明．另有 \icode{lean/Probes.lean} 核对了三件事：仅有 \hyperref[ax:ME]{\ME}{} 与罗素实例时，存在单点模型；\hyperref[ax:ME]{\ME}{} 与去掉参数均质限制的 \hyperref[ax:COMP]{\COMP}{} 不一致；若 \hyperref[ax:COMP]{\COMP}{} 改用同侧的读法，即要求 $F_s(A) = \{x : \varphi^s(x)\}$，则它本身就不一致．核对命令如下：
+\item \textbf{Lean 4}\quad 版本为 v4.36.0，不依赖任何库．Lean 文件 \icode{lean/DESTInconsistency.lean} 的结构与 Agda 文件相同，信任部分即第 I 部分和第 III 部分的定理陈述，原样列于\hyperref[app:formal]{附录~A}．与 Agda 不同，关系取值于 \icode{Prop}，\hyperref[ax:COMP]{\COMP}{} 只给出 $\exists$ 而不是 $\Sigma$．经典逻辑作为显式假设 \icode{∀ P : Prop, ¬¬P → P} 出现在 \icode{inconsistent} 与 \icode{DEST\_inconsistent} 中．用 \icode{\#print axioms} 查看，\icode{diagonal}、\icode{inconsistent}、\icode{DEST\_inconsistent} 都不依赖任何公理．\icode{leanchecker} 是 Lean 自带的检查器，它重新核对了编译结果．独立内核 nanoda~0.4.17 在禁止使用任何公理的设置下，重新核对了这三个定理所依赖的全部 263 个声明．另有 \icode{lean/Probes.lean} 核对了三件事：仅有 \hyperref[ax:ME]{\ME}{} 与罗素实例时，存在单点模型；\hyperref[ax:ME]{\ME}{} 与去掉参数均质限制的 \hyperref[ax:COMP]{\COMP}{} 不一致；若 \hyperref[ax:COMP]{\COMP}{} 改用同侧的读法，即要求 $F_s(A) = \{x : \varphi^s(x)\}$，则它本身就不一致．核对命令如下：\nopagebreak
 \begin{codebox}
 \begin{Verbatim}[fontsize=\codesize]
 cd lean && lake build && lake env leanchecker DESTInconsistency
 \end{Verbatim}
 \end{codebox}
-\item \textbf{盲测形式化}\quad 两个彼此隔离的 Claude Opus~5.5 实例从零完成了 Agda 形式化，各自只看到自己的材料：一个是本论文的初稿，另一个是对角论证的一页摘要．两份都通过了 Agda 的类型检查．第二个实例发现，对角论证既不需要 \hyperref[ax:ME]{\ME}，也不需要经典逻辑，由此引出了\hyperref[thm:1]{定理~1}．该摘要收录于仓库的 \icode{blind-test/diagonal-summary.zh.png}．
-\item \textbf{范围}\quad \icode{inconsistent} 与 \icode{DEST\_inconsistent} 断言：没有结构满足这些公理．要由此得出一阶理论不一致，还需用到完备性定理；这一步没有形式化．
+\item \textbf{附加代码}\quad 文件 \icode{agda/Intuitionistic.agda} 与 \icode{lean/Intuitionistic.lean} 给出\hyperref[sec:2]{第 2 节}所说的变体，信任部分与主文件相同，只是没有经典逻辑的假设．用 \icode{\#print axioms} 查看，后者的三个定理都不依赖任何公理；nanoda 核对了它们所依赖的 267 个声明．文件 \icode{agda/Supplement.agda} 证明\hyperref[sec:1]{第 1}、\hyperref[sec:5]{5}、\hyperref[sec:8]{8 节}引用的三个定理，正文中这些定理名与\hyperref[sec:2]{第 2 节}的两个文件名都链接到代码；它不导入任何模块，信任部分是主文件的第 0--1 节与序数公式、陈述所需的定义，以及三条陈述．Agda 文件的核对方法与主文件相同；\icode{lake build} 也构建这个 Lean 文件，\icode{leanchecker} 也重新核对了它．
+\item \textbf{盲测形式化}\quad 两个彼此隔离的 Claude Opus~5.5 实例从零完成了 Agda 形式化，各自只看到自己的材料：一个是本论文的初稿，另一个是对角论证的一页摘要．两份都通过了 Agda 的类型检查．第二个实例发现，对角论证既不需要 \hyperref[ax:ME]{\ME}，也不需要经典逻辑，由此引出了\hyperref[thm:1]{定理~1}．该摘要收录于仓库的 \icode{blind-test/diagonal-summary.zh.png}．第三个实例只看到本文第一版的第 1--5 节和\hyperref[sec:2]{第 2 节}所说变体的草稿，从零用 Lean~4 形式化了它，其定理不依赖任何公理；它还发现草稿在\hyperref[step:cut]{切割}一步漏写了\hyperref[lem:6]{引理~6} 的条件．输入与形式化见 \icode{blind-test/intuitionistic-input.md} 与 \icode{blind-test/intuitionistic.lean}．
+\item \textbf{范围}\quad \icode{inconsistent} 与 \icode{DEST\_inconsistent} 断言：没有结构满足这些公理．要由此得出一阶理论不一致，还需用到完备性定理；这一步没有形式化．在 Lean 中，\hyperref[ax:COMP]{\COMP}{} 给出的 $\exists$ 只能用来证明命题，与一阶推导中的存在命题相同；在 Agda 中，$\Sigma$ 则把每个见证作为参数的函数给出．要由 \icode{lean/Intuitionistic.lean} 得出一阶理论在直觉主义逻辑下不一致，还需用到直觉主义逻辑对 Kripke 模型的完备性，以及 Lean 的逻辑对这类模型的可靠性．前者没有形式化，后者我们没有核对．
 \end{itemize}
 
 \section{回顾与复盘}\label{sec:7}
@@ -467,11 +489,11 @@ cd lean && lake build && lake env leanchecker DESTInconsistency
 
 \section{展望}\label{sec:8}
 
-不一致并不意味着双面外延集合论的研究就此终结．被列为开放问题的那个理论已被否定，寻找一致的公理化反而比以往更难．自然的表述已被排除，必须先找到替代表述，再证明它一致．\hyperref[thm:1]{定理~1} 指明了保留交叉概括的替代表述必须避免什么：不能有任何齐一公式不对称．至于 \DESTm{} 在直觉主义逻辑下是否不一致，我们尚不清楚．每一次规避矛盾的尝试都可能让理论弱一些，但这不一定使它失去意义．我们认为，只要最终得到的理论被证明一致，仍能解释 ZF，仍有罗素集 $\{x \mid x \notin x\}$ 这类基本的异质对象，且公理读起来自然、没有针对已知悖论打补丁的痕迹，它就有意义．
+不一致并不意味着双面外延集合论的研究就此终结．被列为开放问题的那个理论已被否定，寻找一致的公理化反而比以往更难．自然的表述已被排除，必须先找到替代表述，再证明它一致．\hyperref[thm:1]{定理~1} 指明了保留交叉概括的替代表述必须避免什么：不能有任何齐一公式不对称．若替代表述采用经典逻辑，保留 \hyperref[ax:COMP]{\COMP}，并在 $z$ 也均质的情形保留\hyperref[lem:2]{引理~2}，则它的两侧都有异质序数，见 \codeat{irrord}{irregular-ordinals}；于是在这样的替代表述中，$\Ord$ 的哪一面都不恰由均质序数组成，对 $\ord$ 而言，Holmes 解释 ZF 所依据的断言 \cite[断言 4.1]{H05} 在其中不成立，所以他对 ZF 的解释不能原样搬到这样的替代表述中．\hyperref[sec:2]{第 2 节}所说的变体提示，改用直觉主义逻辑也避不开这一矛盾．每一次规避矛盾的尝试都可能让理论弱一些，但这不一定使它失去意义．我们认为，只要最终得到的理论被证明一致，仍能解释 ZF，仍有罗素对象 $\{x \mid x \notin x\}$ 这类基本的异质对象，且公理读起来自然、没有针对已知悖论打补丁的痕迹，它就有意义．
 
 \section*{AI 使用声明}
 
-Peter Zhang 主导了这项研究：提出问题，把握方向，作出决定，并对内容负责．工作借助 AI 系统完成．项目证明一致性的尝试陷入僵局之后，ChatGPT（Astra~6.2，OpenAI）担任了外部审计者，经过见\hyperref[sec:7]{第 7 节}．它在不用 \hyperref[ax:REG]{\REG}{} 的情况下推出了序数的不对称，并找到了对角论证．Claude（Anthropic）审核并简化了论证，将其推广为\hyperref[thm:1]{定理~1}，完成了 Agda 与 Lean 形式化，并起草了本文；其中大部分由 Claude Code 中的 Claude Opus~5.5 完成，两次盲测形式化则由相互隔离的 Claude Opus~5.5 实例完成．项目此前的轮次以证明一致性为目标，用到了 Claude 和其他 AI 系统．
+Peter Zhang 主导了这项研究：提出问题，把握方向，作出决定，并对内容负责．工作借助 AI 系统完成．项目证明一致性的尝试陷入僵局之后，ChatGPT（Astra~6.2，OpenAI）担任了外部审计者，经过见\hyperref[sec:7]{第 7 节}．它在不用 \hyperref[ax:REG]{\REG}{} 的情况下推出了序数的不对称，并找到了对角论证．Claude（Anthropic）审核并简化了论证，将其推广为\hyperref[thm:1]{定理~1}，完成了 Agda 与 Lean 形式化，并起草了本文；其中大部分由 Claude Code 中的 Claude Opus~5.5 完成，三次盲测形式化则由相互隔离的 Claude Opus~5.5 实例完成．在这项研究中，Claude Opus~5.5 还找到了\hyperref[sec:2]{第 2 节}所说的变体与 \icode{agda/Supplement.agda} 中的三条结果；前者经其他 Claude Opus~5.5 实例的独立审稿和第三次盲测形式化核对．项目此前的轮次以证明一致性为目标，用到了 Claude 和其他 AI 系统．
 
 % 参考文献：标题与其他节标题相同，条目小五号，著录格式参照 GB/T 7714．
 \begingroup\zihao{-5}
@@ -487,6 +509,8 @@ Peter Zhang 主导了这项研究：提出问题，把握方向，作出决定�
 
 \appendix
 \ctexset{section/name = {附录,}}
+% Keep the heading with the first code chunk.
+\needspace{10\baselineskip}
 \section{形式陈述}\label{app:formal}
 
 \input{lean-statements}
