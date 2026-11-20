@@ -6,6 +6,12 @@
 
 核心是一条对角定理：单凭概括就能驳倒一切在两种成员关系之间「不对称」的公式，而且这一定理的证明既不需要混合外延性，也不需要经典逻辑．混合外延性与经典逻辑只用来证明序数不对称．
 
+## 论文
+
+1. **弱双面外延集合论不一致**（2026 年 11 月）．[中文 PDF](pdf/dest-inconsistency.zh.pdf) · [英文 PDF](pdf/dest-inconsistency.en.pdf) · [BibTeX](CITATION.bib)
+
+## 文件
+
 | 路径 | 内容 |
 |---|---|
 | `pdf/` | 论文：中文 `dest-inconsistency.zh.pdf`，英文 `dest-inconsistency.en.pdf` |

@@ -6,6 +6,12 @@ We prove that Kisielewicz's weak double extension set theory DEST is inconsisten
 
 The core is a diagonal theorem: comprehension alone refutes every formula that is *asymmetric* between the two membership relations, and this needs neither mixed extensionality nor classical logic. Mixed extensionality and classical logic are used only to show that the ordinals are asymmetric.
 
+## Papers
+
+1. **Weak double extension set theory is inconsistent** (November 2026). [English PDF](pdf/dest-inconsistency.en.pdf) · [Chinese PDF](pdf/dest-inconsistency.zh.pdf) · [BibTeX](CITATION.bib)
+
+## Files
+
 | Path | Content |
 |---|---|
 | `pdf/` | The paper, English (`dest-inconsistency.en.pdf`) and Chinese (`dest-inconsistency.zh.pdf`) |
